@@ -1,2 +1,2 @@
 # StructurePrixProduits
-Analyse des prix du marché des différents produits en côte d'ivoire
+Product market price analysis in Côte d'Ivoire.
