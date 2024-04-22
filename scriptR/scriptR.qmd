@@ -12,6 +12,7 @@ editor: visual
 ```{r warning=FALSE}
 library(tidyverse)
 library(ggplot2)
+library(rvest)
 ```
 
 # chargement des données
@@ -21,8 +22,25 @@ data <- read_delim("../data/ECHO_DU_MARCHE.csv")
 data |> head(6)
 ```
 
+# Scraping des données sur la page de Sika Finance
 ```{r warning=FALSE}
 
-data <- read_delim("../data/ECHO_DU_MARCHE.csv")
-data |> head(6)
+url_sika<- "https://www.sikafinance.com/conso/liste_des_prix"
+data_html <- read_html(url_sika)
+
+data_0 <- data_html |> html_elements( "td , th") |>
+          html_text2() |> matrix(ncol=9,byrow=TRUE)|> as.data.frame()
+
+# Assign the first row as column names
+colnames(data_0) <- data_0[1, ]
+# Remove the first row since it's now column names
+data_0 <- data_0[-1, ]
+# Remove spaces from columns 3 to 8
+for (i in 3:8) {
+  data_0[[i]] <- gsub("\\s+", "", data_0[[i]])
+}
+# Change the type of columns 3 to 8 to double
+data_0 <- data_0 |> mutate_at(vars(3:8), as.double)
+
+data_0|>head(10)
 ```
