@@ -4,7 +4,6 @@ author: "Amed BAH ~ Frederic AKADJE"
 documentclass: report
 format: pdf
 toc: true
-toc-location: body
 toc-expand: true
 toccolor: blue
 margin-left: 2.5cm
