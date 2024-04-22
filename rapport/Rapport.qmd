@@ -1,0 +1,37 @@
+---
+title: "Structure du prix des produits dans les différents marchés en Côte d'Ivoire"
+author: "Amed BAH ~ Frederic AKADJE"
+documentclass: report
+format: pdf
+toc: true
+toc-expand: true
+toccolor: blue
+margin-left: 2.5cm
+editor: visual
+---
+
+## Description
+
+Dans un contexte actuelle d'inflation générale, et d'incertitude constante, couvrir ses besoins quotidiens devient difficile. Pour l'Afrique , ces inflations sont directement repercutées sur les populations dans un contexte ....
+
+## Mise en oeuvre
+
+### Collaboration et contribution
+
+Le projet est disponible sur les repo github: \@ ou \@ . Aussi la mise place de ce projet a occasionné la conception d'une maqette pour l'application Shiny est disponible sur : [ici](https://www.figma.com/file/IkEu8xdFRqfcr2R0eESQFC/Structure_Prix-team-library?type=design&mode=design&t=u1JtKOkRZorjGNiW-1)
+
+### Source de données
+
+Ce projet a nécessité l'utilisation des sources de données suivantes:
+
+-   Prix des produits dans les différents marchés en Côte d'Ivoire depuis Janvier 2022 (csv), OpendataCi : <https://data.gouv.ci/datasets/echo-du-marche>
+
+-   Mise à jour des prix de gros et de détail sur certains marchés de la Côte d'Ivoire en 2016 (csv), OpendataCi : <https://data.gouv.ci/datasets/mise-a-jour-des-prix-de-gros-et-au-details-sur-certains-marches-en-2016>
+
+-   Prix actuel des produits de marché (donnée scrappée), SIKA finance : <https://www.sikafinance.com/conso/liste_des_prix>
+
+-   Catégorisation des produits du marché (pdf), OCPV : <https://www.ocpv-ci.com/doc/SYNTHESE/2023/SYNTHESE_PRIX_MOYENS_S13_2023.pdf>
+
+-   Estimation du panier moyen (csv) : voir dossier /data/name.csv
+
+### 
