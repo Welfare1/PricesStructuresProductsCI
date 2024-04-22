@@ -1,0 +1,28 @@
+---
+title: "ScriptR"
+format: html
+editor: visual
+---
+
+## Script de chargement et de nettoyage des données
+
+# Chargement des librairies
+
+
+```{r warning=FALSE}
+library(tidyverse)
+library(ggplot2)
+```
+
+# chargement des données
+
+```{r warning=FALSE}
+data <- read_delim("../data/ECHO_DU_MARCHE.csv")
+data |> head(6)
+```
+
+```{r warning=FALSE}
+
+data <- read_delim("../data/ECHO_DU_MARCHE.csv")
+data |> head(6)
+```
