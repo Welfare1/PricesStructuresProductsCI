@@ -8,10 +8,8 @@ editor: visual
 
 # Chargement des librairies
 
-
-```{r warning=FALSE}
+```{r, warning=FALSE}
 library(tidyverse)
-library(ggplot2)
 library(rvest)
 ```
 
@@ -23,6 +21,7 @@ data |> head(6)
 ```
 
 # Scraping des données sur la page de Sika Finance
+
 ```{r warning=FALSE}
 
 url_sika<- "https://www.sikafinance.com/conso/liste_des_prix"
@@ -43,4 +42,10 @@ for (i in 3:8) {
 data_0 <- data_0 |> mutate_at(vars(3:8), as.double)
 
 data_0|>head(10)
+head(data_0)
+
 ```
+
+
+
+
