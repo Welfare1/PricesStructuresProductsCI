@@ -1,8 +1,10 @@
-﻿Categorie,Produits
+﻿Categories,Produits
 CEREALES,Haricot
 CEREALES,Maïs grain
 CEREALES,Mil
 CEREALES,Riz importé de grande consommation
+CEREALES,"Riz importé de grande
+consommation"
 CEREALES,Riz local blanchi
 CEREALES,Sorgho
 FECULENTS,Banane plantain
@@ -27,6 +29,7 @@ LEGUMES,"Oignon ""violet de Galmi"""
 LEGUMES,Oignon Hollande
 LEGUMES,Piment frais ordinaire
 LEGUMES,Tomate SODEFEL
+OLEAGINEUX,[image] Graine de palme ordinaire
 OLEAGINEUX,Arachide décortiquée gros grain
 OLEAGINEUX,Arachide décortiquée petit grain
 OLEAGINEUX,Graine de palme ordinaire
