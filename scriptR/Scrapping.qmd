@@ -1,5 +1,4 @@
 ---
-title: "ScriptR"
 format: html
 editor: visual
 ---
