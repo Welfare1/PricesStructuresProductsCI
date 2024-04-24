@@ -8,11 +8,23 @@ toc-expand: true
 toccolor: blue
 margin-left: 2.5cm
 editor: visual
+lang: fr
+fontsize: 12pt
 ---
 
 ## Description
 
-Dans un contexte actuelle d'inflation générale, et d'incertitude constante, couvrir ses besoins quotidiens devient difficile. Pour l'Afrique , ces inflations sont directement repercutées sur les populations dans un contexte ....
+Dans le contexte économique actuel, marqué par une inflation constante et une incertitude croissante, la question de la variabilité des prix des produits et leur l\'accessibilité dans les différents marchés est devenue cruciale. Les ménages sont contraints de jongler entre le désir de maintenir un certain niveau de vie et la nécessité de s\'adapter à une réalité économique de plus en plus difficile. En Côte d'Ivoire, l'Etat s'engage constament dans la lutte contre la vie chère, à travers ccertains organismes tels que le CNLVC (conseil national de lutte contre la vie chère) et le OCPV ((Office d'aide à la Commercialisation des Produits Vivriers). Ses actions visent à atténuer l\'impact de l\'inflation sur les populations vulnérables et à garantir l\'accessibilité des produits de base à tous. Ces initiatives sont cruciales pour assurer la stabilité économique et sociale en Côte d\'Ivoire.
+
+Cette étude vise à analyser la structure des prix sur les différents marchés ivoiriens.
+
+Nous nous pencherons sur deux problématiques principales :
+
+**Variabilité des prix** : Nous chercherons à comprendre si la structure des prix varie d\'une région à une autre, d\'une année à une autre, et si les prix présentent un caractère saisonnier.
+
+**Accessibilité des produits** : Nous examinerons l\'évolution des prix d\'une année à une autre, identifierons les périodes de l\'année où les prix sont plus bas, et déterminerons quels produits sont les plus accessibles selon les marchés, les années et les régions.
+
+En fin de compte, cette analyse approfondie vise à fournir des informations précieuses qui pourraient aider à élaborer des politiques efficaces pour atténuer l\'impact de l\'inflation sur les populations vulnérables en Côte d\'Ivoire.
 
 ## Mise en oeuvre
 
