@@ -10,13 +10,19 @@ editor: visual
 ```{r, warning=FALSE,message=FALSE}
 library(tidyverse)
 library(rvest)
+library(fuzzywuzzyR)
+library(fuzzyjoin)
+library(stringdist)
+library(dplyr)
 ```
 
 # chargement des données
 
 ```{r, warning=FALSE, message=FALSE}
 data <- read_delim("../data/ECHO_DU_MARCHE.csv")
+data_cat <- read_delim("../data/catProduit.csv")
 data |> head(6)
+data_cat |> head(6)
 ```
 
 # Scraping des données sur la page de Sika Finance
@@ -45,5 +51,22 @@ head(data_0)
 
 ```
 
+ Ajout des catergories aux données
 
 
+```{r warning=FALSE}
+
+data$PRODUITS <- tolower(trimws(data$PRODUITS))
+data_cat$Produits <- tolower(trimws(data_cat$Produits))
+ data_join <- stringdist_join(data, data_cat, 
+                by = c("PRODUITS"="Produits"),
+                mode = 'left', 
+                 # use jw distance metric
+                method = 'jw',
+                max_dist = 0.3, 
+                )
+length(is.na(data_join$Produits))
+
+length(data_join$Produits[is.na(data_join$Produits)])
+
+length(data_join$Produits)
