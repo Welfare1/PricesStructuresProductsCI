@@ -3,20 +3,22 @@ title: "Traitement1"
 format: html
 editor: visual
 ---
+
 # Data processing
+
 ## Chargement des packages
+
 ```{r,warning=FALSE,message=FALSE}
 library(tidyverse)
 library(stringdist)
 ```
 
-
-
 ## Chargement des jeux de données
-```{r}
-priceGlob <- read_csv("data/ECHO_DU_MARCHE.csv",locale = locale())
 
-CatProd <- read_csv("data/CatProduit.csv", locale = locale())
+```{r}
+priceGlob <- read_csv("../data/ECHO_DU_MARCHE.csv",locale = locale())
+
+CatProd <- read_csv("../data/CatProduit.csv", locale = locale())
 
 #Transformation de la colonne PRODUITS en miniscule
 
@@ -29,7 +31,8 @@ priceGlob |> sample_n(10)
 ```
 
 ## Evalutation de la distance
-```{r}
+
+```{r warning=FALSE}
 # matrice des distances
 dataMat <- as_tibble(stringdistmatrix(CatProd$Produits,unique(priceGlob$PRODUITS),method ='soundex'))
 
@@ -52,6 +55,7 @@ resultMap
 Conclusion : Moyennant une bonne distance, nous pourront avoir le moins d'erreurs possibles.
 
 ### Recherches de distances plus précises
+
 ```{r}
 # Test des distances
 dist<- stringdist("assawa",unique(CatProd$Produits))
@@ -60,5 +64,3 @@ dist<- stringdist("assawa",unique(CatProd$Produits))
 unique(CatProd$Produits)[order(dist)[1]]
 
 ```
-
-
