@@ -75,11 +75,15 @@ class(data_cat)
 # Perform fuzzy join using stringdist_join with Jaro-Winkler distance metric
 data_join <- stringdist_join(datap, data_cat, 
                              by = c("datap"="Produits"),
-                             mode = 'right',
+                             mode = 'left',
                              method = 'soundex')
 data_join
+<<<<<<< HEAD
 
 view(data_join)
+=======
+unique.data.frame(data_join[,c("datap","Categories")])
+>>>>>>> 026d10e5d9d0d606fdb2729531848e741f96b2b5
 # Check the number of NA values in the 'Produits' column of the joined data frame
 
 # Alternative way to count NA values
