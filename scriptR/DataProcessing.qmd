@@ -71,7 +71,6 @@ datap <- tibble(datap)
 data_cat$Produits <- tolower(trimws(data_cat$Produits))
 class(datap)
 class(data_cat)
-datap
 
 # Perform fuzzy join using stringdist_join with Jaro-Winkler distance metric
 data_join <- stringdist_join(datap, data_cat, 
@@ -79,6 +78,8 @@ data_join <- stringdist_join(datap, data_cat,
                              mode = 'right',
                              method = 'soundex')
 data_join
+
+view(data_join)
 # Check the number of NA values in the 'Produits' column of the joined data frame
 
 # Alternative way to count NA values
