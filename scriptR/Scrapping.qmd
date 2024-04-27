@@ -7,7 +7,7 @@ editor: visual
 
 # Chargement des librairies
 
-```{r, warning=FALSE}
+```{r, warning=FALSE,message=FALSE}
 library(tidyverse)
 library(rvest)
 library(fuzzywuzzyR)
@@ -18,7 +18,7 @@ library(dplyr)
 
 # chargement des données
 
-```{r warning=FALSE}
+```{r, warning=FALSE, message=FALSE}
 data <- read_delim("../data/ECHO_DU_MARCHE.csv")
 data_cat <- read_delim("../data/catProduit.csv")
 data |> head(6)
@@ -51,8 +51,7 @@ head(data_0)
 
 ```
 
-
-# Ajout des catergories aux données
+ Ajout des catergories aux données
 
 
 ```{r warning=FALSE}
@@ -71,5 +70,3 @@ length(is.na(data_join$Produits))
 length(data_join$Produits[is.na(data_join$Produits)])
 
 length(data_join$Produits)
-
-```
