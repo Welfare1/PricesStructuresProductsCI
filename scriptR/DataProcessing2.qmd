@@ -31,7 +31,7 @@ priceGlob |> sample_n(10)
 ## Evalutation de la distance
 ```{r}
 # matrice des distances
-dataMat <- as_tibble(stringdistmatrix(CatProd$Produits,unique(priceGlob$PRODUITS)))
+dataMat <- as_tibble(stringdistmatrix(CatProd$Produits,unique(priceGlob$PRODUITS),method ='soundex'))
 
 # Ajout des produits dans un premier temps (cette colonne sera remplacé par Catégorie à la fin)
 test <- bind_cols(unique(CatProd$Produits),dataMat)
