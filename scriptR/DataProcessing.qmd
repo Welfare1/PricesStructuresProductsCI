@@ -1,0 +1,109 @@
+---
+title: "DataProcessing"
+format: html
+editor: visual
+---
+
+---
+format: html
+editor: visual
+---
+
+# Script de chargement et de nettoyage des données
+
+## Chargement des librairies
+
+```{r, warning=FALSE}
+library(tidyverse)
+library(fuzzywuzzyR)
+library(fuzzyjoin)
+library(stringdist)
+```
+
+## chargement des données
+
+```{r warning=FALSE}
+data <- read_delim("../data/ECHO_DU_MARCHE.csv")
+data_cat <- read_delim("../data/catProduit.csv")
+data |> head(6)
+data_cat |> head(6)
+
+library(stringr)
+
+substring <- "ve"
+sentence <- "je veux une orange"
+str_detect(sentence, substring)
+if (str_detect(sentence, substring)) {
+  print("La partie du mot est incluse dans la phrase.")
+} else {
+  print("La partie du mot n'est pas incluse dans la phrase.")
+}
+```
+
+## Ajout des catergories aux données
+
+### Méthode 1
+
+```{r warning=FALSE}
+
+data$PRODUITS <- tolower(trimws(data$PRODUITS))
+data_cat$Produits <- tolower(trimws(data_cat$Produits))
+
+unique(data$PRODUITS)
+
+#dist <- stringdist("igname",str_to_lower(data_cat$Produits), method ="soundex")
+#data_cat$Produits[dist==min(dist)]
+
+ data_join <- stringdist_join(data, data_cat, 
+                by = c("PRODUITS"="Produits"),
+                mode = 'left', 
+                 # use jw distance metric
+                method = 'jw',
+                max_dist =0.3, 
+                )
+data_join[,c("PRODUITS","Produits")]
+
+length(data_join$Produits)
+
+length(data_join$Produits[is.na(data_join$Produits)])
+
+length(data_join$Produits)
+
+```
+
+### Méthode 2
+
+```{r}
+
+# Extract unique product values and convert to lowercase with trimmed whitespace
+
+
+# Convert 'PRODUITS' column to lowercase with trimmed whitespace
+datap<- tolower(trimws(datap))
+datap <- tibble(unique(data$PRODUITS))
+data_cat$Produits <- tolower(trimws(data_cat$Produits))
+class(datap)
+class(data_cat)
+
+
+# Perform fuzzy join using stringdist_join with Jaro-Winkler distance metric
+data_join <- stringdist_join(datap, data_cat, 
+                             by = c("unique(data$PRODUITS)"="Produits"),
+                             mode = 'right',
+                             method = 'soundex')
+data_join
+# Check the number of NA values in the 'Produits' column of the joined data frame
+
+# Alternative way to count NA values
+length(data_join$`unique(data$PRODUITS)`[is.na(data_join$`unique(data$PRODUITS)`)])
+
+# Check the total number of unique product values in the joined data frame
+length(data_join$Produits)
+
+```
+
+
+```{r warning=FALSE}
+
+
+```
