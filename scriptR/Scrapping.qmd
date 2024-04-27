@@ -51,22 +51,3 @@ head(data_0)
 
 ```
 
- Ajout des catergories aux données
-
-
-```{r warning=FALSE}
-
-data$PRODUITS <- tolower(trimws(data$PRODUITS))
-data_cat$Produits <- tolower(trimws(data_cat$Produits))
- data_join <- stringdist_join(data, data_cat, 
-                by = c("PRODUITS"="Produits"),
-                mode = 'left', 
-                 # use jw distance metric
-                method = 'jw',
-                max_dist = 0.3, 
-                )
-length(is.na(data_join$Produits))
-
-length(data_join$Produits[is.na(data_join$Produits)])
-
-length(data_join$Produits)
