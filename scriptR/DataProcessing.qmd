@@ -4,11 +4,6 @@ format: html
 editor: visual
 ---
 
----
-format: html
-editor: visual
----
-
 # Script de chargement et de nettoyage des données
 
 ## Chargement des librairies
@@ -101,7 +96,6 @@ length(data_join$`unique(data$PRODUITS)`[is.na(data_join$`unique(data$PRODUITS)`
 length(data_join$Produits)
 
 ```
-
 
 ```{r warning=FALSE}
 

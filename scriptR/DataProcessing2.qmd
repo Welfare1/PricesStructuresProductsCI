@@ -1,0 +1,64 @@
+---
+title: "Traitement1"
+format: html
+editor: visual
+---
+# Data processing
+## Chargement des packages
+```{r,warning=FALSE,message=FALSE}
+library(tidyverse)
+library(stringdist)
+```
+
+
+
+## Chargement des jeux de données
+```{r}
+priceGlob <- read_csv("data/ECHO_DU_MARCHE.csv",locale = locale())
+
+CatProd <- read_csv("data/CatProduit.csv", locale = locale())
+
+#Transformation de la colonne PRODUITS en miniscule
+
+priceGlob <- priceGlob |> mutate(PRODUITS=str_to_lower(PRODUITS))
+
+CatProd <- CatProd |> mutate(Produits=str_to_lower(Produits))
+
+# Affichage sampling de lignes
+priceGlob |> sample_n(10)
+```
+
+## Evalutation de la distance
+```{r}
+# matrice des distances
+dataMat <- as_tibble(stringdistmatrix(CatProd$Produits,unique(priceGlob$PRODUITS)))
+
+# Ajout des produits dans un premier temps (cette colonne sera remplacé par Catégorie à la fin)
+test <- bind_cols(unique(CatProd$Produits),dataMat)
+
+# Utilisation de `map` order, afin de transformer les colonnes en lignes et opérer sur elles
+# (1) Voir d'abord : map(test[-1],\(x) order(x)[1])
+# Puck(1,y), pour appeler la ligne y de la colonne 1
+resultMap <- map(test[-1],\(x) order(x)[1]) |> map(\(y) test |> pluck(1,y))
+
+# Affectation des noms des produits
+names(resultMap) <- unique(priceGlob$PRODUITS)
+
+#Affichage résultat
+resultMap
+
+```
+
+Conclusion : Moyennant une bonne distance, nous pourront avoir le moins d'erreurs possibles.
+
+### Recherches de distances plus précises
+```{r}
+# Test des distances
+dist<- stringdist("assawa",unique(CatProd$Produits))
+
+#Retrouver l'élément correspondant à la plus petite distance
+unique(CatProd$Produits)[order(dist)[1]]
+
+```
+
+
