@@ -7,14 +7,14 @@ editor: visual
 
 # Chargement des librairies
 
-```{r, warning=FALSE}
+```{r, warning=FALSE,message=FALSE}
 library(tidyverse)
 library(rvest)
 ```
 
 # chargement des données
 
-```{r warning=FALSE}
+```{r, warning=FALSE, message=FALSE}
 data <- read_delim("../data/ECHO_DU_MARCHE.csv")
 data |> head(6)
 ```
@@ -44,3 +44,6 @@ data_0|>head(10)
 head(data_0)
 
 ```
+
+
+
