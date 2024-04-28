@@ -86,10 +86,10 @@ unique.data.frame(data_join[,c("datap","Categories")])
 >>>>>>> 026d10e5d9d0d606fdb2729531848e741f96b2b5
 # Check the number of NA values in the 'Produits' column of the joined data frame
 
-# Alternative way to count NA values
-length(data_join$`datap`[is.na(data_join$`datap`)])
+length(data_join$Produits)
 
-# Check the total number of unique product values in the joined data frame
+length(data_join$Categories[is.na(data_join$Categories)])
+
 length(data_join$Produits)
 
 ```

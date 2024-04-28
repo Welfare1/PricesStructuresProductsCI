@@ -24,6 +24,9 @@ CatProd <- read_csv("../data/CatProduit.csv", locale = locale())
 
 # Jeu de données contenant les produits inexistant dans CatProd
 CatProdSupp <- read_csv2("../data/CatProduitSupp.csv", locale = locale())
+priceGlob <- read_csv("../data/ECHO_DU_MARCHE.csv",locale = locale())
+
+CatProd <- read_csv("../data/CatProduit.csv", locale = locale())
 
 # COncaténation des jeux de données CatProd et CatProdSupp
 CatProd <- bind_rows(CatProd,CatProdSupp)
@@ -42,10 +45,12 @@ La difficulté majeur dans le processus réside dans la correspondance des noms 
 - Matching : Un matching est fait dans un premier avec les colonnes réduits des datasets (ceci afin d'éviter d'étendre l'opération sur les ~ 47 000 lignes du dataset ECHO_MARCHE)
 - Jointure : Une jointure finale est faite dans but ramener les correspondances attendues vers le grand jeu de données.
 
-
 ### Matching :
 Nous établissons ici une correspondance entre les produits de `priceGlob(ECHO_DU_MARCHE)` et `CatProd`
-```{r}
+
+## Evalutation de la distance
+
+```{r warning=FALSE}
 # matrice des distances
 # Nous formons la matrice des distances avec la méthode "lcs"
 dataMat <- as_tibble(stringdistmatrix(CatProd$Produits,unique(priceGlob$PRODUITS),method ='lcs'))
@@ -80,10 +85,5 @@ CatGlob<- bind_cols(resultCat,resultProd[-1])
 # Affichage du résulat
 CatGlob |> view()
 
-
 ```
-
-
-### Jointure
-
 
