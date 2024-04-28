@@ -3,88 +3,87 @@ title: "DataProcessing1"
 format: html
 editor: visual
 ---
+
 # Data processing
+
 ## Chargement des packages
+
 ```{r,warning=FALSE,message=FALSE}
 library(tidyverse)
 library(stringdist)
 ```
 
-
-
 ## Chargement des jeux de données
-```{r}
-priceGlob <- read_csv("data/ECHO_DU_MARCHE.csv",locale = locale())
 
-CatProd <- read_csv("data/CatProduit.csv", locale = locale())
+```{r,warning=FALSE,message=FALSE}
+# Jeu de données ECHO_DU_MARCHE
+priceGlob <- read_csv("../data/ECHO_DU_MARCHE.csv",locale = locale())
 
-CatProdSupp <- read_csv("data/CatProduitSupp.csv", locale = locale())
+# Jeu de données Contenant les catégories des produits (avec les orthographes approximatifs)
+CatProd <- read_csv("../data/CatProduit.csv", locale = locale())
 
-#Transformation de la colonne PRODUITS en miniscule
+# Jeu de données contenant les produits inexistant dans CatProd
+CatProdSupp <- read_csv2("../data/CatProduitSupp.csv", locale = locale())
+
+# COncaténation des jeux de données CatProd et CatProdSupp
+CatProd <- bind_rows(CatProd,CatProdSupp)
+
+# Transformation de la colonne PRODUITS en miniscule afin de faciliter le matching
 
 priceGlob <- priceGlob |> mutate(PRODUITS=str_to_lower(PRODUITS))
 
 CatProd <- CatProd |> mutate(Produits=str_to_lower(Produits))
 
-# Affichage sampling de lignes
-priceGlob |> sample_n(10)
 ```
 
-## Evalutation de la distance
+## Transformation des colonnes
+
+La difficulté majeur dans le processus réside dans la correspondance des noms des produits d'un dataset à un autre. Ces noms diffèrent dans l'orthograghe. Pour cela nous le faisons en deux étapes:
+- Matching : Un matching est fait dans un premier avec les colonnes réduits des datasets (ceci afin d'éviter d'étendre l'opération sur les ~ 47 000 lignes du dataset ECHO_MARCHE)
+- Jointure : Une jointure finale est faite dans but ramener les correspondances attendues vers le grand jeu de données.
+
+
+### Matching :
+Nous établissons ici une correspondance entre les produits de `priceGlob(ECHO_DU_MARCHE)` et `CatProd`
 ```{r}
 # matrice des distances
+# Nous formons la matrice des distances avec la méthode "lcs"
 dataMat <- as_tibble(stringdistmatrix(CatProd$Produits,unique(priceGlob$PRODUITS),method ='lcs'))
 
-# Ajout des produits dans un premier temps (cette colonne sera remplacé par Catégorie à la fin)
-test <- bind_cols(unique(CatProd$Produits),dataMat)
+# Récupération des colonnes produits et catégories du dataset CatProd
+test <- bind_cols(CatProd,dataMat)
+# head(test)
 
 # Utilisation de `map` order, afin de transformer les colonnes en lignes et opérer sur elles
 # (1) Voir d'abord : map(test[-1],\(x) order(x)[1])
 # Puck(1,y), pour appeler la ligne y de la colonne 1
-resultMap <- map(test[-1],\(x) order(x)[1]) |> map(\(y) test |> pluck(1,y))
-resultMapCol <- map(test[-1],\(x) order(x)[1])|> map(\(y) test |> pluck(1,y))
-
-
+resultCat <- map(test[-c(1,2)],\(x) order(x)[1]) |> map(\(y) test |> pluck(1,y))
+# Puck(1,y), pour appeler la ligne y de la colonne 2
+resultProd <- map(test[-c(1,2)],\(x) order(x)[1])|> map(\(y) test |> pluck(2,y))
 
 # Affectation des noms des produits
-names(resultMap) <- unique(priceGlob$PRODUITS)
-names(resultMapCol) <- unique(priceGlob$PRODUITS)
+names(resultCat) <- unique(priceGlob$PRODUITS)
+names(resultProd) <- unique(priceGlob$PRODUITS)
 
-resultMap <- resultMap |> as_tibble() |>
-  pivot_longer(everything(),names_to="Produit", values_to = "Match")
+# Transformation des listes resultMap et resultMapCol en tibble moyennant un pivotement
 
-resultMapCol <- resultMapCol |> as_tibble() |>
-  pivot_longer(everything(),names_to="Produit", values_to = "MatchScore")
+resultCat <- resultCat |> as_tibble() |>
+  pivot_longer(everything(),names_to="Produit", values_to = "Categories")
 
-head(resultMapCol)
+resultProd <- resultProd |> as_tibble() |>
+  pivot_longer(everything(),names_to="Produit", values_to = "MatchProduit")
 
-as_tibble(resultMapCol)
-#Affichage résultat
-bind_cols(resultMap,resultMapCol$MatchScore) |> view()
+# Formation du dataset : CatGlob , qui correspond contient les produits et leurs catégories
+# Nous retirons le produits afin [-1] afin d'éviter les répétitions dans les colonnes
+CatGlob<- bind_cols(resultCat,resultProd[-1])
 
-write.csv(resultMap |> as_tibble(), "data.csv", row.names = FALSE)
-
-resultMap |> as_tibble() |>
-  pivot_longer(everything(),names_to="Produit", values_to = "Match")
-
-
-
-length(resultMap)
-
-```
-
-Conclusion : Moyennant une bonne distance, nous pourront avoir le moins d'erreurs possibles.
-
-### Recherches de distances plus précises
-```{r}
-# Test des distances
-dist<- stringdist("poisson sosso (kg)",unique(CatProd$Produits), method='cosine')
-
-#Retrouver l'élément correspondant à la plus petite distance
-unique(CatProd$Produits)[order(dist)[1]]
-
+# Affichage du résulat
+CatGlob |> view()
 
 
 ```
+
+
+### Jointure
 
 
