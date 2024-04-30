@@ -79,6 +79,8 @@ data_join <- stringdist_join(datap, data_cat,
                              mode = 'left',
                              method = '')
 data_join
+
+view(data_join)
 unique.data.frame(data_join[,c("datap","Categories")])
 # Check the number of NA values in the 'Produits' column of the joined data frame
 
