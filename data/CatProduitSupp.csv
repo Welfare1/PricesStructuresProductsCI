@@ -1,4 +1,4 @@
-Categorie;Produits
+ÔªøCategories;Produits
 FECULENTS;kponan (kg)
 FRUITS;ananas (kg)
 CEREALES;fonio (400 gr.)
@@ -21,14 +21,14 @@ PRODUITS HALIEUTIQUES;carpe rouge locale
 PRODUITS HALIEUTIQUES;thon noir
 PRODUITS HALIEUTIQUES;thon rouge
 PRODUITS HALIEUTIQUES;sosso local
-PRODUITS HALIEUTIQUES;m‚choiron frais local
-PRODUITS HALIEUTIQUES;sardine fumÈe (mangne)
+PRODUITS HALIEUTIQUES;m√¢choiron frais local
+PRODUITS HALIEUTIQUES;sardine fum√©e (mangne)
 PRODUITS HALIEUTIQUES;escargot local
 PRODUITS HALIEUTIQUES;crevette locale
 CEREALES;riz importe du vietnam / sac 5 kgs
-HUILES;huile de palme raffinÈe / bouteille 5l
-HUILES;huile de palme raffinÈe bouteille 31
-HUILES;huile de palme raffinÈe / bouteille 1,5l
+HUILES;huile de palme raffin√©e / bouteille 5l
+HUILES;huile de palme raffin√©e bouteille 31
+HUILES;huile de palme raffin√©e / bouteille 1,5l
 FARINES;farine de bls patissiere / paquet 1 kg
 SUCRES;sucre en poudre blanc / sachet 1 kg
 SUCRES;sucre en poudre blanc / vrac
@@ -43,14 +43,14 @@ EAUX MINERALES;eau minerale source bonoua / bouteille 1,5 l
 EAUX MINERALES;eau minerale source bonoua/ bouteille 1,2 l
 EAUX MINERALES;eau minerale source bonoua/ bouteille 33 cl
 EAUX MINERALES;eau minerale source bonoua/ verre 33 cl
-FARINES;farine de blÈ p‚tissiËre / paquet 1 kg
-PATES ALIMENTAIRES;p‚tes alimentaires spaghettis / paquet 200g
-PATES ALIMENTAIRES;p‚tes alimentaires vermicelles / sachet 200g
-EAUX MINERALES;eau minÈrale source bonoua / bouteille 1,5 l
-EAUX MINERALES;eau minÈrale source bonoua / bouteille 1,2 l
-EAUX MINERALES;eau minÈrale source bonoua / bouteille 33 cl
-EAUX MINERALES;eau minÈrale source bonoua / verre 33 cl
-PRODUITS ANIMAUX;pattes de búuf importees
+FARINES;farine de bl√© p√¢tissi√®re / paquet 1 kg
+PATES ALIMENTAIRES;p√¢tes alimentaires spaghettis / paquet 200g
+PATES ALIMENTAIRES;p√¢tes alimentaires vermicelles / sachet 200g
+EAUX MINERALES;eau min√©rale source bonoua / bouteille 1,5 l
+EAUX MINERALES;eau min√©rale source bonoua / bouteille 1,2 l
+EAUX MINERALES;eau min√©rale source bonoua / bouteille 33 cl
+EAUX MINERALES;eau min√©rale source bonoua / verre 33 cl
+PRODUITS ANIMAUX;pattes de b≈ìuf importees
 PRODUITS ANIMAUX;tripes importes
 PRODUITS HALIEUTIQUES;dorade locale
 PRODUITS HALIEUTIQUES;carpe noire d'eau douce locale
@@ -65,26 +65,40 @@ PRODUITS HALIEUTIQUES;sosso importe
 PRODUITS HALIEUTIQUES;carpe noire importee
 PRODUITS HALIEUTIQUES;maquereau importe
 PRODUITS HALIEUTIQUES;chinchard
-PRODUITS ANIMAUX;cote de búuf importee
+PRODUITS ANIMAUX;cote de b≈ìuf importee
 PRODUITS HALIEUTIQUES;thon garba
 OLEAGINEUX;amande de cajou (100 gr)
 PRODUITS ANIMAUX;cote de porc (kg)
 LEGUMES;gombo (kg)
 LEGUMES;gombo sec en poudre (400 g.)
-PRODUITS ANIMAUX;kplo (unitÈ moyen)
+PRODUITS ANIMAUX;kplo (unit√© moyen)
 OLEAGINEUX;pate anacarde(500 g.)
 OLEAGINEUX;pate arachide (400 g.)
 OLEAGINEUX;pate pistache(400 g.)
 PRODUITS ANIMAUX;pattes de boeuf (kg)
 PRODUITS ANIMAUX;pattes de porc (kg)
 PRODUITS ANIMAUX;pondeuse (kg)
-HERBES AROMATIQUES;bissap (kg)
+EPICES;bissap (kg)
 HUILES;huile raffinee 0,90 l
 PRODUITS LAITIERS;lait liquide (l)
 CEREALES;mais concasse (kg)
-HERBES AROMATIQUES;menthe (bouquet)
+EPICES;menthe (bouquet)
 MIEL;miel(l)
 PRODUITS ANIMAUX;poisson sosso (kg)
 SUCRES;sucre blanc (kg)
 SUCRES;sucre roux (kg)
 FRUITS;tamarin (kg)
+LEGUMES;oignon blanc (kg)
+FRUITS;haricot vert (kg)
+FRUITS;tomate type salade (kg)
+PRODUITS ANIMAUX;gesiers de poulets importes
+PRODUITS ANIMAUX;aileron de dinde importe
+CEREALES;ma√Øs (kg)
+CEREALES;ma√Øs decortique (kg)
+CEREALES;ma√Øs poudre (kabato 1 kg)
+CEREALES;riz local (kg)
+PRODUITS HALIEUTIQUES;poisson carpe (kg)
+FECULENTS;manioc (kg)
+LEGUMES;chou (kg)
+PRODUITS MANIFACTURES;tomate concentree / boite 2,2 kgs
+PRODUITS MANIFACTURES;tomate concentree / boite 400g
