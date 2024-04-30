@@ -98,13 +98,6 @@ CatGlob<- bind_cols(resultCat,resultProd[-1])
 CatProd <- bind_rows(CatProd,CatProdSupp)
 head(CatProd)
 
-write.csv(resultMap |> as_tibble(), "data.csv", row.names = FALSE)
-
-resultMap |> as_tibble() |>
-  pivot_longer(everything(),names_to="Produit", values_to = "Match")
-
-
-length(resultMap)
 
 ```
 
@@ -116,8 +109,15 @@ L'inclusion de la colonne catégorie dans le dataset`priceGlob`, se fait au moye
 ```{r}
 # Retrait de la colonne matchingProduit dans la jointure
 priceGlob <- left_join(priceGlob,CatGlob[-3], by=join_by("PRODUITS"=="Produit"),keep = FALSE)
+
+# Nom des colonnes
+namesCol <- colnames(priceGlob)
+
 # Changement de nom de la colonne `catégories`
 colnames(priceGlob)<- c(namesCol[1:(length(namesCol)-1)],"SPECIFICITE")
+
+# Résultat
+priceGlob
 
 ```
 
