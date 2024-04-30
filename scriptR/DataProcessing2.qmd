@@ -27,11 +27,18 @@ CatProdSupp <- read_csv2("../data/CatProduitSupp.csv", locale = locale())
 priceGlob <- read_csv("../data/ECHO_DU_MARCHE.csv",locale = locale())
 
 CatProd <- read_csv("../data/CatProduit.csv", locale = locale())
+<<<<<<< HEAD
+CatProdSupp <- read_delim("../data/CatProduitSupp.csv", delim = ";", locale = locale())
+colnames(CatProdSupp) <- c("Categories","Produits")
+CatProdSupp|>head()
+#Transformation de la colonne PRODUITS en miniscule
+=======
 
 # COncaténation des jeux de données CatProd et CatProdSupp
 CatProd <- bind_rows(CatProd,CatProdSupp)
 
 # Transformation de la colonne PRODUITS en miniscule afin de faciliter le matching
+>>>>>>> df2d266539719a4c318461022ecf77368e7d91a6
 
 priceGlob <- priceGlob |> mutate(PRODUITS=str_to_lower(PRODUITS))
 
@@ -82,8 +89,38 @@ resultProd <- resultProd |> as_tibble() |>
 # Nous retirons le produits afin [-1] afin d'éviter les répétitions dans les colonnes
 CatGlob<- bind_cols(resultCat,resultProd[-1])
 
+<<<<<<< HEAD
+CatProd <- bind_rows(CatProd,CatProdSupp)
+head(CatProd)
+
+write.csv(resultMap |> as_tibble(), "data.csv", row.names = FALSE)
+
+resultMap |> as_tibble() |>
+  pivot_longer(everything(),names_to="Produit", values_to = "Match")
+
+
+length(resultMap)
+
+```
+
+Conclusion : Moyennant une bonne distance, nous pourront avoir le moins d'erreurs possibles.
+
+### Recherches de distances plus précises
+
+```{r}
+# matrice des distances
+CatProd <- bind_rows(CatProd,CatProdSupp)
+head(CatProd)
+
+dataMat <- as_tibble(stringdistmatrix(CatProd$Produits,unique(priceGlob$PRODUITS),method ='soundex'))
+
+
+
+```
+=======
 # Affichage du résulat
 CatGlob |> view()
 
 ```
 
+>>>>>>> df2d266539719a4c318461022ecf77368e7d91a6
