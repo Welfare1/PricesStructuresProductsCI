@@ -1,0 +1,185 @@
+---
+title: "DataProcessing1"
+format: html
+editor: visual
+---
+
+# Data processing
+
+## Chargement des packages
+
+```{r,warning=FALSE,message=FALSE}
+library(tidyverse)
+library(stringdist)
+library(tidygeocoder)
+library(sf)
+```
+
+## Chargement des jeux de données
+
+```{r,warning=FALSE,message=FALSE}
+# Jeu de données ECHO_DU_MARCHE
+priceGlob <- read_csv("../data/ECHO_DU_MARCHE.csv",locale = locale())
+
+# Jeu de données Contenant les catégories des produits (avec les orthographes approximatifs)
+CatProd <- read_csv("../data/CatProduit.csv", locale = locale())
+
+# Jeu de données contenant les produits inexistant dans CatProd
+CatProdSupp <- read_csv2("../data/CatProduitSupp.csv", locale = locale())
+priceGlob <- read_csv("../data/ECHO_DU_MARCHE.csv",locale = locale())
+
+CatProd <- read_csv("../data/CatProduit.csv", locale = locale())
+CatProdSupp <- read_delim("../data/CatProduitSupp.csv", delim = ";", locale = locale())
+colnames(CatProdSupp) <- c("Categories","Produits")
+CatProdSupp|>head()
+#Transformation de la colonne PRODUITS en miniscule
+
+# Concaténation des jeux de données CatProd et CatProdSupp
+CatProd <- bind_rows(CatProd,CatProdSupp)
+
+# Transformation de la colonne PRODUITS en miniscule afin de faciliter le matching
+
+priceGlob <- priceGlob |> mutate(PRODUITS=str_to_lower(PRODUITS))
+
+CatProd <- CatProd |> mutate(Produits=str_to_lower(Produits))
+
+```
+
+## Transformation des colonnes
+
+La difficulté majeure dans le processus réside dans la correspondance des noms des produits d'un dataset à un autre.\
+Ces noms diffèrent dans l'orthograghe. Pour cela nous le faisons en deux étapes:\
+- **Matching** : Un matching est fait dans un premier avec les colonnes des datasets au nombre de lignes réduits (ceci afin d'éviter d'étendre l'opération sur les \~ 47 000 lignes du dataset ECHO_MARCHE).\
+- **Jointure** : Une jointure finale est faite dans but ramener les correspondances attendues vers le grand jeu de données.\
+
+### Matching :
+
+Nous établissons ici une correspondance entre les produits de `priceGlob(ECHO_DU_MARCHE)` et `CatProd`
+
+## Evalutation de la distance
+
+```{r ,warning=FALSE}
+
+# matrice des distances
+# Nous formons la matrice des distances avec la méthode "lcs"
+dataMat <- as_tibble(stringdistmatrix(CatProd$Produits,unique(priceGlob$PRODUITS),method ='lcs'))
+
+# Récupération des colonnes produits et catégories du dataset CatProd
+test <- bind_cols(CatProd,dataMat)
+# head(test)
+
+# Utilisation de `map` order, afin de transformer les colonnes en lignes et opérer sur elles
+# (1) Voir d'abord : map(test[-1],\(x) order(x)[1])
+# Puck(1,y), pour appeler la ligne y de la colonne 1
+resultCat <- map(test[-c(1,2)],\(x) order(x)[1]) |>
+  map(\(y) test |>
+        pluck(1,y))
+# Puck(1,y), pour appeler la ligne y de la colonne 2
+resultProd <- map(test[-c(1,2)],\(x) order(x)[1])|>
+  map(\(y) test |>
+        pluck(2,y))
+
+# Affectation des noms des produits
+names(resultCat) <- unique(priceGlob$PRODUITS)
+names(resultProd) <- unique(priceGlob$PRODUITS)
+
+# Transformation des listes resultMap et resultMapCol en tibble moyennant un pivotement
+
+resultCat <- resultCat |> as_tibble() |>
+  pivot_longer(everything(),names_to="Produit", values_to = "Categories")
+resultProd
+resultProd <- resultProd |> as_tibble() |>
+  pivot_longer(everything(),names_to="Produit", values_to = "MatchProduit")
+resultProd
+# Formation du dataset : CatGlob , qui correspond contient les produits et leurs catégories
+# Nous retirons le produits afin [-1] afin d'éviter les répétitions dans les colonnes
+CatGlob<- bind_cols(resultCat,resultProd[-1])
+
+CatProd <- bind_rows(CatProd,CatProdSupp)
+head(CatProd)
+
+
+```
+
+### Jointure
+
+L'inclusion de la colonne catégorie dans le dataset`priceGlob`, se fait au moyen de jointure. La jointure se fera ici avec le dataset `CatGlob`
+
+```{r warning=FALSE}
+# Retrait de la colonne matchingProduit dans la jointure
+priceGlob <- left_join(priceGlob,CatGlob[-3], by=join_by("PRODUITS"=="Produit"),keep = FALSE)
+
+# Nom des colonnes
+namesCol <- colnames(priceGlob)
+
+# Changement de nom de la colonne `catégories`
+colnames(priceGlob)<- c(namesCol[1:(length(namesCol)-1)],"SPECIFICITE")
+
+# Résultat
+priceGlob
+
+
+# Creating a tibble
+visuel <- tibble(
+  PRODUITS = priceGlob$PRODUITS,
+  DATE = priceGlob$DATE,
+  VILLE = priceGlob$VILLE,
+  PRIX = priceGlob$PRIX
+)
+
+# Pivot to wide format
+visuel_wide <- visuel %>%
+  pivot_wider(names_from = VILLE, values_from = PRIX)
+#################################""
+library(stringr)
+# Specify the cities for extraction
+cities <- c("ABIDJAN", "SANPEDRO", "BOUAKE", "YAMOUSSOUKRO", "MAN", "KORHOGO")
+
+# Loop through each city and extract the first number from each element in the corresponding column
+for (city in cities) {
+  visuel_wide[[city]] <- as.numeric(str_extract(visuel_wide[[city]], "\\d+"))
+}
+print(visuel_wide)
+# Add the extracted first numbers as a new column to visuel_wide
+
+################"""
+
+
+
+```
+
+### Gestion des valeurs manquantes
+
+Deux cas de figures s'assimilent à l'observation de valeurs manquantes dans notre dataset:\
+1. Une indisponibilité du produits dans la région concernée\
+2. Un défaut de mesure des prix sur la période concernée\
+
+Par suite nous considérons le cas 2.
+
+#### Imputations
+
+Pour chaque valeur manquante dans une région, une imputation par un arbitrage. D'un côté par l'imputation du prix observé chez la ville la plus proche, et de l'autre par le prix observé aux semaines qui environnent l'obervation de la valeur manquante.
+
+##### Détection des villes les plus proches
+
+Les villes aux prix manquant sur une période sont retrouvés dans un premier temps, puis ces valeurs manquantes sont imputées par la moyenne des valeurs observées dans les autres villes.
+
+```{r}
+region <- unique(priceGlob$VILLE) |> as_tibble()
+
+adressRegion <- region |> geocode(value)
+
+adressRegionGeo <- adressRegion |> st_as_sf(coords = c("long","lat")) |> st_set_crs(4326)
+
+# Distance les plus proches
+centro <- st_centroid(adressRegionGeo$geometry) 
+
+DD <- st_distance(centro,centro)
+
+matching <- apply(DD,2 ,order) |> as_tibble() |> slice(4) |> map(~ region |> pluck(1,.x))
+
+names(matching) <- region$value
+
+matching
+
+```
