@@ -187,26 +187,28 @@ print(matching)
 ```{r}
 print(priceGlob_visuel)
 cities <- c("ABIDJAN", "SANPEDRO", "BOUAKE", "YAMOUSSOUKRO", "MAN", "KORHOGO")
+priceGlob_visuel_m <- as.tibble(priceGlob_visuel)
 
+for (ville in cities){
 # Parcourir chaque ligne de données
-for (i in 1:nrow(priceGlob_visuel)) {
+for (i in 1:nrow(priceGlob_visuel_m)) {
   # Vérifier si le prix à Abidjan est NA
   
-  if (is.na(priceGlob_visuel$SANPEDRO[i])) {
+  if (is.na(priceGlob_visuel_m[[ville]][i])) {
     # Trouver la ville la plus proche avec un prix non nul
-    for (ville_proche in matching$SANPEDRO) {
-      if (!is.na(priceGlob_visuel[[ville_proche]][i])) {
-        priceGlob_visuel$SANPEDRO[i] <- priceGlob_visuel[[ville_proche]][i]
+    for (ville_proche in matching[[ville]]) {
+      if (!is.na(priceGlob_visuel_m[[ville_proche]][i])) {
+        priceGlob_visuel_m[[ville]][i] <- priceGlob_visuel_m[[ville_proche]][i]
         break
       }else{
-        priceGlob_visuel$SANPEDRO[i]=250
+        priceGlob_visuel_m[[ville]][i]=NA
       }
     }
   }
-}
+}}
 
 
-print(priceGlob_visuel)
+print(priceGlob_visuel_m)
 
 ```
 
