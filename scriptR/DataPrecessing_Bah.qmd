@@ -163,16 +163,17 @@ Les villes aux prix manquant sur une période sont retrouvés dans un premier te
 
 ```{r}
 region <- unique(priceGlob$VILLE) |> as_tibble()
-
-adressRegion <- region |> geocode(value)
+region$value[2] <- "SAN-PEDRO"
+region <- region |> mutate(pays = "Côte d'Ivoire")
+adressRegion <- geocode(region,city = value, country = pays)
 
 adressRegionGeo <- adressRegion |> st_as_sf(coords = c("long","lat")) |> st_set_crs(4326)
 
 # Distance les plus proches
 centro <- st_centroid(adressRegionGeo$geometry) 
 
-DD <- st_distance(centro,centro)
-
+DD <- st_distance(centro,centro,which = "Great Circle")
+print(DD)
 matching <- apply(DD, 2, function(x) {
   ordered_index <- order(x)
   region$value[ordered_index]  # Get the label of region$value based on the ordered index
@@ -189,23 +190,24 @@ print(priceGlob_visuel)
 cities <- c("ABIDJAN", "SANPEDRO", "BOUAKE", "YAMOUSSOUKRO", "MAN", "KORHOGO")
 priceGlob_visuel_m <- as.tibble(priceGlob_visuel)
 
-for (ville in cities){
-# Parcourir chaque ligne de données
-for (i in 1:nrow(priceGlob_visuel_m)) {
-  # Vérifier si le prix à Abidjan est NA
-  
-  if (is.na(priceGlob_visuel_m[[ville]][i])) {
-    # Trouver la ville la plus proche avec un prix non nul
-    for (ville_proche in matching[[ville]]) {
-      if (!is.na(priceGlob_visuel_m[[ville_proche]][i])) {
-        priceGlob_visuel_m[[ville]][i] <- priceGlob_visuel_m[[ville_proche]][i]
-        break
-      }else{
-        priceGlob_visuel_m[[ville]][i]=NA
+for (ville in cities) {
+  # Parcourir chaque ligne de données
+  for (i in 1:nrow(priceGlob_visuel_m)) {
+    # Vérifier si le prix à la ville est NA
+    if (is.na(priceGlob_visuel_m[[ville]][i])) {
+      # Trouver la ville la plus proche avec un prix non nul
+      for (ville_proche in matching[[ville]]) {
+        # Vérifier si la ville proche existe dans priceGlob_visuel_m et si son prix n'est pas NA
+        if (!is.null(priceGlob_visuel_m[[ville_proche]]) && !is.na(priceGlob_visuel_m[[ville_proche]][i])) {
+          priceGlob_visuel_m[[ville]][i] <- priceGlob_visuel_m[[ville_proche]][i]
+          break
+        } else {
+          priceGlob_visuel_m[[ville]][i] <- NA
+        }
       }
     }
   }
-}}
+}
 
 
 print(priceGlob_visuel_m)
