@@ -15,11 +15,11 @@ bibliography: references.bib
 
 # Description
 
-Dans le contexte économique actuel, marqué par une inflation constante et une incertitude croissante, la question de la variabilité des prix des produits et leur l'accessibilité dans les différents marchés est devenue cruciale. Les ménages sont contraints de jongler entre le désir de maintenir un certain niveau de vie et la nécessité de s'adapter à une réalité économique de plus en plus difficile. En Côte d'Ivoire, l'Etat s'engage résolument dans la lutte contre la vie chère, à travers certains organismes tels que le CNLVC (Conseil National de Lutte Contre la Vie Chère) et le OCPV (Office d'aide à la Commercialisation des Produits Vivriers). Ses actions visent à atténuer l'impact de l'inflation sur les populations vulnérables et à garantir l'accessibilité des produits de base à tous. Somme toute, ces initiatives sont cruciales pour assurer la stabilité économique et sociale en Côte d'Ivoire.
+Dans le contexte économique actuel, marqué par une inflation constante et une incertitude croissante, la question de la variabilité des prix des produits et leur l'accessibilité dans les différents marchés est devenue cruciale. Les ménages sont contraints de jongler entre le désir de maintenir un certain niveau de vie et la nécessité de s'adapter à une réalité économique de plus en plus difficile. En Côte d'Ivoire, l'Etat s'engage résolument dans la lutte contre la vie chère, à travers certains organismes tels que le CNLVC (Conseil National de Lutte Contre la Vie Chère) et le OCPV (Office d'aide à la Commercialisation des Produits Vivriers). Ses actions visent à atténuer l'impact de l'inflation sur les populations vulnérables et à garantir l'accessibilité des produits de base à tous. Somme toute, ces initiatives sont précieuses pour assurer la stabilité économique et sociale en Côte d'Ivoire.
 
 Cette étude vise à analyser la structure des prix sur les différents marchés ivoiriens.
 
-Deux problématiques principales articuleront notre analyse: **comment les prix varie-t-il** et **l'accessibilité des produits**. 
+Deux problématiques principales articuleront notre analyse: **comment les prix varie-t-ils** et **et qu'en est-il de leur accessibilité au sein des différents marchés en Côte d'Ivoire**.
 
 En fin de compte, cette analyse approfondie vise à fournir des informations précieuses qui pourraient aider à élaborer des politiques efficaces pour atténuer l'impact de l'inflation sur les populations vulnérables en Côte d'Ivoire.
 
@@ -27,7 +27,7 @@ En fin de compte, cette analyse approfondie vise à fournir des informations pr�
 
 ### Collaboration et contribution
 
-Le projet est disponible sur les repo github: \@ ou \@ . Aussi la mise place de ce projet a occasionné la conception d'une maqette pour l'application Shiny est disponible sur : [ici](https://www.figma.com/file/IkEu8xdFRqfcr2R0eESQFC/Structure_Prix-team-library?type=design&mode=design&t=u1JtKOkRZorjGNiW-1)
+Le projet est disponible sur les repo github: \@ ou \@ . Aussi la mise place de ce projet a occasionné la conception d'une maqette pour l'application Shiny avant sa réalisation (maquette disponible sur : [ici](https://www.figma.com/file/IkEu8xdFRqfcr2R0eESQFC/Structure_Prix-team-library?type=design&mode=design&t=u1JtKOkRZorjGNiW-1)).
 
 ### Source de données
 
@@ -43,6 +43,17 @@ Ce projet a nécessité l'utilisation des sources de données suivantes:
 
 -   Estimation du panier moyen (csv) : voir dossier /data/name.csv
 
+# Data Processing
+
+L'ensemble des tâches effectuées passe par un travail de fond sur les différentes données collectées. Ces tâches s'étendent depuis la collecte jusqu'au aux calculs des indicateurs.
+
+## Collecte des données
+
+## Transformation et nettoyage
+
+## Gestion des valeurs manquantes
+
+## Calcul des indicateurs
 
 # REFERENCE
 

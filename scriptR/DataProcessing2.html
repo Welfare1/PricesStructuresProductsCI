@@ -100,7 +100,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="chargement-des-packages">Chargement des packages</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringdist)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringdist)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidygeocoder)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="chargement-des-jeux-de-données" class="level2">
@@ -114,15 +116,38 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Jeu de données contenant les produits inexistant dans CatProd</span></span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>CatProdSupp <span class="ot">&lt;-</span> <span class="fu">read_csv2</span>(<span class="st">"../data/CatProduitSupp.csv"</span>, <span class="at">locale =</span> <span class="fu">locale</span>())</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># COncaténation des jeux de données CatProd et CatProdSupp</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>CatProd <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(CatProd,CatProdSupp)</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Transformation de la colonne PRODUITS en miniscule afin de faciliter le matching</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>priceGlob <span class="ot">&lt;-</span> priceGlob <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">PRODUITS=</span><span class="fu">str_to_lower</span>(PRODUITS))</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>CatProd <span class="ot">&lt;-</span> CatProd <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">Produits=</span><span class="fu">str_to_lower</span>(Produits))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>priceGlob <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"../data/ECHO_DU_MARCHE.csv"</span>,<span class="at">locale =</span> <span class="fu">locale</span>())</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>CatProd <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"../data/CatProduit.csv"</span>, <span class="at">locale =</span> <span class="fu">locale</span>())</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>CatProdSupp <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"../data/CatProduitSupp.csv"</span>, <span class="at">delim =</span> <span class="st">";"</span>, <span class="at">locale =</span> <span class="fu">locale</span>())</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(CatProdSupp) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Categories"</span>,<span class="st">"Produits"</span>)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>CatProdSupp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 103 × 2
+   Categories Produits       
+   &lt;chr&gt;      &lt;chr&gt;          
+ 1 FECULENTS  kponan (kg)    
+ 2 FRUITS     ananas (kg)    
+ 3 CEREALES   fonio (400 gr.)
+ 4 LEGUMES    piment (kg)    
+ 5 LEGUMES    courgette (kg) 
+ 6 EPICES     navet (kg)     
+ 7 EPICES     poivron (kg)   
+ 8 LEGUMES    comcombre (kg) 
+ 9 FRUITS     pamplemousse   
+10 FRUITS     papaye (kg)    
+# ℹ 93 more rows</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Transformation de la colonne PRODUITS en miniscule</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Concaténation des jeux de données CatProd et CatProdSupp</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>CatProd <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(CatProd,CatProdSupp)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Transformation de la colonne PRODUITS en miniscule afin de faciliter le matching</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>priceGlob <span class="ot">&lt;-</span> priceGlob <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">PRODUITS=</span><span class="fu">str_to_lower</span>(PRODUITS))</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>CatProd <span class="ot">&lt;-</span> CatProd <span class="sc">|&gt;</span> <span class="fu">mutate</span>(<span class="at">Produits=</span><span class="fu">str_to_lower</span>(Produits))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="transformation-des-colonnes" class="level2">
@@ -135,48 +160,151 @@ Ces noms diffèrent dans l’orthograghe. Pour cela nous le faisons en deux éta
 <section id="matching" class="level3">
 <h3 class="anchored" data-anchor-id="matching">Matching :</h3>
 <p>Nous établissons ici une correspondance entre les produits de <code>priceGlob(ECHO_DU_MARCHE)</code> et <code>CatProd</code></p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># matrice des distances</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Nous formons la matrice des distances avec la méthode "lcs"</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>dataMat <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(<span class="fu">stringdistmatrix</span>(CatProd<span class="sc">$</span>Produits,<span class="fu">unique</span>(priceGlob<span class="sc">$</span>PRODUITS),<span class="at">method =</span><span class="st">'lcs'</span>))</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Récupération des colonnes produits et catégories du dataset CatProd</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(CatProd,dataMat)</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># head(test)</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Utilisation de `map` order, afin de transformer les colonnes en lignes et opérer sur elles</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co"># (1) Voir d'abord : map(test[-1],\(x) order(x)[1])</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Puck(1,y), pour appeler la ligne y de la colonne 1</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>resultCat <span class="ot">&lt;-</span> <span class="fu">map</span>(test[<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>)],\(x) <span class="fu">order</span>(x)[<span class="dv">1</span>]) <span class="sc">|&gt;</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(\(y) test <span class="sc">|&gt;</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>        <span class="fu">pluck</span>(<span class="dv">1</span>,y))</span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Puck(1,y), pour appeler la ligne y de la colonne 2</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>resultProd <span class="ot">&lt;-</span> <span class="fu">map</span>(test[<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>)],\(x) <span class="fu">order</span>(x)[<span class="dv">1</span>])<span class="sc">|&gt;</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(\(y) test <span class="sc">|&gt;</span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>        <span class="fu">pluck</span>(<span class="dv">2</span>,y))</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Affectation des noms des produits</span></span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(resultCat) <span class="ot">&lt;-</span> <span class="fu">unique</span>(priceGlob<span class="sc">$</span>PRODUITS)</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(resultProd) <span class="ot">&lt;-</span> <span class="fu">unique</span>(priceGlob<span class="sc">$</span>PRODUITS)</span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Transformation des listes resultMap et resultMapCol en tibble moyennant un pivotement</span></span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>resultCat <span class="ot">&lt;-</span> resultCat <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="fu">everything</span>(),<span class="at">names_to=</span><span class="st">"Produit"</span>, <span class="at">values_to =</span> <span class="st">"Categories"</span>)</span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>resultProd <span class="ot">&lt;-</span> resultProd <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="fu">everything</span>(),<span class="at">names_to=</span><span class="st">"Produit"</span>, <span class="at">values_to =</span> <span class="st">"MatchProduit"</span>)</span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Formation du dataset : CatGlob , qui correspond contient les produits et leurs catégories</span></span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Nous retirons le produits afin [-1] afin d'éviter les répétitions dans les colonnes</span></span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>CatGlob<span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(resultCat,resultProd[<span class="sc">-</span><span class="dv">1</span>])</span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a><span class="co"># Affichage du résulat</span></span>
-<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>CatGlob <span class="sc">|&gt;</span> <span class="fu">view</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
 </section>
+</section>
+<section id="evalutation-de-la-distance" class="level2">
+<h2 class="anchored" data-anchor-id="evalutation-de-la-distance">Evalutation de la distance</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># matrice des distances</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Nous formons la matrice des distances avec la méthode "lcs"</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>dataMat <span class="ot">&lt;-</span> <span class="fu">as_tibble</span>(<span class="fu">stringdistmatrix</span>(CatProd<span class="sc">$</span>Produits,<span class="fu">unique</span>(priceGlob<span class="sc">$</span>PRODUITS),<span class="at">method =</span><span class="st">'lcs'</span>))</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Récupération des colonnes produits et catégories du dataset CatProd</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>test <span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(CatProd,dataMat)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># head(test)</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Utilisation de `map` order, afin de transformer les colonnes en lignes et opérer sur elles</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co"># (1) Voir d'abord : map(test[-1],\(x) order(x)[1])</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Puck(1,y), pour appeler la ligne y de la colonne 1</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>resultCat <span class="ot">&lt;-</span> <span class="fu">map</span>(test[<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>)],\(x) <span class="fu">order</span>(x)[<span class="dv">1</span>]) <span class="sc">|&gt;</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(\(y) test <span class="sc">|&gt;</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>        <span class="fu">pluck</span>(<span class="dv">1</span>,y))</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Puck(1,y), pour appeler la ligne y de la colonne 2</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>resultProd <span class="ot">&lt;-</span> <span class="fu">map</span>(test[<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>)],\(x) <span class="fu">order</span>(x)[<span class="dv">1</span>])<span class="sc">|&gt;</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(\(y) test <span class="sc">|&gt;</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>        <span class="fu">pluck</span>(<span class="dv">2</span>,y))</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Affectation des noms des produits</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(resultCat) <span class="ot">&lt;-</span> <span class="fu">unique</span>(priceGlob<span class="sc">$</span>PRODUITS)</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(resultProd) <span class="ot">&lt;-</span> <span class="fu">unique</span>(priceGlob<span class="sc">$</span>PRODUITS)</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Transformation des listes resultMap et resultMapCol en tibble moyennant un pivotement</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>resultCat <span class="ot">&lt;-</span> resultCat <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="fu">everything</span>(),<span class="at">names_to=</span><span class="st">"Produit"</span>, <span class="at">values_to =</span> <span class="st">"Categories"</span>)</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>resultProd <span class="ot">&lt;-</span> resultProd <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="fu">everything</span>(),<span class="at">names_to=</span><span class="st">"Produit"</span>, <span class="at">values_to =</span> <span class="st">"MatchProduit"</span>)</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Formation du dataset : CatGlob , qui correspond contient les produits et leurs catégories</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Nous retirons le produits afin [-1] afin d'éviter les répétitions dans les colonnes</span></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>CatGlob<span class="ot">&lt;-</span> <span class="fu">bind_cols</span>(resultCat,resultProd[<span class="sc">-</span><span class="dv">1</span>])</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>CatProd <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(CatProd,CatProdSupp)</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(CatProd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 2
+  Categories Produits                               
+  &lt;chr&gt;      &lt;chr&gt;                                  
+1 CEREALES   "haricot"                              
+2 CEREALES   "maïs grain"                           
+3 CEREALES   "mil"                                  
+4 CEREALES   "riz importé de grande consommation"   
+5 CEREALES   "riz importé de grande\r\nconsommation"
+6 CEREALES   "riz local blanchi"                    </code></pre>
+</div>
+</div>
 <section id="jointure" class="level3">
 <h3 class="anchored" data-anchor-id="jointure">Jointure</h3>
+<p>L’inclusion de la colonne catégorie dans le dataset<code>priceGlob</code>, se fait au moyen de jointure. La jointure se fera ici avec le dataset <code>CatGlob</code></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Retrait de la colonne matchingProduit dans la jointure</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>priceGlob <span class="ot">&lt;-</span> <span class="fu">left_join</span>(priceGlob,CatGlob[<span class="sc">-</span><span class="dv">3</span>], <span class="at">by=</span><span class="fu">join_by</span>(<span class="st">"PRODUITS"</span><span class="sc">==</span><span class="st">"Produit"</span>),<span class="at">keep =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Nom des colonnes</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>namesCol <span class="ot">&lt;-</span> <span class="fu">colnames</span>(priceGlob)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Changement de nom de la colonne `catégories`</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(priceGlob)<span class="ot">&lt;-</span> <span class="fu">c</span>(namesCol[<span class="dv">1</span><span class="sc">:</span>(<span class="fu">length</span>(namesCol)<span class="sc">-</span><span class="dv">1</span>)],<span class="st">"SPECIFICITE"</span>)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Résultat</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>priceGlob</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 40,421 × 10
+   MOIS   DATE       ANNEE CATEGORIE `SOUS-CATEGORIE` PRODUITS UNITE VILLE  PRIX
+   &lt;chr&gt;  &lt;date&gt;     &lt;dbl&gt; &lt;chr&gt;     &lt;chr&gt;            &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt; &lt;dbl&gt;
+ 1 janvi… 2020-01-06  2020 PRODUITS… PRODUITS HORS  … kponan … kilo… ABID…   500
+ 2 janvi… 2020-01-06  2020 PRODUITS… PRODUITS DE SAI… igname … kilo… ABID…   400
+ 3 janvi… 2020-01-06  2020 PRODUITS… PRODUITS HORS  … assawa   kilo… ABID…   450
+ 4 janvi… 2020-01-06  2020 PRODUITS… PRODUITS DE SAI… igname … kilo… ABID…    NA
+ 5 janvi… 2020-01-06  2020 PRODUITS… PRODUITS HORS  … manioc … kilo… ABID…   250
+ 6 janvi… 2020-01-06  2020 PRODUITS… PRODUITS DE SAI… citron … kilo… ABID…   500
+ 7 janvi… 2020-01-06  2020 PRODUITS… PRODUITS HORS  … pomme d… kilo… ABID…   500
+ 8 janvi… 2020-01-06  2020 PRODUITS… FRUITS           ananas … kilo… ABID…   250
+ 9 janvi… 2020-01-06  2020 PRODUITS… PRODUITS DE SAI… mil (kg) kilo… ABID…   400
+10 janvi… 2020-01-06  2020 PRODUITS… DIVERS           fonio (… gram… ABID…   800
+# ℹ 40,411 more rows
+# ℹ 1 more variable: SPECIFICITE &lt;chr&gt;</code></pre>
+</div>
+</div>
+</section>
+<section id="gestion-des-valeurs-manquantes" class="level3">
+<h3 class="anchored" data-anchor-id="gestion-des-valeurs-manquantes">Gestion des valeurs manquantes</h3>
+<p>Deux cas de figures s’assimilent à l’observation de valeurs manquantes dans notre dataset:<br>
+1. Une indisponibilité du produits dans la région concernée<br>
+2. Un défaut de mesure des prix sur la période concernée<br>
+</p>
+<p>Par suite nous considérons le cas 2.</p>
+<section id="imputations" class="level4">
+<h4 class="anchored" data-anchor-id="imputations">Imputations</h4>
+<p>Pour chaque valeur manquante dans une région, une imputation par un arbitrage. D’un côté par l’imputation du prix observé chez la ville la plus proche, et de l’autre par le prix observé aux semaines qui environnent l’obervation de la valeur manquante.</p>
+<section id="détection-des-villes-les-plus-proches" class="level5">
+<h5 class="anchored" data-anchor-id="détection-des-villes-les-plus-proches">Détection des villes les plus proches</h5>
+<p>Les villes aux prix manquant sur une période sont retrouvés dans un premier temps, puis ces valeurs manquantes sont imputées par la moyenne des valeurs observées dans les autres villes.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>region <span class="ot">&lt;-</span> <span class="fu">unique</span>(priceGlob<span class="sc">$</span>VILLE) <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>()</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>adressRegion <span class="ot">&lt;-</span> region <span class="sc">|&gt;</span> <span class="fu">geocode</span>(value)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Passing 6 addresses to the Nominatim single address geocoder</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Query completed in: 6.8 seconds</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>adressRegionGeo <span class="ot">&lt;-</span> adressRegion <span class="sc">|&gt;</span> <span class="fu">st_as_sf</span>(<span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"long"</span>,<span class="st">"lat"</span>)) <span class="sc">|&gt;</span> <span class="fu">st_set_crs</span>(<span class="dv">4326</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Distance les plus proches</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>centro <span class="ot">&lt;-</span> <span class="fu">st_centroid</span>(adressRegionGeo<span class="sc">$</span>geometry) </span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>DD <span class="ot">&lt;-</span> <span class="fu">st_distance</span>(centro,centro)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>matching <span class="ot">&lt;-</span> <span class="fu">apply</span>(DD,<span class="dv">2</span> ,order) <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span> <span class="fu">slice</span>(<span class="dv">4</span>) <span class="sc">|&gt;</span> <span class="fu">map</span>(<span class="sc">~</span> region <span class="sc">|&gt;</span> <span class="fu">pluck</span>(<span class="dv">1</span>,.x))</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(matching) <span class="ot">&lt;-</span> region<span class="sc">$</span>value</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>matching</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$ABIDJAN
+[1] "KORHOGO"
+
+$SANPEDRO
+[1] "BOUAKE"
+
+$BOUAKE
+[1] "ABIDJAN"
+
+$YAMOUSSOUKRO
+[1] "KORHOGO"
+
+$MAN
+[1] "YAMOUSSOUKRO"
+
+$KORHOGO
+[1] "ABIDJAN"</code></pre>
+</div>
+</div>
+</section>
+</section>
 </section>
 </section>
 </section>
