@@ -138,6 +138,10 @@ cities <- c("ABIDJAN", "SANPEDRO", "BOUAKE", "YAMOUSSOUKRO", "MAN", "KORHOGO")
 for (city in cities) {
   priceGlob_visuel[[city]] <- as.numeric(str_extract(priceGlob_visuel[[city]], "\\d+"))
 }
+
+
+priceGlob_visuel<- priceGlob_visuel %>%
+  rename("SAN-PEDRO" = "SANPEDRO")
 print(priceGlob_visuel)
 
 
@@ -166,7 +170,7 @@ region <- unique(priceGlob$VILLE) |> as_tibble()
 region$value[2] <- "SAN-PEDRO"
 region <- region |> mutate(pays = "Côte d'Ivoire")
 adressRegion <- geocode(region,city = value, country = pays)
-
+adressRegion
 adressRegionGeo <- adressRegion |> st_as_sf(coords = c("long","lat")) |> st_set_crs(4326)
 
 # Distance les plus proches
@@ -187,7 +191,7 @@ print(matching)
 
 ```{r}
 print(priceGlob_visuel)
-cities <- c("ABIDJAN", "SANPEDRO", "BOUAKE", "YAMOUSSOUKRO", "MAN", "KORHOGO")
+cities <- c("ABIDJAN", "SAN-PEDRO", "BOUAKE", "YAMOUSSOUKRO", "MAN", "KORHOGO")
 priceGlob_visuel_m <- as.tibble(priceGlob_visuel)
 
 for (ville in cities) {
@@ -208,6 +212,7 @@ for (ville in cities) {
     }
   }
 }
+
 
 
 print(priceGlob_visuel_m)
