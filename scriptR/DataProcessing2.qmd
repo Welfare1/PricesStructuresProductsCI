@@ -287,4 +287,3 @@ priceGlobCleanFull <- left_join(priceGlob |>
 priceGlobClean |>group_by(PRODUITS,VILLE) |>   mutate(PRIXPREC=lag(PRIX,order_by = DATE)) |> mutate(TauxVar=round((PRIX-PRIXPREC)/PRIXPREC,2))
 ```
 
-
