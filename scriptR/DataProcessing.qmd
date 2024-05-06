@@ -4,95 +4,258 @@ format: html
 editor: visual
 ---
 
-# Script de chargement et de nettoyage des données
+# Data processing
 
-## Chargement des librairies
+## Chargement des packages
 
-```{r, warning=FALSE}
+```{r,warning=FALSE,message=FALSE}
 library(tidyverse)
-library(fuzzywuzzyR)
-library(fuzzyjoin)
 library(stringdist)
+library(tidygeocoder)
+library(sf)
 ```
 
-## chargement des données
+## Chargement des jeux de données
 
-```{r warning=FALSE}
-data <- read_delim("../data/ECHO_DU_MARCHE.csv")
-data_cat <- read_delim("../data/catProduit.csv")
-data |> head(6)
-data_cat |> head(6)
+```{r,warning=FALSE,message=FALSE}
+# Jeu de données ECHO_DU_MARCHE
+priceGlob <- read_csv("../data/ECHO_DU_MARCHE.csv",locale = locale())
 
+# Suppression des doublons dans la base de données
+priceGlob <- unique(priceGlob)
 
-```
+# Jeu de données Contenant les catégories des produits (avec les orthographes approximatifs)
+CatProd <- read_csv("../data/CatProduit.csv", locale = locale())
 
-## Ajout des catergories aux données
+# Jeu de données contenant les produits inexistant dans CatProd
+CatProdSupp <- read_csv2("../data/CatProduitSupp.csv", locale = locale())
+priceGlob <- read_csv("../data/ECHO_DU_MARCHE.csv",locale = locale())
 
-### Méthode 1
+CatProd <- read_csv("../data/CatProduit.csv", locale = locale())
+CatProdSupp <- read_delim("../data/CatProduitSupp.csv", delim = ";", locale = locale())
 
-```{r warning=FALSE}
+colnames(CatProdSupp) <- c("Categories","Produits")
 
-data$PRODUITS <- tolower(trimws(data$PRODUITS))
-data_cat$Produits <- tolower(trimws(data_cat$Produits))
+# Concaténation des jeux de données CatProd et CatProdSupp
+CatProd <- bind_rows(CatProd,CatProdSupp)
 
-unique(data$PRODUITS)
+# Transformation de la colonne PRODUITS en miniscule afin de faciliter le matching
 
-#dist <- stringdist("igname",str_to_lower(data_cat$Produits), method ="soundex")
-#data_cat$Produits[dist==min(dist)]
+priceGlob <- priceGlob |> mutate(PRODUITS=str_to_lower(PRODUITS))
 
- data_join <- stringdist_join(data, data_cat, 
-                by = c("PRODUITS"="Produits"),
-                mode = 'left', 
-                 # use jw distance metric
-                method = 'jw',
-                max_dist =0.3, 
-                )
-data_join[,c("PRODUITS","Produits")]
-
-length(data_join$Produits)
-
-length(data_join$Produits[is.na(data_join$Produits)])
-
-length(data_join$Produits)
+CatProd <- CatProd |> mutate(Produits=str_to_lower(Produits))
 
 ```
 
-### Méthode 2
+## Transformation des colonnes
+
+La difficulté majeure dans le processus réside dans la correspondance des noms des produits d'un dataset à un autre.\
+Ces noms diffèrent dans l'orthograghe. Pour cela nous le faisons en deux étapes:\
+- **Matching** : Un matching est fait dans un premier avec les colonnes des datasets au nombre de lignes réduits (ceci afin d'éviter d'étendre l'opération sur les \~ 47 000 lignes du dataset ECHO_MARCHE).\
+- **Jointure** : Une jointure finale est faite dans but ramener les correspondances attendues vers le grand jeu de données.\
+
+### Matching :
+
+Nous établissons ici une correspondance entre les produits de `priceGlob(ECHO_DU_MARCHE)` et `CatProd`
+
+## Evalutation de la distance
+```{r ,warning=FALSE}
+
+# matrice des distances
+# Nous formons la matrice des distances avec la méthode "lcs"
+dataMat <- as_tibble(stringdistmatrix(CatProd$Produits,unique(priceGlob$PRODUITS),method ='lcs'))
+
+# Récupération des colonnes produits et catégories du dataset CatProd
+test <- bind_cols(CatProd,dataMat)
+# head(test)
+
+# Utilisation de `map` order, afin de transformer les colonnes en lignes et opérer sur elles
+# (1) Voir d'abord : map(test[-1],\(x) order(x)[1])
+# Puck(1,y), pour appeler la ligne y de la colonne 1
+resultCat <- map(test[-c(1,2)],\(x) order(x)[1]) |>
+  map(\(y) test |>
+        pluck(1,y))
+# Puck(1,y), pour appeler la ligne y de la colonne 2
+resultProd <- map(test[-c(1,2)],\(x) order(x)[1])|>
+  map(\(y) test |>
+        pluck(2,y))
+
+# Affectation des noms des produits
+names(resultCat) <- unique(priceGlob$PRODUITS)
+names(resultProd) <- unique(priceGlob$PRODUITS)
+
+# Transformation des listes resultMap et resultMapCol en tibble moyennant un pivotement
+
+resultCat <- resultCat |> as_tibble() |>
+  pivot_longer(everything(),names_to="Produit", values_to = "Categories")
+
+resultProd <- resultProd |> as_tibble() |>
+  pivot_longer(everything(),names_to="Produit", values_to = "MatchProduit")
+
+# Formation du dataset : CatGlob , qui correspond contient les produits et leurs catégories
+# Nous retirons le produits afin [-1] afin d'éviter les répétitions dans les colonnes
+CatGlob<- bind_cols(resultCat,resultProd[-1])
+
+CatProd <- bind_rows(CatProd,CatProdSupp)
+# head(CatProd)
+
+
+```
+
+
+### Jointure
+L'inclusion de la colonne catégorie dans le dataset`priceGlob`, se fait au moyen de jointure. La jointure se fera ici avec le dataset `CatGlob`
+
+```{r,warning=FALSE}
+# Retrait de la colonne matchingProduit dans la jointure
+priceGlob <- left_join(priceGlob,CatGlob[-3], by=join_by("PRODUITS"=="Produit"),keep = FALSE)
+
+# Nom des colonnes
+namesCol <- colnames(priceGlob)
+
+# Changement de nom de la colonne `catégories`
+colnames(priceGlob)<- c(namesCol[1:(length(namesCol)-1)],"SPECIFICITE")
+
+# Creating a tibble
+priceGlob_visuel <- tibble(
+  PRODUITS = priceGlob$PRODUITS,
+  DATE = priceGlob$DATE,
+  VILLE = priceGlob$VILLE,
+  PRIX = priceGlob$PRIX
+)
+
+# Pivot to wide format
+priceGlob_visuel <- priceGlob_visuel %>%
+  pivot_wider(names_from = VILLE, values_from = PRIX)
+
+# Specify the cities for extraction
+cities <- c("ABIDJAN", "SANPEDRO", "BOUAKE", "YAMOUSSOUKRO", "MAN", "KORHOGO")
+
+# Loop through each city and extract the first number from each element in the corresponding column
+for (city in cities) {
+  priceGlob_visuel[[city]] <- as.numeric(str_extract(priceGlob_visuel[[city]], "\\d+"))
+}
+
+
+priceGlob_visuel<- priceGlob_visuel %>%
+  rename("SAN-PEDRO" = "SANPEDRO")
+print(priceGlob_visuel)
+
+
+```
+
+### Gestion des valeurs manquantes
+
+Deux cas de figures s'assimilent à l'observation de valeurs manquantes dans notre dataset:\
+1. Une indisponibilité du produits dans la région concernée\
+2. Un défaut de mesure des prix sur la période concernée\
+
+Par suit, le cas 2 sera considéré.
+
+#### Imputations
+
+Le prix absent est imputé à travers le prix observé chez la ville la plus proche.
+Un prix absent dans toutes les régions de base, est considéré comme une indisponibilité du produit sur la période observée.
+
+**Récupération de la géolocalisation des villes**
+```{r,warning=FALSE}
+region <- unique(priceGlob$VILLE) |> as_tibble()
+region$value[2] <- "SAN-PEDRO"
+region <- region |> mutate(pays = "Cote d'Ivoire")
+# region
+
+adressRegion <- geocode(region,city = value, country = pays)
+# adressRegion
+
+adressRegionGeo <- adressRegion |> st_as_sf(coords = c("long","lat")) |> st_set_crs(4326)
+
+# Distance les plus proches
+centro <- st_centroid(adressRegionGeo$geometry) 
+# centro
+
+#Matrice des distances entre ville
+DD <- st_distance(centro,centro,which = "Great Circle")
+# DD
+
+matching <- apply(DD, 2, function(x) {
+  ordered_index <- order(x)
+  region$value[ordered_index]  # obtenir les noms des villes
+}) |> as_tibble()
+# matching
+
+names(matching) <- region$value
+# Suppression de la première ligne du dataset contenant : distance(ville1,ville1)
+matching <- matching[-1, ]
+# matching
+```
+
+**Imputations**
+```{r,warning=FALSE}
+# Villes de base
+cities <- c("ABIDJAN", "SAN-PEDRO", "BOUAKE", "YAMOUSSOUKRO", "MAN", "KORHOGO")
+priceGlob_visuel_m <- as.tibble(priceGlob_visuel)
+
+for (ville in cities) {
+  # Parcourir chaque ligne de données
+  for (i in 1:nrow(priceGlob_visuel_m)) {
+    # Vérifier si le prix à la ville est NA
+    if (is.na(priceGlob_visuel_m[[ville]][i])) {
+      # Trouver la ville la plus proche avec un prix non nul
+      for (ville_proche in matching[[ville]]) {
+        # Vérifier si la ville proche existe dans priceGlob_visuel_m et si son prix n'est pas NA
+        if (!is.null(priceGlob_visuel_m[[ville_proche]]) && !is.na(priceGlob_visuel_m[[ville_proche]][i])) {
+          priceGlob_visuel_m[[ville]][i] <- priceGlob_visuel_m[[ville_proche]][i]
+          break
+        } else {
+          priceGlob_visuel_m[[ville]][i] <- NA
+        }
+      }
+    }
+  }
+}
+
+# priceGlob_visuel_m
+
+```
+
+
+## Traitement des données géographiques
+Les prix initialement capturés sur 6 villes de la côte d'ivoire, sont à présent repartis sur tout l'ensemble du territoire ivoirien. il ne s'agira pas seulement des prix, mais de tout indicateur calculé dans la perspertive de l'analyse.
+Pour cela la correspondance de chaque ville par rapport à sa ville la plus proche est alors appliquée.Environ 3658600 en tout seront générées dans un nouveau dataset.
+
 
 ```{r}
+dpt <- sf::read_sf("../data/civ")
 
-# Extract unique product values and convert to lowercase with trimmed whitespace
+# Géolocalisation des villes de bases
+region <- unique(priceGlob$VILLE) |> as_tibble()
+region$value[2] <- "SAN-PEDRO"
+region <- region |> mutate(pays = "Cote d'Ivoire")
+adressRegion <- geocode(region,city = value, country = pays)
 
+# Ajout de l'attribut geometry
+adressRegionGeo <- adressRegion |> st_as_sf(coords = c("long","lat")) |> st_set_crs(4326)
 
-# Convert 'PRODUITS' column to lowercase with trimmed whitespace
-datap<- tolower(trimws(unique(data$PRODUITS)))
-datap <- tibble(datap)
+# Les centroïdes des villes de bases
+centroVilleBase <- st_centroid(adressRegionGeo$geometry)
 
-data_cat$Produits <- tolower(trimws(data_cat$Produits))
-class(datap)
-class(data_cat)
-datap
+# centroïdes des villes de la côte d'ivoire
+centroVilleEntiere <- st_centroid(dpt$geometry)
 
-# Perform fuzzy join using stringdist_join with Jaro-Winkler distance metric
-data_join <- stringdist_join(datap, data_cat, 
-                             by = c("datap"="Produits"),
-                             mode = 'left',
-                             method = '')
-data_join
+# Estimation des distances entre les villes de la côte d'ivoire et les villes de base
+MatriceDistance <- st_distance(centroVilleEntiere,centroVilleBase,which = "Great Circle")
 
-view(data_join)
-unique.data.frame(data_join[,c("datap","Categories")])
-# Check the number of NA values in the 'Produits' column of the joined data frame
+# Ville du pays et la ville de base la plus proche
+VillePaysVilleProche <- MatriceDistance  |>
+  apply(1,order)|> 
+  t() |> 
+  as_tibble()|>
+  select(V1) |> 
+  mutate(VillePays=dpt$ADM3_FR,VilleProche=map_chr(V1,~region$value[.x])) |> select(2:3)
 
-length(data_join$Produits)
-
-length(data_join$Categories[is.na(data_join$Categories)])
-
-length(data_join$Produits)
-
+# Jointure avec la base de données sf des villes de la côte d'ivoire
+dpt2 <- left_join(dpt,VillePaysVilleProche,join_by(ADM3_FR==VillePays))
+# dtp2
 ```
 
-```{r warning=FALSE}
 
-
-```
