@@ -21,6 +21,9 @@ library(sf)
 # Jeu de données ECHO_DU_MARCHE
 priceGlob <- read_csv("../data/ECHO_DU_MARCHE.csv",locale = locale())
 
+# Suppression des doublons dans la base de données
+priceGlob <- unique(priceGlob)
+
 # Jeu de données Contenant les catégories des produits (avec les orthographes approximatifs)
 CatProd <- read_csv("../data/CatProduit.csv", locale = locale())
 
@@ -30,9 +33,8 @@ priceGlob <- read_csv("../data/ECHO_DU_MARCHE.csv",locale = locale())
 
 CatProd <- read_csv("../data/CatProduit.csv", locale = locale())
 CatProdSupp <- read_delim("../data/CatProduitSupp.csv", delim = ";", locale = locale())
+
 colnames(CatProdSupp) <- c("Categories","Produits")
-CatProdSupp|>head()
-#Transformation de la colonne PRODUITS en miniscule
 
 # Concaténation des jeux de données CatProd et CatProdSupp
 CatProd <- bind_rows(CatProd,CatProdSupp)
@@ -101,7 +103,6 @@ head(CatProd)
 
 ```
 
-
 ### Jointure
 
 L'inclusion de la colonne catégorie dans le dataset`priceGlob`, se fait au moyen de jointure. La jointure se fera ici avec le dataset `CatGlob`
@@ -135,7 +136,7 @@ Pour chaque valeur manquante dans une région, une imputation par un arbitrage. 
 
 ##### Détection des villes les plus proches
 
-Les villes aux prix manquant sur une période sont retrouvés dans un premier temps, puis ces valeurs manquantes sont imputées par la moyenne des valeurs observées dans les autres villes.
+Les villes aux prix manquants sur une période sont retrouvées dans un premier temps, puis ces valeurs manquantes sont imputées par la moyenne des valeurs observées dans les autres villes.
 
 ```{r}
 region <- unique(priceGlob$VILLE) |> as_tibble()
@@ -147,12 +148,104 @@ adressRegionGeo <- adressRegion |> st_as_sf(coords = c("long","lat")) |> st_set_
 # Distance les plus proches
 centro <- st_centroid(adressRegionGeo$geometry) 
 
-DD <- st_distance(centro,centro)
+DD <- st_distance(centro,centro,which = "Frechet")
 
-matching <- apply(DD,2 ,order) |> as_tibble() |> slice(4) |> map(~ region |> pluck(1,.x))
+matching <- apply(DD,2 ,order) |> as_tibble() |> slice(2) |> map(~ region |> pluck(1,.x))
 
 names(matching) <- region$value
 
 matching
+```
+
+Fonction permettant d'affecter les valeurs d'une liste selon la proximité des villes. Nous avons ici 4 villes:
+
+```{r}
+# Ajout d'un identifant pour les colonnes 
+priceGlob |> mutate(IDENTIFIANT=str_c("ENR",1:dim(priceGlob)[1]))
+priceGlob |> 
+  pivot_wider(names_from = VILLE,values_from =PRIX) |>
+  slice(6) |>
+  select(MAN) |> 
+  pluck(1,1)
+
+priceGlob |>
+  pivot_wider(names_from = VILLE,values_from =PRIX,values_fn = ~first(.x)) |>
+  rowwise(PRODUITS) |> 
+  select(c(PRODUITS,ABIDJAN:KORHOGO))
+
+priceGlob |> filter(MOIS=="janvier",
+                    DATE==mdy("1/6/2020"),
+                    CATEGORIE=="PRODUITS VIVRIERS",
+                    `SOUS-CATEGORIE`=="PRODUITS DE SAISON",
+                    PRODUITS=="citron (kg)",
+                    VILLE=="ABIDJAN")
+priceGlob |> dim()
+
+priceGlob 
+```
+
+```{r,warning=FALSE}
+for (i in 1:dim(priceGlob)) {
+  
+}
+
+# Imputation d'une liste d'éléments
+NomVille <- c("ABIDJAN","SANPEDRO", "BOUAKE", "YAMOUSSOUKRO", "MAN","KORHOGO")
+
+which(NomVille==c("BOUAKE", "YAMOUSSOUKRO"))
+
+vecTest1 <- c(800,NA,500,NA,NA,NA)
+
+# Récupération des villes aux valeurs non manquantes
+which(!is.na(vecTest1)) # Position
+
+vecTest1[which(!is.na(vecTest1))]
+
+vecTest1[which(is.na(vecTest1))]
+
+# Fonction qui rammène la plus proche d'un ensemble de ville
+
+villeProche <- function(ville,VilleDispo,MatriceDistance){
+  
+  NomVille <- c("ABIDJAN","SANPEDRO", "BOUAKE", "YAMOUSSOUKRO", "MAN","KORHOGO")
+  
+  # Récupération des villes aux valeurs non manquantes
+  VilleDispo <- NomVille[which(!is.na(VilleDispo))]
+  
+  # Ordre des villes proches : Ordre relatif au nombre d'éléments
+  ordreVilleProche <-  which(NomVille%in%VilleDispo)
+  
+  # Ordre de ville entrée
+  ordreVille<- which(NomVille==ville)
+  
+  # Récupération du nom de la ville la plus proche
+  
+  ## Vecteur distance de la ville entrée en paramètre
+   vecteurDistance <- MatriceDistance|> apply(2 ,order)|> as_tibble() |> pluck(ordreVille)
+  
+  ## Ordre la ville la plus proche
+  ordreVilleProche <- ordreVilleProche |>
+    map_dbl(~which(vecteurDistance==.x)) |>
+    which.min() 
+  
+  ## Nom de la ville la plus proche
+  NomVilleProche<- NomVille[ordreVille[ordreVilleProche]]
+  
+  return(ordreVilleProche)
+}
+
+villeProche("KORHOGO",c(800,NA,500,NA,NA,NA),DD)
+
+
+## Test de proximité
+vec <- DD |> apply(2 ,order)|> as_tibble() |> pluck(2)
+vec
+
+c(2,6) |> map_dbl(~which(vec==.x)) |> which.min()
+
+which(c("ABIDJAN","SANPEDRO", "BOUAKE", "YAMOUSSOUKRO", "MAN","KORHOGO")%in%c("KORHOGO","BOUAKE"))
+
 
 ```
+
+janvier 2020-01-06 2020 PRODUITS VIVRIERS PRODUITS DE SAISON citron (kg) kilogramme
