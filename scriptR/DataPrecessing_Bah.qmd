@@ -220,7 +220,7 @@ for (ville in cities) {
 
 
 ```{r}
-# Trier le jeu de données par PRODUITS et DATE
+#Trier le jeu de données par PRODUITS et DATE
 priceGlob_visuel_m <- priceGlob_visuel_m |>
   arrange(PRODUITS, DATE)
 print(priceGlob_visuel_m)
