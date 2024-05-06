@@ -59,6 +59,7 @@ Ces noms diffèrent dans l'orthograghe. Pour cela nous le faisons en deux étape
 Nous établissons ici une correspondance entre les produits de `priceGlob(ECHO_DU_MARCHE)` et `CatProd`
 
 ## Evalutation de la distance
+
 ```{r ,warning=FALSE}
 
 # matrice des distances
@@ -102,8 +103,8 @@ CatProd <- bind_rows(CatProd,CatProdSupp)
 
 ```
 
-
 ### Jointure
+
 L'inclusion de la colonne catégorie dans le dataset`priceGlob`, se fait au moyen de jointure. La jointure se fera ici avec le dataset `CatGlob`
 
 ```{r,warning=FALSE}
@@ -154,10 +155,10 @@ Par suit, le cas 2 sera considéré.
 
 #### Imputations
 
-Le prix absent est imputé à travers le prix observé chez la ville la plus proche.
-Un prix absent dans toutes les régions de base, est considéré comme une indisponibilité du produit sur la période observée.
+Le prix absent est imputé à travers le prix observé chez la ville la plus proche. Un prix absent dans toutes les régions de base, est considéré comme une indisponibilité du produit sur la période observée.
 
 **Récupération de la géolocalisation des villes**
+
 ```{r,warning=FALSE}
 region <- unique(priceGlob$VILLE) |> as_tibble()
 region$value[2] <- "SAN-PEDRO"
@@ -190,6 +191,7 @@ matching <- matching[-1, ]
 ```
 
 **Imputations**
+
 ```{r,warning=FALSE}
 # Villes de base
 cities <- c("ABIDJAN", "SAN-PEDRO", "BOUAKE", "YAMOUSSOUKRO", "MAN", "KORHOGO")
@@ -218,11 +220,9 @@ for (ville in cities) {
 
 ```
 
-
 ## Traitement des données géographiques
-Les prix initialement capturés sur 6 villes de la côte d'ivoire, sont à présent repartis sur tout l'ensemble du territoire ivoirien. il ne s'agira pas seulement des prix, mais de tout indicateur calculé dans la perspertive de l'analyse.
-Pour cela la correspondance de chaque ville par rapport à sa ville la plus proche est alors appliquée.Environ 3658600 en tout seront générées dans un nouveau dataset.
 
+Les prix initialement capturés sur 6 villes de la côte d'ivoire, sont à présent repartis sur tout l'ensemble du territoire ivoirien. il ne s'agira pas seulement des prix, mais de tout indicateur calculé dans la perspertive de l'analyse. Pour cela la correspondance de chaque ville par rapport à sa ville la plus proche est alors appliquée.Environ 3658600 en tout seront générées dans un nouveau dataset.
 
 ```{r}
 dpt <- sf::read_sf("../data/civ")
@@ -257,5 +257,3 @@ VillePaysVilleProche <- MatriceDistance  |>
 dpt2 <- left_join(dpt,VillePaysVilleProche,join_by(ADM3_FR==VillePays))
 # dtp2
 ```
-
-

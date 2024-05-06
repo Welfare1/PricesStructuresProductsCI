@@ -1,5 +1,5 @@
 ---
-title: "DataProcessing1"
+title: "DataProcessing"
 format: html
 editor: visual
 ---
@@ -13,7 +13,6 @@ library(tidyverse)
 library(stringdist)
 library(tidygeocoder)
 library(sf)
-library(stringr)
 ```
 
 ## Chargement des jeux de données
@@ -21,6 +20,9 @@ library(stringr)
 ```{r,warning=FALSE,message=FALSE}
 # Jeu de données ECHO_DU_MARCHE
 priceGlob <- read_csv("../data/ECHO_DU_MARCHE.csv",locale = locale())
+
+# Suppression des doublons dans la base de données
+priceGlob <- unique(priceGlob)
 
 # Jeu de données Contenant les catégories des produits (avec les orthographes approximatifs)
 CatProd <- read_csv("../data/CatProduit.csv", locale = locale())
@@ -31,9 +33,8 @@ priceGlob <- read_csv("../data/ECHO_DU_MARCHE.csv",locale = locale())
 
 CatProd <- read_csv("../data/CatProduit.csv", locale = locale())
 CatProdSupp <- read_delim("../data/CatProduitSupp.csv", delim = ";", locale = locale())
+
 colnames(CatProdSupp) <- c("Categories","Produits")
-CatProdSupp|>head()
-#Transformation de la colonne PRODUITS en miniscule
 
 # Concaténation des jeux de données CatProd et CatProdSupp
 CatProd <- bind_rows(CatProd,CatProdSupp)
@@ -88,16 +89,16 @@ names(resultProd) <- unique(priceGlob$PRODUITS)
 
 resultCat <- resultCat |> as_tibble() |>
   pivot_longer(everything(),names_to="Produit", values_to = "Categories")
-resultProd
+
 resultProd <- resultProd |> as_tibble() |>
   pivot_longer(everything(),names_to="Produit", values_to = "MatchProduit")
-resultProd
+
 # Formation du dataset : CatGlob , qui correspond contient les produits et leurs catégories
 # Nous retirons le produits afin [-1] afin d'éviter les répétitions dans les colonnes
 CatGlob<- bind_cols(resultCat,resultProd[-1])
 
 CatProd <- bind_rows(CatProd,CatProdSupp)
-head(CatProd)
+# head(CatProd)
 
 
 ```
@@ -106,7 +107,7 @@ head(CatProd)
 
 L'inclusion de la colonne catégorie dans le dataset`priceGlob`, se fait au moyen de jointure. La jointure se fera ici avec le dataset `CatGlob`
 
-```{r warning=FALSE}
+```{r,warning=FALSE}
 # Retrait de la colonne matchingProduit dans la jointure
 priceGlob <- left_join(priceGlob,CatGlob[-3], by=join_by("PRODUITS"=="Produit"),keep = FALSE)
 
@@ -115,10 +116,6 @@ namesCol <- colnames(priceGlob)
 
 # Changement de nom de la colonne `catégories`
 colnames(priceGlob)<- c(namesCol[1:(length(namesCol)-1)],"SPECIFICITE")
-
-# Résultat
-priceGlob
-
 
 # Creating a tibble
 priceGlob_visuel <- tibble(
@@ -131,6 +128,7 @@ priceGlob_visuel <- tibble(
 # Pivot to wide format
 priceGlob_visuel <- priceGlob_visuel %>%
   pivot_wider(names_from = VILLE, values_from = PRIX)
+
 # Specify the cities for extraction
 cities <- c("ABIDJAN", "SANPEDRO", "BOUAKE", "YAMOUSSOUKRO", "MAN", "KORHOGO")
 
@@ -145,8 +143,6 @@ priceGlob_visuel<- priceGlob_visuel %>%
 print(priceGlob_visuel)
 
 
-
-
 ```
 
 ### Gestion des valeurs manquantes
@@ -155,42 +151,49 @@ Deux cas de figures s'assimilent à l'observation de valeurs manquantes dans not
 1. Une indisponibilité du produits dans la région concernée\
 2. Un défaut de mesure des prix sur la période concernée\
 
-Par suite nous considérons le cas 2.
+Par suit, le cas 2 sera considéré.
 
 #### Imputations
 
-Pour chaque valeur manquante dans une région, une imputation par un arbitrage. D'un côté par l'imputation du prix observé chez la ville la plus proche, et de l'autre par le prix observé aux semaines qui environnent l'obervation de la valeur manquante.
+Le prix absent est imputé à travers le prix observé chez la ville la plus proche. Un prix absent dans toutes les régions de base, est considéré comme une indisponibilité du produit sur la période observée.
 
-##### Détection des villes les plus proches
+**Récupération de la géolocalisation des villes**
 
-Les villes aux prix manquant sur une période sont retrouvés dans un premier temps, puis ces valeurs manquantes sont imputées par la moyenne des valeurs observées dans les autres villes.
-
-```{r}
+```{r,warning=FALSE}
 region <- unique(priceGlob$VILLE) |> as_tibble()
 region$value[2] <- "SAN-PEDRO"
 region <- region |> mutate(pays = "Cote d'Ivoire")
+# region
+
 adressRegion <- geocode(region,city = value, country = pays)
-adressRegion 
+# adressRegion
+
 adressRegionGeo <- adressRegion |> st_as_sf(coords = c("long","lat")) |> st_set_crs(4326)
 
 # Distance les plus proches
 centro <- st_centroid(adressRegionGeo$geometry) 
+# centro
 
+#Matrice des distances entre ville
 DD <- st_distance(centro,centro,which = "Great Circle")
-print(DD)
+# DD
+
 matching <- apply(DD, 2, function(x) {
   ordered_index <- order(x)
-  region$value[ordered_index]  # Get the label of region$value based on the ordered index
+  region$value[ordered_index]  # obtenir les noms des villes
 }) |> as_tibble()
-names(matching) <- region$value
-# Remove the first row from the matching tibble
-matching <- matching[-1, ]
-print(matching)
+# matching
 
+names(matching) <- region$value
+# Suppression de la première ligne du dataset contenant : distance(ville1,ville1)
+matching <- matching[-1, ]
+# matching
 ```
 
-```{r}
-print(priceGlob_visuel)
+**Imputations**
+
+```{r,warning=FALSE}
+# Villes de base
 cities <- c("ABIDJAN", "SAN-PEDRO", "BOUAKE", "YAMOUSSOUKRO", "MAN", "KORHOGO")
 priceGlob_visuel_m <- as.tibble(priceGlob_visuel)
 
@@ -213,8 +216,57 @@ for (ville in cities) {
   }
 }
 
+```
 
 
+```{r}
+# Trier le jeu de données par PRODUITS et DATE
+priceGlob_visuel_m <- priceGlob_visuel_m |>
+  arrange(PRODUITS, DATE)
 print(priceGlob_visuel_m)
 
+# Remplir les valeurs manquantes avec les valeurs précédentes dans le cadre de chaque groupe de PRODUITS
+priceGlob_visuel_m <- priceGlob_visuel_m |>
+  group_by(PRODUITS) |>
+  fill(everything(), .direction = "down")
+print(priceGlob_visuel_m)
+```
+
+
+## Traitement des données géographiques
+
+Les prix initialement capturés sur 6 villes de la côte d'ivoire, sont à présent repartis sur tout l'ensemble du territoire ivoirien. il ne s'agira pas seulement des prix, mais de tout indicateur calculé dans la perspertive de l'analyse. Pour cela la correspondance de chaque ville par rapport à sa ville la plus proche est alors appliquée.Environ 3658600 en tout seront générées dans un nouveau dataset.
+
+```{r}
+dpt <- sf::read_sf("../data/civ")
+
+# Géolocalisation des villes de bases
+region <- unique(priceGlob$VILLE) |> as_tibble()
+region$value[2] <- "SAN-PEDRO"
+region <- region |> mutate(pays = "Cote d'Ivoire")
+adressRegion <- geocode(region,city = value, country = pays)
+
+# Ajout de l'attribut geometry
+adressRegionGeo <- adressRegion |> st_as_sf(coords = c("long","lat")) |> st_set_crs(4326)
+
+# Les centroïdes des villes de bases
+centroVilleBase <- st_centroid(adressRegionGeo$geometry)
+
+# centroïdes des villes de la côte d'ivoire
+centroVilleEntiere <- st_centroid(dpt$geometry)
+
+# Estimation des distances entre les villes de la côte d'ivoire et les villes de base
+MatriceDistance <- st_distance(centroVilleEntiere,centroVilleBase,which = "Great Circle")
+
+# Ville du pays et la ville de base la plus proche
+VillePaysVilleProche <- MatriceDistance  |>
+  apply(1,order)|> 
+  t() |> 
+  as_tibble()|>
+  select(V1) |> 
+  mutate(VillePays=dpt$ADM3_FR,VilleProche=map_chr(V1,~region$value[.x])) |> select(2:3)
+
+# Jointure avec la base de données sf des villes de la côte d'ivoire
+dpt2 <- left_join(dpt,VillePaysVilleProche,join_by(ADM3_FR==VillePays))
+# dtp2
 ```
