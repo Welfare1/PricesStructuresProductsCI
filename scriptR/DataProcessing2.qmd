@@ -270,7 +270,21 @@ Trois indicateurs feront l'objet d'analyse dans un premier temps. Il s'agit entr
 
 ## Varation du prix par date
 ```{r}
-priceGlob_visuel_m
+
+price
+# pivotement du dataset
+priceGlobClean <- priceGlob_visuel_m |> pivot_longer(!(PRODUITS:DATE),names_to = "VILLE", values_to = "PRIX")
+
+priceGlob
+
+# Jointure au dataset initial
+priceGlobCleanFull <- left_join(priceGlob |>
+                                  select(MOIS:VILLE),
+                                priceGlobClean,
+                                join_by(PRODUITS,DATE,VILLE)
+                                )
+# A une date pour un produit un seul prix est défini
+priceGlobClean |>group_by(PRODUITS,VILLE) |>   mutate(PRIXPREC=lag(PRIX,order_by = DATE)) |> mutate(TauxVar=round((PRIX-PRIXPREC)/PRIXPREC,2))
 ```
 
 
