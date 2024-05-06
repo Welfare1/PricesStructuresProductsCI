@@ -273,4 +273,3 @@ Trois indicateurs feront l'objet d'analyse dans un premier temps. Il s'agit entr
 priceGlob_visuel_m
 ```
 
-
