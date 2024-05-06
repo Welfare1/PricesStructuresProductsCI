@@ -154,98 +154,123 @@ matching <- apply(DD,2 ,order) |> as_tibble() |> slice(2) |> map(~ region |> plu
 
 names(matching) <- region$value
 
-matching
+# matching
 ```
 
-Fonction permettant d'affecter les valeurs d'une liste selon la proximité des villes. Nous avons ici 4 villes:
+**Récupération de la géolocalisation des villes**
+```{r,warning=FALSE}
+region <- unique(priceGlob$VILLE) |> as_tibble()
+region$value[2] <- "SAN-PEDRO"
+region <- region |> mutate(pays = "Cote d'Ivoire")
+# region
+
+adressRegion <- geocode(region,city = value, country = pays)
+# adressRegion
+
+adressRegionGeo <- adressRegion |> st_as_sf(coords = c("long","lat")) |> st_set_crs(4326)
+
+# Distance les plus proches
+centro <- st_centroid(adressRegionGeo$geometry) 
+# centro
+
+#Matrice des distances entre ville
+DD <- st_distance(centro,centro,which = "Great Circle")
+# DD
+
+matching <- apply(DD, 2, function(x) {
+  ordered_index <- order(x)
+  region$value[ordered_index]  # obtenir les noms des villes
+}) |> as_tibble()
+# matching
+
+names(matching) <- region$value
+# Suppression de la première ligne du dataset contenant : distance(ville1,ville1)
+matching <- matching[-1, ]
+# matching
+```
+
+**Imputations**
+```{r,warning=FALSE}
+# Villes de base
+cities <- c("ABIDJAN", "SAN-PEDRO", "BOUAKE", "YAMOUSSOUKRO", "MAN", "KORHOGO")
+
+#
+priceGlob_visuel_m <- as.tibble(priceGlob_visuel)
+
+for (ville in cities) {
+  # Parcourir chaque ligne de données
+  for (i in 1:nrow(priceGlob_visuel_m)) {
+    # Vérifier si le prix à la ville est NA
+    if (is.na(priceGlob_visuel_m[[ville]][i])) {
+      # Trouver la ville la plus proche avec un prix non nul
+      for (ville_proche in matching[[ville]]) {
+        # Vérifier si la ville proche existe dans priceGlob_visuel_m et si son prix n'est pas NA
+        if (!is.null(priceGlob_visuel_m[[ville_proche]]) && !is.na(priceGlob_visuel_m[[ville_proche]][i])) {
+          priceGlob_visuel_m[[ville]][i] <- priceGlob_visuel_m[[ville_proche]][i]
+          break
+        } else {
+          priceGlob_visuel_m[[ville]][i] <- NA
+        }
+      }
+    }
+  }
+}
+
+# priceGlob_visuel_m
+
+```
+
+
+## Traitement des données géographiques
+Les prix initialement capturés sur 6 villes de la côte d'ivoire, sont à présent repartis sur tout l'ensemble du territoire ivoirien. il ne s'agira pas seulement des prix, mais de tout indicateur calculé dans la perspertive de l'analyse.
+Pour cela la correspondance de chaque ville par rapport à sa ville la plus proche est alors appliquée.Environ 3658600 en tout seront générées dans un nouveau dataset.
+
 
 ```{r}
-# Ajout d'un identifant pour les colonnes 
-priceGlob |> mutate(IDENTIFIANT=str_c("ENR",1:dim(priceGlob)[1]))
-priceGlob |> 
-  pivot_wider(names_from = VILLE,values_from =PRIX) |>
-  slice(6) |>
-  select(MAN) |> 
-  pluck(1,1)
+dpt <- sf::read_sf("../data/civ")
 
-priceGlob |>
-  pivot_wider(names_from = VILLE,values_from =PRIX,values_fn = ~first(.x)) |>
-  rowwise(PRODUITS) |> 
-  select(c(PRODUITS,ABIDJAN:KORHOGO))
+# Géolocalisation des villes de bases
+region <- unique(priceGlob$VILLE) |> as_tibble()
+region$value[2] <- "SAN-PEDRO"
+region <- region |> mutate(pays = "Cote d'Ivoire")
+adressRegion <- geocode(region,city = value, country = pays)
 
-priceGlob |> filter(MOIS=="janvier",
-                    DATE==mdy("1/6/2020"),
-                    CATEGORIE=="PRODUITS VIVRIERS",
-                    `SOUS-CATEGORIE`=="PRODUITS DE SAISON",
-                    PRODUITS=="citron (kg)",
-                    VILLE=="ABIDJAN")
-priceGlob |> dim()
+# Ajout de l'attribut geometry
+adressRegionGeo <- adressRegion |> st_as_sf(coords = c("long","lat")) |> st_set_crs(4326)
 
-priceGlob 
+# Les centroïdes des villes de bases
+centroVilleBase <- st_centroid(adressRegionGeo$geometry)
+
+# centroïdes des villes de la côte d'ivoire
+centroVilleEntiere <- st_centroid(dpt$geometry)
+
+# Estimation des distances entre les villes de la côte d'ivoire et les villes de base
+MatriceDistance <- st_distance(centroVilleEntiere,centroVilleBase,which = "Great Circle")
+
+# Ville du pays et la ville de base la plus proche
+VillePaysVilleProche <- MatriceDistance  |>
+  apply(1,order)|> 
+  t() |> 
+  as_tibble()|>
+  select(V1) |> 
+  mutate(VillePays=dpt$ADM3_FR,VilleProche=map_chr(V1,~region$value[.x])) |> select(2:3)
+
+# Jointure avec la base de données sf des villes de la côte d'ivoire
+dpt2 <- left_join(dpt,VillePaysVilleProche,join_by(ADM3_FR==VillePays))
+# dtp2
 ```
 
-```{r,warning=FALSE}
-for (i in 1:dim(priceGlob)) {
-  
-}
 
-# Imputation d'une liste d'éléments
-NomVille <- c("ABIDJAN","SANPEDRO", "BOUAKE", "YAMOUSSOUKRO", "MAN","KORHOGO")
+# Calcul des indicateurs
 
-which(NomVille==c("BOUAKE", "YAMOUSSOUKRO"))
+Trois indicateurs feront l'objet d'analyse dans un premier temps. Il s'agit entre autre de:
+- Taux de variation du prix par date;
+- Taux de variation du prix par région;
+- Prix du panier moyen (*).
 
-vecTest1 <- c(800,NA,500,NA,NA,NA)
-
-# Récupération des villes aux valeurs non manquantes
-which(!is.na(vecTest1)) # Position
-
-vecTest1[which(!is.na(vecTest1))]
-
-vecTest1[which(is.na(vecTest1))]
-
-# Fonction qui rammène la plus proche d'un ensemble de ville
-
-villeProche <- function(ville,VilleDispo,MatriceDistance){
-  
-  NomVille <- c("ABIDJAN","SANPEDRO", "BOUAKE", "YAMOUSSOUKRO", "MAN","KORHOGO")
-  
-  # Récupération des villes aux valeurs non manquantes
-  VilleDispo <- NomVille[which(!is.na(VilleDispo))]
-  
-  # Ordre des villes proches : Ordre relatif au nombre d'éléments
-  ordreVilleProche <-  which(NomVille%in%VilleDispo)
-  
-  # Ordre de ville entrée
-  ordreVille<- which(NomVille==ville)
-  
-  # Récupération du nom de la ville la plus proche
-  
-  ## Vecteur distance de la ville entrée en paramètre
-   vecteurDistance <- MatriceDistance|> apply(2 ,order)|> as_tibble() |> pluck(ordreVille)
-  
-  ## Ordre la ville la plus proche
-  ordreVilleProche <- ordreVilleProche |>
-    map_dbl(~which(vecteurDistance==.x)) |>
-    which.min() 
-  
-  ## Nom de la ville la plus proche
-  NomVilleProche<- NomVille[ordreVille[ordreVilleProche]]
-  
-  return(ordreVilleProche)
-}
-
-villeProche("KORHOGO",c(800,NA,500,NA,NA,NA),DD)
-
-
-## Test de proximité
-vec <- DD |> apply(2 ,order)|> as_tibble() |> pluck(2)
-vec
-
-c(2,6) |> map_dbl(~which(vec==.x)) |> which.min()
-
-which(c("ABIDJAN","SANPEDRO", "BOUAKE", "YAMOUSSOUKRO", "MAN","KORHOGO")%in%c("KORHOGO","BOUAKE"))
-
-
+## Varation du prix par date
+```{r}
+priceGlob_visuel_m
 ```
 
-janvier 2020-01-06 2020 PRODUITS VIVRIERS PRODUITS DE SAISON citron (kg) kilogramme
+

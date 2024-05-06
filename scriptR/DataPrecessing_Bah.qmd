@@ -168,9 +168,9 @@ Les villes aux prix manquant sur une période sont retrouvés dans un premier te
 ```{r}
 region <- unique(priceGlob$VILLE) |> as_tibble()
 region$value[2] <- "SAN-PEDRO"
-region <- region |> mutate(pays = "Côte d'Ivoire")
+region <- region |> mutate(pays = "Cote d'Ivoire")
 adressRegion <- geocode(region,city = value, country = pays)
-adressRegion
+adressRegion 
 adressRegionGeo <- adressRegion |> st_as_sf(coords = c("long","lat")) |> st_set_crs(4326)
 
 # Distance les plus proches
@@ -218,4 +218,3 @@ for (ville in cities) {
 print(priceGlob_visuel_m)
 
 ```
-
