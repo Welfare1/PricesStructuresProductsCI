@@ -42,7 +42,12 @@ CatProd <- bind_rows(CatProd,CatProdSupp)
 # Transformation de la colonne PRODUITS en miniscule afin de faciliter le matching
 
 priceGlob <- priceGlob |> mutate(PRODUITS=str_to_lower(PRODUITS))
+# priceGlob
 
+# Transformation du mois en format date
+priceGlob <- priceGlob |> mutate(MOIS=month(DATE,label=TRUE))
+
+# Transformation de la colonne `Produits` du dataset CatProd en miniscule
 CatProd <- CatProd |> mutate(Produits=str_to_lower(Produits))
 
 ```
@@ -257,7 +262,7 @@ VillePaysVilleProche <- MatriceDistance  |>
 
 # Jointure avec la base de données sf des villes de la côte d'ivoire
 dpt2 <- left_join(dpt,VillePaysVilleProche,join_by(ADM3_FR==VillePays))
-# dtp2
+dpt2
 ```
 
 
@@ -265,17 +270,13 @@ dpt2 <- left_join(dpt,VillePaysVilleProche,join_by(ADM3_FR==VillePays))
 
 Trois indicateurs feront l'objet d'analyse dans un premier temps. Il s'agit entre autre de:
 - Taux de variation du prix par date;
-- Taux de variation du prix par région;
+- Taux de variation du prix par région;²
 - Prix du panier moyen (*).
 
-## Varation du prix par date
+## Format initial du dataset
 ```{r}
-
-price
 # pivotement du dataset
 priceGlobClean <- priceGlob_visuel_m |> pivot_longer(!(PRODUITS:DATE),names_to = "VILLE", values_to = "PRIX")
-
-priceGlob
 
 # Jointure au dataset initial
 priceGlobCleanFull <- left_join(priceGlob |>
@@ -283,7 +284,52 @@ priceGlobCleanFull <- left_join(priceGlob |>
                                 priceGlobClean,
                                 join_by(PRODUITS,DATE,VILLE)
                                 )
-# A une date pour un produit un seul prix est défini
-priceGlobClean |>group_by(PRODUITS,VILLE) |>   mutate(PRIXPREC=lag(PRIX,order_by = DATE)) |> mutate(TauxVar=round((PRIX-PRIXPREC)/PRIXPREC,2))
 ```
+
+## Variation des prix par date, par produit
+```{r}
+# A une date pour un produit un seul prix est défini
+# Dataset de base
+priceGlobClean <- priceGlobClean |>
+  group_by(PRODUITS,VILLE) |>
+  mutate(PRIXPREC=lag(PRIX,order_by = DATE)) # Dataset de base
+  # Indicateur
+priceGlobClean |>
+  mutate(TauxVar=round((PRIX-PRIXPREC)/PRIXPREC,2)) |>
+  group_by(DATE) |>
+  summarise(PrixMoy=mean(PRIX,na.rm = TRUE),
+            VarMoy=mean(TauxVar,na.rm =TRUE))|>
+  ## Plot
+  ggplot()+
+  aes(x=DATE,y=PrixMoy)+
+  geom_line()+
+  theme_minimal()
+```
+
+## Variation des prix par date, par produit
+```{r}
+# A une date pour un produit un seul prix est défini
+# Dataset de base
+priceGlobClean |>
+  group_by(PRODUITS) |> mutate(PRIX= round(PRIX,2))|>
+  mutate(PRIXPREC=lag(PRIX,order_by = DATE,default = NA)) |> 
+  mutate(TauxVar=round((PRIX-PRIXPREC)/PRIXPREC,2)) |>
+  group_by(VILLE) |> 
+   summarise(PrixMoy=mean(PRIX,na.rm = TRUE),
+            VarMoy=mean(TauxVar,na.rm =TRUE))
+```
+
+```{r}
+priceGlob |> filter(PRIX==0)
+```
+
+
+## Par produits selon les villes
+```{r}
+# A une date pour un produit un seul prix est défini
+priceGlobClean |>group_by(PRODUITS,VILLE) |>   mutate(PRIXPREC=lag(PRIX,order_by = DATE)) |> mutate(TauxVar=round((PRIX-PRIXPREC)/PRIXPREC,2)) |> ungroup() |> filter(TauxVar==Inf)
+```
+
+
+
 
