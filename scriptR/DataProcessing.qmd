@@ -255,7 +255,7 @@ VillePaysVilleProche <- MatriceDistance  |>
 
 # Jointure avec la base de données sf des villes de la côte d'ivoire
 dpt2 <- left_join(dpt,VillePaysVilleProche,join_by(ADM3_FR==VillePays))
-# dtp2
+dpt2
 ```
 
 
