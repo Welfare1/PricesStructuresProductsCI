@@ -178,7 +178,7 @@ adressRegionGeo <- adressRegion |> st_as_sf(coords = c("long","lat")) |> st_set_
 centro <- st_centroid(adressRegionGeo$geometry) 
 # centro
 
-#Matrice des distances entre ville
+# Matrice des distances entre ville
 DD <- st_distance(centro,centro,which = "Great Circle")
 # DD
 
@@ -307,16 +307,23 @@ priceGlobClean |>
 ```
 
 ## Variation des prix par date, par produit
+Nous utilisons ici les dates format Mois-an. 
 ```{r}
 # A une date pour un produit un seul prix est défini
 # Dataset de base
 priceGlobClean |>
-  group_by(PRODUITS) |> mutate(PRIX= round(PRIX,2))|>
+  mutate(MOIS=as.yearmon(DATE, "%m/%Y")) |> 
+  group_by(PRODUITS) |> 
   mutate(PRIXPREC=lag(PRIX,order_by = DATE,default = NA)) |> 
   mutate(TauxVar=round((PRIX-PRIXPREC)/PRIXPREC,2)) |>
-  group_by(VILLE) |> 
+  group_by(MOIS) |> 
    summarise(PrixMoy=mean(PRIX,na.rm = TRUE),
-            VarMoy=mean(TauxVar,na.rm =TRUE))
+            VarMoy=mean(TauxVar,na.rm =TRUE)) |> ungroup() |> 
+  ggplot()+
+  aes(x=MOIS,y=VarMoy)+
+  geom_line()+
+  theme_minimal()
+
 ```
 
 ```{r}
