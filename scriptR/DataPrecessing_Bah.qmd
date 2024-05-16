@@ -288,7 +288,7 @@ priceGlobClean <- priceGlob_visuel_m |>
 
 # Jointure au dataset initial
 priceGlobCleanFull <- left_join(priceGlob |>
-                                  select(c(MOIS:VILLE,MOISNum)),
+                                  select(c(MOIS:VILLE,MOISNum, SPECIFICITE)),
                                 priceGlobClean,
                                 join_by(PRODUITS,DATE,VILLE)
                                 )
@@ -302,6 +302,7 @@ Le calcul de ces indicateurs sur les autres axes pourra être obtenu moyennant u
 priceGlobCleanFull <- priceGlobCleanFull |>
   group_by(PRODUITS,VILLE) |>
   mutate(PRIXPREC=lag(PRIX,order_by = DATE)) # Dataset de base
+
   # Indicateur
 priceGlobCleanFull |>
   filter(CATEGORIE!="PRODUITS MANUFACTURES") |>
@@ -313,4 +314,85 @@ priceGlobCleanFull |>
   summarise(PrixMoy=mean(PRIX,na.rm = TRUE),
             VarMoy=mean(TauxVar,na.rm =TRUE),
             VarMoyAbs=mean(abs(TauxVar),na.rm =TRUE))
+priceGlobCleanFull
+
+
 ```
+```{r}
+priceGlobCleanFull <- priceGlobCleanFull |>
+  group_by(PRODUITS,VILLE) |>
+  mutate(PRIXPREC=lag(PRIX,order_by = DATE)) # Dataset de base
+priceGlobCleanFull
+  # Indicateur
+indicateurs <- priceGlobCleanFull |>
+  filter(CATEGORIE!="PRODUITS MANUFACTURES") |>
+  mutate(MoisAn=as.yearmon(DATE, "%m/%Y"),
+         TauxVar=round((PRIX-PRIXPREC)/PRIXPREC,2),
+         ANNEE=as.character(ANNEE),
+         ) |>
+  group_by(VILLE,SPECIFICITE) |>
+  summarise(PrixMoy=mean(PRIX,na.rm = TRUE),
+            VarMoy=mean(TauxVar,na.rm =TRUE),
+            VarMoyAbs=mean(abs(TauxVar),na.rm =TRUE))
+
+library(leaflet)
+library(dplyr)
+adressRegion <- adressRegion|>select(-pays)
+# Filtrer les données pour les villes où VarMoyAbs est la plus petite
+indicateurs <- left_join(indicateurs,adressRegion, by=c("VILLE"="value"))
+
+villes_min_VarMoyAb <- indicateurs%>%
+  group_by(SPECIFICITE) %>%
+  filter(min_rank(VarMoyAbs) == 1)
+villes_min_VarMoyAb 
+
+
+# Créer une carte Leaflet
+ leaflet() %>%
+  addProviderTiles("OpenStreetMap.Mapnik") %>%
+  addPolygons(data = dpt2,
+              fillColor = "blue",
+              fillOpacity = 0.2,
+              stroke = FALSE) %>%
+  addCircleMarkers(data = villes_min_VarMoyAb,
+                   lng = ~long,
+                   lat = ~lat,
+                   popup = ~paste(VILLE, " - ", c(SPECIFICITE), "<br>VarMoyAbs: ", VarMoyAbs),
+                   color = "red",
+                   radius = 5)
+
+
+
+```
+
+```{r}
+villes_min_VarMoyAb
+# Agréger les spécificités par ville
+villes_agg <- villes_min_VarMoyAb %>%
+  group_by(VILLE, lat, long) %>%
+  summarise(SPECIFICITE = paste(SPECIFICITE, collapse = ", "))
+
+# Définir une palette de couleurs
+palette_couleurs <- rainbow(length(unique(villes_agg$VILLE)))
+
+# Créer une carte Leaflet
+carte <- leaflet() %>%
+  addProviderTiles("OpenStreetMap.Mapnik") %>%
+  addPolygons(data = dpt2,
+              stroke = TRUE,
+              color = palette_couleurs[match(dpt2$VilleProche, villes_agg$VILLE)]) %>%
+  addMarkers(data = villes_agg,
+                   lng = ~long,
+                   lat = ~lat,
+                   popup = ~paste(VILLE, "<br>SPECIFICITE: ", SPECIFICITE),
+                   )%>%
+  addLegend(position = "bottomright", 
+             colors = palette_couleurs, 
+             labels = unique(villes_agg$VILLE),
+             title = "Villes")
+
+# Afficher la carte
+carte
+```
+
+

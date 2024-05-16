@@ -14,6 +14,15 @@ function(input, output, session) {
     
   ##########################################################""
   # Analyse par region
+  # Sidebar action
+      # Met à jour les choix des produits en fonction de la catégorie sélectionnée
+      observeEvent(input$categorie, {
+        # Filtrer les produits en fonction de la catégorie sélectionnée
+        filtered_products <- priceGlob[priceGlob$SPECIFICITE == input$categorie, "PRODUITS"]
+        
+        # Mettre à jour les choix du selectizeInput des produits
+        updateSelectizeInput(session, "produit", choices = unique(filtered_products), selected = unique(filtered_products)[1])
+      })
   # Carte
   
   output$aRegionM <- renderLeaflet({
@@ -25,23 +34,22 @@ function(input, output, session) {
   
   ###############################""
   # Boxplot
-  
-  # Filtrer les données priceGlob en fonction du produit et de la date sélectionnés
-  filteredPriceGlob <- reactive({
-    subset(priceGlob, PRODUITS == input$produit & DATE == input$date)
-  })
-  
   # Rendre le boxplot basé sur le produit et la ville sélectionnés
   output$aRegionP <- renderPlot({
-   
-    filtered_data <- filteredPriceGlob()
+    # Filtrer les données priceGlob en fonction du produit et de la date sélectionnés
+    
+    filtered_data <- priceGlob|>filter(PRODUITS == input$produit & ANNEE == input$date)|>select(c(VILLE,PRODUITS,ANNEE,PRIX))
     
     ggplot(filtered_data, aes(x = VILLE, y = PRIX)) +
       geom_boxplot() +
-      labs(title = paste("Boîte à moustaches des prix pour", input$produit, "le", input$date),
+      labs(title = paste("Boîte à moustaches des prix pour", input$produit, "en", input$date),
            x = "Ville", y = "Prix")
   })
 
-    
+  ###############################"
+  #Tableau indicateur
+  output$table <- renderTable({
+    indicateurs_recap
+  })
 
 }

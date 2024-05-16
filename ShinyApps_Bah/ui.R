@@ -198,30 +198,26 @@ fluidPage(
                            
                             div(
                               style = "background-color: #A09D9E; padding: 15px; margin-bottom: 15px;",
-                              selectizeInput(inputId = "indicateur", label = "Choisir un indicateur: ", selected = "indicateur1",
-                                             choices = c("indicateur1", "indicateur2", "indicateur3"))
+                              selectizeInput(inputId = "indicateur", label = "Choisir un indicateur: ", selected = "PrixMoy",
+                                             choices = c("PrixMoy","VarMoy","VarMoyAbs"))
                             ),
                             
                             
                             div(
                               style = "background-color: #478FFC; padding: 15px; margin-bottom: 15px;",
-                              selectizeInput(inputId = "region", label = "Region: ", selected = "Region1",
-                                             choices = priceGlob$VILLE),
                               selectizeInput(inputId = "ville", label = "Ville: ", selected = "Ville1",
-                                             choices = dpt2$ADM2_FR)
+                                             choices = priceGlob$VILLE)
                             ),
                             
                            
                             div(
                               style = "background-color:#50FC47; padding: 15px; margin-bottom: 15px;",
-                              selectizeInput(inputId = "hierarchie", label = "Hierarchie: ", selected = "Hierarchie1",
-                                             choices = priceGlob$CATEGORIE),
-                            
+                              
                               selectizeInput(inputId = "categorie", label = "Categorie: ", selected = "Categorie1",
-                                             choices = priceGlob$SPECIFICITE),
+                                             choices = unique(priceGlob$SPECIFICITE)),
                             
-                              selectizeInput(inputId = "produit", label = "Produits: ", selected = "Produit1",
-                                             choices = priceGlob$PRODUITS)
+                              selectizeInput(inputId = "produit", label = "Produits: ", selected = NULL,
+                                             choices = NULL)
                             ),
                             
                             div(
@@ -244,38 +240,38 @@ fluidPage(
                    tabPanel("Général",
                             style = "background-color: #A09D9E;",
                             div(
-                              style = "background-color: #FFFFFF;padding: 15px;",
+                              style = "background-color: #FFFFFF;padding: 10px;",
                               p("Trois indicateurs sont utilisés dans la mise en évidence des différentes variations
                                 des prix selon les régions. L’intensité des couleurs sur les cartes est proportionnelle
                                 à la valeur prise par l’indicateur. Les aproximations des prix sur toute l’étendue du 
                                 térritoire se fait aux moyens de prévisions de prix selon leur proximité")
                             ),
                             fluidRow(
-                              column(width = 7,
+                              column(width = 6,
                                      div(
-                                       style = "background-color: #FFFFFF;margin: 10px",
+                                       style = "background-color: #FFFFFF;margin-left: 10px",
                                        
                                        leafletOutput("aRegionM"),
                                        p("La palettte verte désigne les zones au prix moyen en dessous du prix moyen général.
                                          A contrario, une couleur rouge désignera les zones aux moyen dépassant le prix moyen global.")
                                      ),
                               ),
-                              column(width = 5,
+                              column(width = 6,
                                      div(
-                                       style = "background-color: #FFFFFF;margin-right: 10px",
+                                       style = "background-color: #FFFFFF;margin-right: 10px; text-align:center",
                                        h6("DISTRIBUTION DES PRIX SELON LES REGIONS DE LA CI"),
                                        plotOutput("aRegionP"),
-                                       p("La palettte verte désigne les zones au prix moyen en dessous du prix moyen général.
-                                         A contrario, une couleur rouge désignera les zones aux moyen dépassant le prix moyen global.")
-                                     ),
-                                     div(
-                                       style = "background-color: #FFFFFF;margin-right: 10px",
-                                       h6("Table"),
-                                       tableOutput(outputId = "table")
                                        ),
+                                    
                                     ),
                             ),
-                            
+                            fluidRow(
+                            div(
+                              style = "background-color: #FFFFFF;width:45%; text-align:center;margin-left:250px",
+                              h5("Table"),
+                              tableOutput(outputId = "table")
+                            )
+                            ),
                             ),
                    
                    # TabPanel 2

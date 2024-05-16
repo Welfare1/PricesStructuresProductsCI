@@ -10,10 +10,10 @@ library(plotly)
 library(bslib)
 library(leaflet)
 library(DT)
+library(zoo)
 
-
-dpt <- read_sf("civ")
-priceGlob <- read.csv("priceGlob.csv")
+dpt <- read_sf("data/civ")
+priceGlob <- read.csv("data/priceGlobCleanFull.csv")
 
 # Géolocalisation des villes de bases
 region <- unique(priceGlob$VILLE) |> as_tibble()
@@ -43,3 +43,32 @@ VillePaysVilleProche <- MatriceDistance  |>
 
 # Jointure avec la base de données sf des villes de la côte d'ivoire
 dpt2 <- left_join(dpt,VillePaysVilleProche,join_by(ADM3_FR==VillePays))
+
+###############################"""
+#Indicateur
+
+priceGlobCleanFull <- priceGlob |>
+  group_by(PRODUITS,VILLE) |>
+  mutate(PRIXPREC=lag(PRIX,order_by = DATE)) # Dataset de base
+
+# Indicateur
+indicateurs_recap <- priceGlobCleanFull |>
+  mutate(MoisAn=as.yearmon(DATE, "%m/%Y"),
+         TauxVar=round((PRIX-PRIXPREC)/PRIXPREC,2),
+         ANNEE=as.character(ANNEE),
+  ) |>
+  group_by(VILLE) |>
+  summarise(PrixMoy=mean(PRIX,na.rm = TRUE),
+            VarMoy=mean(TauxVar,na.rm =TRUE),
+            VarMoyAbs=mean(abs(TauxVar),na.rm =TRUE))
+
+indicateurs<- priceGlobCleanFull |>
+  mutate(MoisAn=as.yearmon(DATE, "%m/%Y"),
+         TauxVar=round((PRIX-PRIXPREC)/PRIXPREC,2),
+         ANNEE=as.character(ANNEE),
+  ) |>
+  group_by(VILLE,SPECIFICITE) |>
+  summarise(PrixMoy=mean(PRIX,na.rm = TRUE),
+            VarMoy=mean(TauxVar,na.rm =TRUE),
+            VarMoyAbs=mean(abs(TauxVar),na.rm =TRUE))
+
