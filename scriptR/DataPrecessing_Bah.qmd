@@ -13,6 +13,7 @@ library(tidyverse)
 library(stringdist)
 library(tidygeocoder)
 library(sf)
+library(zoo)
 ```
 
 ## Chargement des jeux de données
@@ -28,22 +29,32 @@ priceGlob <- unique(priceGlob)
 CatProd <- read_csv("../data/CatProduit.csv", locale = locale())
 
 # Jeu de données contenant les produits inexistant dans CatProd
-CatProdSupp <- read_csv2("../data/CatProduitSupp.csv", locale = locale())
 priceGlob <- read_csv("../data/ECHO_DU_MARCHE.csv",locale = locale())
 
-CatProd <- read_csv("../data/CatProduit.csv", locale = locale())
+# Chargement du jeu de données contenant les catégories supplémentaires absents dans CatProd
 CatProdSupp <- read_delim("../data/CatProduitSupp.csv", delim = ";", locale = locale())
 
+# Changement des noms des colonnes de CatProdSupp pour la jointure
 colnames(CatProdSupp) <- c("Categories","Produits")
 
 # Concaténation des jeux de données CatProd et CatProdSupp
 CatProd <- bind_rows(CatProd,CatProdSupp)
 
-# Transformation de la colonne PRODUITS en miniscule afin de faciliter le matching
-
+# Tranformation :
+## Transformation de la colonne PRODUITS en miniscule afin de faciliter le matching
 priceGlob <- priceGlob |> mutate(PRODUITS=str_to_lower(PRODUITS))
+# priceGlob
 
+## Transformation du mois en format date
+priceGlob <- priceGlob |> mutate(MOIS=month(DATE,label=TRUE))
+
+## Transformation du mois en format date numérique
+priceGlob <- priceGlob |> mutate(MOISNum=month(DATE))
+## Transformation de la colonne `Produits` du dataset CatProd en miniscule
 CatProd <- CatProd |> mutate(Produits=str_to_lower(Produits))
+
+## Remplacement des prix null dans prix par NA
+priceGlob <- priceGlob |> mutate(PRIX=replace(priceGlob$PRIX,which(priceGlob$PRIX==0),NA))
 
 ```
 
@@ -110,14 +121,14 @@ L'inclusion de la colonne catégorie dans le dataset`priceGlob`, se fait au moye
 ```{r,warning=FALSE}
 # Retrait de la colonne matchingProduit dans la jointure
 priceGlob <- left_join(priceGlob,CatGlob[-3], by=join_by("PRODUITS"=="Produit"),keep = FALSE)
-priceGlob 
+
 # Nom des colonnes
 namesCol <- colnames(priceGlob)
 
 # Changement de nom de la colonne `catégories`
 colnames(priceGlob)<- c(namesCol[1:(length(namesCol)-1)],"SPECIFICITE")
 
-# Creation de priceGlob_visuel
+# Creating a tibble
 priceGlob_visuel <- tibble(
   PRODUITS = priceGlob$PRODUITS,
   DATE = priceGlob$DATE,
@@ -125,7 +136,7 @@ priceGlob_visuel <- tibble(
   PRIX = priceGlob$PRIX
 )
 
-
+# Pivot to wide format
 priceGlob_visuel <- priceGlob_visuel %>%
   pivot_wider(names_from = VILLE, values_from = PRIX)
 
@@ -216,29 +227,7 @@ for (ville in cities) {
   }
 }
 
-priceGlob_visuel_m
-
-
-# Convertir le format large en format long
-priceGlob_visuel_long <- priceGlob_visuel_m %>%
-  pivot_longer(cols = -c(PRODUITS, DATE), 
-               names_to = "VILLE",        
-               values_to = "PRIX")  
-sum(is.na(priceGlob_visuel_long$PRIX))
-sum(is.na(priceGlob$PRIX))
-# Afficher le tableau en format long résultant
-print(priceGlob_visuel_long)
-
-# Suppression de la colonne PRIX de priceGlob
-priceGlob <- priceGlob %>%
-  select(-PRIX)
-
-priceGlob <- full_join(priceGlob,priceGlob_visuel_long,by = c("PRODUITS", "DATE", "VILLE"))
-print(priceGlob)
-
-# Définir le chemin du répertoire du shiny
-setwd("../ShinyApps_Bah/data")
-write_csv(priceGlob, "priceGlob.csv")
+# priceGlob_visuel_m
 
 ```
 
@@ -274,15 +263,54 @@ VillePaysVilleProche <- MatriceDistance  |>
   as_tibble()|>
   select(V1) |> 
   mutate(VillePays=dpt$ADM3_FR,VilleProche=map_chr(V1,~region$value[.x])) |> select(2:3)
-VillePaysVilleProche
 
 # Jointure avec la base de données sf des villes de la côte d'ivoire
 dpt2 <- left_join(dpt,VillePaysVilleProche,join_by(ADM3_FR==VillePays))
 dpt2
 ```
-```{r}
 
- ggplot( dpt2) +geom_sf( fill = "white") +
-          theme_void()
+
+
+# Calcul des indicateurs
+
+Trois indicateurs feront l'objet d'analyse dans un premier temps. Il s'agit entre autre de:
+- Le prix moyen
+- Le taux de variation moyen;
+- Le taux de variation moyen en valeur absolue.
+
+## Format initial du dataset
+```{r}
+# pivotement du dataset
+priceGlobClean <- priceGlob_visuel_m |>
+  pivot_longer(!(PRODUITS:DATE),
+               names_to = "VILLE",
+               values_to = "PRIX")
+
+# Jointure au dataset initial
+priceGlobCleanFull <- left_join(priceGlob |>
+                                  select(c(MOIS:VILLE,MOISNum)),
+                                priceGlobClean,
+                                join_by(PRODUITS,DATE,VILLE)
+                                )
 ```
 
+## Variation des prix par (Dimension)
+Le calcul de ces indicateurs sur les autres axes pourra être obtenu moyennant un changement d'axe d'analyse (Date, Ville, Produits etc.)
+```{r}
+# A une date pour un produit un seul prix est défini
+# Dataset de base
+priceGlobCleanFull <- priceGlobCleanFull |>
+  group_by(PRODUITS,VILLE) |>
+  mutate(PRIXPREC=lag(PRIX,order_by = DATE)) # Dataset de base
+  # Indicateur
+priceGlobCleanFull |>
+  filter(CATEGORIE!="PRODUITS MANUFACTURES") |>
+  mutate(MoisAn=as.yearmon(DATE, "%m/%Y"),
+         TauxVar=round((PRIX-PRIXPREC)/PRIXPREC,2),
+         ANNEE=as.character(ANNEE),
+         ) |>
+  group_by(MOIS,ANNEE) |>
+  summarise(PrixMoy=mean(PRIX,na.rm = TRUE),
+            VarMoy=mean(TauxVar,na.rm =TRUE),
+            VarMoyAbs=mean(abs(TauxVar),na.rm =TRUE))
+```

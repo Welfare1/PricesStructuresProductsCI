@@ -364,14 +364,13 @@ priceGlobCleanFull |>
          TauxVar=round((PRIX-PRIXPREC)/PRIXPREC,2),
          
          ) |>
-  group_by(QuarterAn) |> 
+  group_by(DATE) |> 
   summarise(PrixMoy=mean(PRIX,na.rm = TRUE),
             VarMoy=mean(TauxVar,na.rm =TRUE),
             VarMoyAbs=mean(abs(TauxVar),na.rm =TRUE)) |> 
-  select(QuarterAn,PrixMoy) |> 
+  select(DATE,PrixMoy) |> 
   dygraph() |> 
-  addShading(SemestreTable) |> 
-   dyAnnotation("2021-7-1", text = "Produits frais", tooltip = "Korea",attachAtBottom = TRUE, width = 60)
+  addShadNot(SemestreTable)
   
 ```
 
@@ -379,12 +378,18 @@ priceGlobCleanFull |>
 
 
 ```{r}
-addShading <- function(dygraph,tabl){
+addShadNot <- function(dygraph,tabl){
   
   # Initialisation des variables
   dateDebutInit <- tabl |> pluck(1,1)
   dateFinInit <- tabl |> pluck(2,1)
+  dateMil <- tabl |> pluck(6,1)
   obj <- dygraph |> dyShading(from =dateDebutInit, to = dateFinInit,color = "#CCEBD6")
+  obj <- obj |> dyAnnotation(dateMil,
+                               text = "Prod",
+                               tooltip = "Produits frais",
+                               attachAtBottom = TRUE,
+                               width = 40)
   
   for (i in 2:dim(tabl)[1]){
     # Ensemble de couleur
@@ -395,8 +400,17 @@ addShading <- function(dygraph,tabl){
     # Récupération des dates de débuts et de fin
     dateDebutInit <- tabl |> pluck(1,i)
     dateFinInit <- tabl |> pluck(2,i)
-  
+    dateMil <- tabl |> pluck(6,i)
+    
+    # Add shading
     obj <- obj |> dyShading(from = dateDebutInit, to = dateFinInit,color = color)
+    
+    # Add notation
+    obj <- obj |> dyAnnotation(dateMil,
+                               text = "Prod",
+                               tooltip = "Produits frais",
+                               attachAtBottom = TRUE,
+                               width = 40)
   }
   return(obj)
 }
@@ -437,17 +451,29 @@ SemestreTable <- tibble(
         "2022-3-31","2022-6-30","2022-9-30","2022-12-31"
         )
   )
+
+
 ```
 
+Afin de retrouver les dates du dataset qui sont plus proches des dates du milieu
 ```{r}
-SemestreTable <- SemestreTable |> mutate(Date=as.Date(fin)) |> mutate(Quarter=as.yearqtr(Date)) 
+# Fonction pour trouver la date la plus proche dans vecB pour une date donnée
+find_closest_date <- function(date, vec) {
+  closest_date <- vec[which.min(abs(vec - date))]
+  return(closest_date)
+}
+
+SemestreTable <- SemestreTable |> 
+  mutate(Date=as.Date(fin)) |>
+  mutate(Quarter=as.yearqtr(Date),
+         DateMil=Date %m-% months(1),
+         DateMilFind= sapply(DateMil,
+                             function(date) find_closest_date(date, priceGlobCleanFull$DATE))|>
+           as.Date()
+         )
+
+SemestreTable
+
 ```
 
-
-```{r}
-i <- 1
-color = c("#FFE6E6","#CCEBD6")
-    # Couleur retenu
-color[c(i%%2==0,i%%2==1)]
-```
 
