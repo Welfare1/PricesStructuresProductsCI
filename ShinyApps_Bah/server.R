@@ -7,28 +7,41 @@
 #    https://shiny.posit.co/
 #
 
-library(shiny)
-library(plotly)
-library(bslib)
+
 
 # Define server logic required to draw a histogram
 function(input, output, session) {
-
-    output$distPlot <- renderPlot({
-
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
-
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white',
-             xlab = 'Waiting time to next eruption (in mins)',
-             main = 'Histogram of waiting times')
-
-    })
     
-    output$plot <- renderUI({
-      plot_ly(diamonds, x = ~price)
-    })
+  ##########################################################""
+  # Analyse par region
+  # Carte
+  
+  output$aRegionM <- renderLeaflet({
+    leaflet() %>%
+      addProviderTiles("OpenStreetMap.Mapnik") %>%
+      addPolygons(data = dpt2, fillColor = "blue", fillOpacity = 0.2)
+  })
+    
+  
+  ###############################""
+  # Boxplot
+  
+  # Filtrer les données priceGlob en fonction du produit et de la date sélectionnés
+  filteredPriceGlob <- reactive({
+    subset(priceGlob, PRODUITS == input$produit & DATE == input$date)
+  })
+  
+  # Rendre le boxplot basé sur le produit et la ville sélectionnés
+  output$aRegionP <- renderPlot({
+   
+    filtered_data <- filteredPriceGlob()
+    
+    ggplot(filtered_data, aes(x = VILLE, y = PRIX)) +
+      geom_boxplot() +
+      labs(title = paste("Boîte à moustaches des prix pour", input$produit, "le", input$date),
+           x = "Ville", y = "Prix")
+  })
+
+    
 
 }

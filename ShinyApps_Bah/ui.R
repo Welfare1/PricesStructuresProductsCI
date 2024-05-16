@@ -7,11 +7,6 @@
 #    https://shiny.posit.co/
 #
 
-library(shiny)
-library(plotly)
-library(bslib)
-library(leaflet)
-library(DT)
 fluidPage(
 
     # Sidebar with a slider input for number of bins
@@ -211,28 +206,28 @@ fluidPage(
                             div(
                               style = "background-color: #478FFC; padding: 15px; margin-bottom: 15px;",
                               selectizeInput(inputId = "region", label = "Region: ", selected = "Region1",
-                                             choices = c("Region1", "Region2", "Region3")),
+                                             choices = priceGlob$VILLE),
                               selectizeInput(inputId = "ville", label = "Ville: ", selected = "Ville1",
-                                             choices = c("Ville1", "Ville2", "Ville3"))
+                                             choices = dpt2$ADM2_FR)
                             ),
                             
                            
                             div(
                               style = "background-color:#50FC47; padding: 15px; margin-bottom: 15px;",
                               selectizeInput(inputId = "hierarchie", label = "Hierarchie: ", selected = "Hierarchie1",
-                                             choices = c("Hierarchie1", "Hierarchie2", "Hierarchie3")),
+                                             choices = priceGlob$CATEGORIE),
                             
                               selectizeInput(inputId = "categorie", label = "Categorie: ", selected = "Categorie1",
-                                             choices = c("Categorie1", "Categorie2", "Categorie3")),
+                                             choices = priceGlob$SPECIFICITE),
                             
                               selectizeInput(inputId = "produit", label = "Produits: ", selected = "Produit1",
-                                             choices = c("Produit1", "Produit2", "Produit3"))
+                                             choices = priceGlob$PRODUITS)
                             ),
                             
                             div(
                               style = "background-color: #FCE147; padding: 15px; margin-bottom: 15px;",
-                              selectizeInput(inputId = "annee", label = "Annee: ", selected = "2020",
-                                             choices = c("2020", "2021", "2022"))
+                              selectizeInput(inputId = "date", label = "Annee: ", selected = priceGlob$ANNEE[0],
+                                             choices = priceGlob$ANNEE)
                             )
                             
                             ),
@@ -259,7 +254,8 @@ fluidPage(
                               column(width = 7,
                                      div(
                                        style = "background-color: #FFFFFF;margin: 10px",
-                                       leafletOutput("ARegionM"),
+                                       
+                                       leafletOutput("aRegionM"),
                                        p("La palettte verte désigne les zones au prix moyen en dessous du prix moyen général.
                                          A contrario, une couleur rouge désignera les zones aux moyen dépassant le prix moyen global.")
                                      ),
@@ -267,8 +263,8 @@ fluidPage(
                               column(width = 5,
                                      div(
                                        style = "background-color: #FFFFFF;margin-right: 10px",
-                                       h6("Boxplot"),
-                                       plotOutput("ARegionP"),
+                                       h6("DISTRIBUTION DES PRIX SELON LES REGIONS DE LA CI"),
+                                       plotOutput("aRegionP"),
                                        p("La palettte verte désigne les zones au prix moyen en dessous du prix moyen général.
                                          A contrario, une couleur rouge désignera les zones aux moyen dépassant le prix moyen global.")
                                      ),
