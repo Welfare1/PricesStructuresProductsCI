@@ -28,9 +28,9 @@ fluidPage(
                    tags$style(
                      HTML(
                        "
-                            .body_row {
-                              background: linear-gradient(to bottom, #007bff, #ffffff); 
-                            }
+                        .body_row {
+                          background: linear-gradient(to bottom, #007bff, #ffffff); 
+                        }
                             "
                      )
                    )
@@ -53,8 +53,8 @@ fluidPage(
                    
                    column(width = 2,
                           style="
-                                    display: inline-flex;
-                                    justify-content: space-evenly;",
+                          display: inline-flex;
+                          justify-content: space-evenly;",
                           img(src="img/AmoirCI.png",
                               title="Popup",
                               width = "60%"
