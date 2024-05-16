@@ -13,6 +13,7 @@ library(tidyverse)
 library(stringdist)
 library(tidygeocoder)
 library(sf)
+library(zoo)
 ```
 
 ## Chargement des jeux de données
@@ -28,27 +29,32 @@ priceGlob <- unique(priceGlob)
 CatProd <- read_csv("../data/CatProduit.csv", locale = locale())
 
 # Jeu de données contenant les produits inexistant dans CatProd
-CatProdSupp <- read_csv2("../data/CatProduitSupp.csv", locale = locale())
 priceGlob <- read_csv("../data/ECHO_DU_MARCHE.csv",locale = locale())
 
-CatProd <- read_csv("../data/CatProduit.csv", locale = locale())
+# Chargement du jeu de données contenant les catégories supplémentaires absents dans CatProd
 CatProdSupp <- read_delim("../data/CatProduitSupp.csv", delim = ";", locale = locale())
 
+# Changement des noms des colonnes de CatProdSupp pour la jointure
 colnames(CatProdSupp) <- c("Categories","Produits")
 
 # Concaténation des jeux de données CatProd et CatProdSupp
 CatProd <- bind_rows(CatProd,CatProdSupp)
 
-# Transformation de la colonne PRODUITS en miniscule afin de faciliter le matching
-
+# Tranformation :
+## Transformation de la colonne PRODUITS en miniscule afin de faciliter le matching
 priceGlob <- priceGlob |> mutate(PRODUITS=str_to_lower(PRODUITS))
 # priceGlob
 
-# Transformation du mois en format date
+## Transformation du mois en format date
 priceGlob <- priceGlob |> mutate(MOIS=month(DATE,label=TRUE))
 
-# Transformation de la colonne `Produits` du dataset CatProd en miniscule
+## Transformation du mois en format date numérique
+priceGlob <- priceGlob |> mutate(MOISNum=month(DATE))
+## Transformation de la colonne `Produits` du dataset CatProd en miniscule
 CatProd <- CatProd |> mutate(Produits=str_to_lower(Produits))
+
+## Remplacement des prix null dans prix par NA
+priceGlob <- priceGlob |> mutate(PRIX=replace(priceGlob$PRIX,which(priceGlob$PRIX==0),NA))
 
 ```
 
@@ -121,6 +127,34 @@ namesCol <- colnames(priceGlob)
 
 # Changement de nom de la colonne `catégories`
 colnames(priceGlob)<- c(namesCol[1:(length(namesCol)-1)],"SPECIFICITE")
+
+
+######### Code Bah à améliorer
+
+# Creating a tibble
+priceGlob_visuel <- tibble(
+  PRODUITS = priceGlob$PRODUITS,
+  DATE = priceGlob$DATE,
+  VILLE = priceGlob$VILLE,
+  PRIX = priceGlob$PRIX
+)
+# Pivot to wide format
+priceGlob_visuel <- priceGlob_visuel |> 
+  pivot_wider(names_from = VILLE, values_from = PRIX)
+
+# Specify the cities for extraction
+cities <- c("ABIDJAN", "SANPEDRO", "BOUAKE", "YAMOUSSOUKRO", "MAN", "KORHOGO")
+
+for (city in cities) {
+  priceGlob_visuel[[city]] <- as.numeric(str_extract(priceGlob_visuel[[city]], "\\d+"))
+}
+
+
+priceGlob_visuel<- priceGlob_visuel %>%
+  rename("SAN-PEDRO" = "SANPEDRO")
+print(priceGlob_visuel)
+######### 
+
 
 # Résultat
 priceGlob
@@ -232,15 +266,12 @@ Pour cela la correspondance de chaque ville par rapport à sa ville la plus proc
 
 
 ```{r}
+# Chargement des données géographique de la Côte d'Ivoire
 dpt <- sf::read_sf("../data/civ")
 
-# Géolocalisation des villes de bases
-region <- unique(priceGlob$VILLE) |> as_tibble()
-region$value[2] <- "SAN-PEDRO"
-region <- region |> mutate(pays = "Cote d'Ivoire")
-adressRegion <- geocode(region,city = value, country = pays)
+# region: Régions de bases; adressRegion:Adresse des régions de bases
 
-# Ajout de l'attribut geometry
+# Ajout de l'attribut geometry adressRegion:Adresse des régions de bases
 adressRegionGeo <- adressRegion |> st_as_sf(coords = c("long","lat")) |> st_set_crs(4326)
 
 # Les centroïdes des villes de bases
@@ -270,73 +301,153 @@ dpt2
 
 Trois indicateurs feront l'objet d'analyse dans un premier temps. Il s'agit entre autre de:
 - Taux de variation du prix par date;
-- Taux de variation du prix par région;²
+- Taux de variation moyen;
+- Taux de variation moyen en valeur absolue;
 - Prix du panier moyen (*).
 
 ## Format initial du dataset
 ```{r}
 # pivotement du dataset
-priceGlobClean <- priceGlob_visuel_m |> pivot_longer(!(PRODUITS:DATE),names_to = "VILLE", values_to = "PRIX")
+priceGlobClean <- priceGlob_visuel_m |>
+  pivot_longer(!(PRODUITS:DATE),
+               names_to = "VILLE",
+               values_to = "PRIX")
 
 # Jointure au dataset initial
 priceGlobCleanFull <- left_join(priceGlob |>
-                                  select(MOIS:VILLE),
+                                  select(c(MOIS:VILLE,MOISNum)),
                                 priceGlobClean,
                                 join_by(PRODUITS,DATE,VILLE)
                                 )
 ```
 
-## Variation des prix par date, par produit
+## Variation des prix par (Dimension)
 ```{r}
 # A une date pour un produit un seul prix est défini
 # Dataset de base
-priceGlobClean <- priceGlobClean |>
+priceGlobCleanFull <- priceGlobCleanFull |>
   group_by(PRODUITS,VILLE) |>
   mutate(PRIXPREC=lag(PRIX,order_by = DATE)) # Dataset de base
   # Indicateur
-priceGlobClean |>
-  mutate(TauxVar=round((PRIX-PRIXPREC)/PRIXPREC,2)) |>
-  group_by(DATE) |>
+priceGlobCleanFull |>
+  filter(CATEGORIE!="PRODUITS MANUFACTURES") |>
+  mutate(MoisAn=as.yearmon(DATE, "%m/%Y"),
+         TauxVar=round((PRIX-PRIXPREC)/PRIXPREC,2),
+         ANNEE=as.character(ANNEE),
+         ) |>
+  group_by(MOIS,ANNEE) |>
   summarise(PrixMoy=mean(PRIX,na.rm = TRUE),
-            VarMoy=mean(TauxVar,na.rm =TRUE))|>
+            VarMoy=mean(TauxVar,na.rm =TRUE),
+            VarMoyAbs=mean(abs(TauxVar),na.rm =TRUE)) |> 
   ## Plot
   ggplot()+
-  aes(x=DATE,y=PrixMoy)+
+  aes(x=MOIS,y=PrixMoy,color=ANNEE)+
+  geom_point()+
   geom_line()+
   theme_minimal()
 ```
 
-## Variation des prix par date, par produit
-Nous utilisons ici les dates format Mois-an. 
+## Exportation
+Nous exportons les données transformer afin d'en faire la visualisation dans l'application shiny.
 ```{r}
-# A une date pour un produit un seul prix est défini
-# Dataset de base
-priceGlobClean |>
-  mutate(MOIS=as.yearmon(DATE, "%m/%Y")) |> 
-  group_by(PRODUITS) |> 
-  mutate(PRIXPREC=lag(PRIX,order_by = DATE,default = NA)) |> 
-  mutate(TauxVar=round((PRIX-PRIXPREC)/PRIXPREC,2)) |>
-  group_by(MOIS) |> 
-   summarise(PrixMoy=mean(PRIX,na.rm = TRUE),
-            VarMoy=mean(TauxVar,na.rm =TRUE)) |> ungroup() |> 
-  ggplot()+
-  aes(x=MOIS,y=VarMoy)+
-  geom_line()+
-  theme_minimal()
-
-```
-
-```{r}
-priceGlob |> filter(PRIX==0)
+# write.csv(priceGlobCleanFull, "priceGlobCleanFull.csv", row.names = FALSE)
 ```
 
 
-## Par produits selon les villes
+dygraph
 ```{r}
-# A une date pour un produit un seul prix est défini
-priceGlobClean |>group_by(PRODUITS,VILLE) |>   mutate(PRIXPREC=lag(PRIX,order_by = DATE)) |> mutate(TauxVar=round((PRIX-PRIXPREC)/PRIXPREC,2)) |> ungroup() |> filter(TauxVar==Inf)
+library(dygraphs)
+priceGlobCleanFull |>
+  # filter(ANNEE==2020) |>
+  mutate(MoisAn=as.yearmon(DATE),
+         QuarterAn=as.yearqtr(DATE),
+         TauxVar=round((PRIX-PRIXPREC)/PRIXPREC,2),
+         
+         ) |>
+  group_by(QuarterAn) |> 
+  summarise(PrixMoy=mean(PRIX,na.rm = TRUE),
+            VarMoy=mean(TauxVar,na.rm =TRUE),
+            VarMoyAbs=mean(abs(TauxVar),na.rm =TRUE)) |> 
+  select(QuarterAn,PrixMoy) |> 
+  dygraph() |> 
+  addShading(SemestreTable) |> 
+   dyAnnotation("2021-7-1", text = "Produits frais", tooltip = "Korea",attachAtBottom = TRUE, width = 60)
+  
 ```
 
 
 
+
+```{r}
+addShading <- function(dygraph,tabl){
+  
+  # Initialisation des variables
+  dateDebutInit <- tabl |> pluck(1,1)
+  dateFinInit <- tabl |> pluck(2,1)
+  obj <- dygraph |> dyShading(from =dateDebutInit, to = dateFinInit,color = "#CCEBD6")
+  
+  for (i in 2:dim(tabl)[1]){
+    # Ensemble de couleur
+    color = c("#FFE6E6","#CCEBD6")
+    # choix de la couleur
+    color =color[c(i%%2==0,i%%2==1)]
+    
+    # Récupération des dates de débuts et de fin
+    dateDebutInit <- tabl |> pluck(1,i)
+    dateFinInit <- tabl |> pluck(2,i)
+  
+    obj <- obj |> dyShading(from = dateDebutInit, to = dateFinInit,color = color)
+  }
+  return(obj)
+}
+
+```
+
+Affichage du classement des produits et catégories
+```{r}
+priceGlobCleanFull |>
+  # filter(ANNEE==2020) |>
+  filter(CATEGORIE!="PRODUITS MANUFACTURES") |>
+  mutate(MoisAn=as.yearmon(DATE),
+         QuarterAn=as.yearqtr(DATE),
+         TauxVar=round((PRIX-PRIXPREC)/PRIXPREC,2),
+         ) |>
+  group_by(ANNEE,QuarterAn,`SOUS-CATEGORIE`) |> 
+  summarise(PrixMoy=mean(PRIX,na.rm = TRUE),
+            VarMoy=mean(TauxVar,na.rm =TRUE),
+            VarMoyAbs=mean(abs(TauxVar),na.rm =TRUE)) |> 
+  mutate(Rank=min_rank(VarMoy)) |>
+  filter(Rank==1)|> 
+  ungroup() |>
+  distinct(QuarterAn,.keep_all=TRUE)
+
+
+```
+
+
+Les saisons et leur périodes
+```{r}
+SemestreTable <- tibble(
+  debut=c("2020-1-1","2020-4-1","2020-7-1","2020-10-1",
+          "2021-1-1","2021-4-1","2021-7-1","2021-10-1",
+          "2022-1-1","2022-4-1","2022-7-1","2022-10-1"
+          ),
+  fin=c("2020-3-31","2020-6-30","2020-9-30","2020-12-31",
+        "2021-3-31","2021-6-30","2021-9-30","2021-12-31",
+        "2022-3-31","2022-6-30","2022-9-30","2022-12-31"
+        )
+  )
+```
+
+```{r}
+SemestreTable <- SemestreTable |> mutate(Date=as.Date(fin)) |> mutate(Quarter=as.yearqtr(Date)) 
+```
+
+
+```{r}
+i <- 1
+color = c("#FFE6E6","#CCEBD6")
+    # Couleur retenu
+color[c(i%%2==0,i%%2==1)]
+```
 
