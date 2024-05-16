@@ -240,21 +240,6 @@ print(priceGlob)
 setwd("../ShinyApps_Bah/data")
 write_csv(priceGlob, "priceGlob.csv")
 
-
-
-
-```{r}
-#Trier le jeu de données par PRODUITS et DATE
-priceGlob_visuel_m <- priceGlob_visuel_m |>
-  arrange(PRODUITS, DATE)
-print(priceGlob_visuel_m)
-
-# Remplir les valeurs manquantes avec les valeurs précédentes dans le cadre de chaque groupe de PRODUITS
-priceGlob_visuel_m <- priceGlob_visuel_m |>
-  group_by(PRODUITS) |>
-  fill(everything(), .direction = "down")
-print(priceGlob_visuel_m)
-
 ```
 
 ## Traitement des données géographiques
