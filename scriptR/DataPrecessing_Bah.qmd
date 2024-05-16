@@ -110,14 +110,14 @@ L'inclusion de la colonne catégorie dans le dataset`priceGlob`, se fait au moye
 ```{r,warning=FALSE}
 # Retrait de la colonne matchingProduit dans la jointure
 priceGlob <- left_join(priceGlob,CatGlob[-3], by=join_by("PRODUITS"=="Produit"),keep = FALSE)
-
+priceGlob 
 # Nom des colonnes
 namesCol <- colnames(priceGlob)
 
 # Changement de nom de la colonne `catégories`
 colnames(priceGlob)<- c(namesCol[1:(length(namesCol)-1)],"SPECIFICITE")
 
-# Creating a tibble
+# Creation de priceGlob_visuel
 priceGlob_visuel <- tibble(
   PRODUITS = priceGlob$PRODUITS,
   DATE = priceGlob$DATE,
@@ -125,7 +125,7 @@ priceGlob_visuel <- tibble(
   PRIX = priceGlob$PRIX
 )
 
-# Pivot to wide format
+
 priceGlob_visuel <- priceGlob_visuel %>%
   pivot_wider(names_from = VILLE, values_from = PRIX)
 
@@ -216,7 +216,31 @@ for (ville in cities) {
   }
 }
 
-```
+priceGlob_visuel_m
+
+
+# Convertir le format large en format long
+priceGlob_visuel_long <- priceGlob_visuel_m %>%
+  pivot_longer(cols = -c(PRODUITS, DATE), 
+               names_to = "VILLE",        
+               values_to = "PRIX")  
+sum(is.na(priceGlob_visuel_long$PRIX))
+sum(is.na(priceGlob$PRIX))
+# Afficher le tableau en format long résultant
+print(priceGlob_visuel_long)
+
+# Suppression de la colonne PRIX de priceGlob
+priceGlob <- priceGlob %>%
+  select(-PRIX)
+
+priceGlob <- full_join(priceGlob,priceGlob_visuel_long,by = c("PRODUITS", "DATE", "VILLE"))
+print(priceGlob)
+
+# Définir le chemin du répertoire du shiny
+setwd("../ShinyApps_Bah/data")
+write_csv(priceGlob, "priceGlob.csv")
+
+
 
 
 ```{r}
@@ -230,6 +254,7 @@ priceGlob_visuel_m <- priceGlob_visuel_m |>
   group_by(PRODUITS) |>
   fill(everything(), .direction = "down")
 print(priceGlob_visuel_m)
+
 ```
 
 ## Traitement des données géographiques
@@ -264,7 +289,15 @@ VillePaysVilleProche <- MatriceDistance  |>
   as_tibble()|>
   select(V1) |> 
   mutate(VillePays=dpt$ADM3_FR,VilleProche=map_chr(V1,~region$value[.x])) |> select(2:3)
+VillePaysVilleProche
+
 # Jointure avec la base de données sf des villes de la côte d'ivoire
 dpt2 <- left_join(dpt,VillePaysVilleProche,join_by(ADM3_FR==VillePays))
 dpt2
 ```
+```{r}
+
+ ggplot( dpt2) +geom_sf( fill = "white") +
+          theme_void()
+```
+

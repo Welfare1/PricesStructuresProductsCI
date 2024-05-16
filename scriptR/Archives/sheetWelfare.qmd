@@ -4,7 +4,6 @@ format: html
 editor: visual
 ---
 
-
 Fonction permettant d'affecter les valeurs d'une liste selon la proximité des villes. Nous avons ici 4 villes:
 
 ```{r}
@@ -31,8 +30,6 @@ priceGlob |> dim()
 
 priceGlob 
 ```
-
-
 
 ```{r,warning=FALSE}
 for (i in 1:dim(priceGlob)) {
@@ -98,5 +95,3 @@ which(c("ABIDJAN","SANPEDRO", "BOUAKE", "YAMOUSSOUKRO", "MAN","KORHOGO")%in%c("K
 priceGlob |> unique()
 
 ```
-
-
