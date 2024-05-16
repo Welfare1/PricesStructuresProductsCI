@@ -12,8 +12,8 @@ library(leaflet)
 library(DT)
 
 
-dpt <- read_sf("civ")
-priceGlob <- read.csv("priceGlob.csv")
+dpt <- read_sf("data/civ")
+priceGlob <- read.csv("data/priceGlobCleanFull.csv")
 
 # Géolocalisation des villes de bases
 region <- unique(priceGlob$VILLE) |> as_tibble()

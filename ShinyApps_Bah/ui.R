@@ -205,20 +205,16 @@ fluidPage(
                             
                             div(
                               style = "background-color: #478FFC; padding: 15px; margin-bottom: 15px;",
-                              selectizeInput(inputId = "region", label = "Region: ", selected = "Region1",
-                                             choices = priceGlob$VILLE),
                               selectizeInput(inputId = "ville", label = "Ville: ", selected = "Ville1",
-                                             choices = dpt2$ADM2_FR)
+                                             choices = priceGlob$VILLE)
                             ),
                             
                            
                             div(
                               style = "background-color:#50FC47; padding: 15px; margin-bottom: 15px;",
-                              selectizeInput(inputId = "hierarchie", label = "Hierarchie: ", selected = "Hierarchie1",
-                                             choices = priceGlob$CATEGORIE),
-                            
+                              
                               selectizeInput(inputId = "categorie", label = "Categorie: ", selected = "Categorie1",
-                                             choices = priceGlob$SPECIFICITE),
+                                             choices = unique(priceGlob$SPECIFICITE)),
                             
                               selectizeInput(inputId = "produit", label = "Produits: ", selected = "Produit1",
                                              choices = priceGlob$PRODUITS)

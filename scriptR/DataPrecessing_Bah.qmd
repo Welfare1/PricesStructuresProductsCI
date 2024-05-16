@@ -313,4 +313,8 @@ priceGlobCleanFull |>
   summarise(PrixMoy=mean(PRIX,na.rm = TRUE),
             VarMoy=mean(TauxVar,na.rm =TRUE),
             VarMoyAbs=mean(abs(TauxVar),na.rm =TRUE))
+priceGlobCleanFull
 ```
+
+
+
