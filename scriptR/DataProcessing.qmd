@@ -13,6 +13,7 @@ library(tidyverse)
 library(stringdist)
 library(tidygeocoder)
 library(sf)
+library(zoo)
 ```
 
 ## Chargement des jeux de données
@@ -47,12 +48,14 @@ priceGlob <- priceGlob |> mutate(PRODUITS=str_to_lower(PRODUITS))
 ## Transformation du mois en format date
 priceGlob <- priceGlob |> mutate(MOIS=month(DATE,label=TRUE))
 
+## Transformation du mois en format date numérique
+priceGlob <- priceGlob |> mutate(MOISNum=month(DATE))
 ## Transformation de la colonne `Produits` du dataset CatProd en miniscule
 CatProd <- CatProd |> mutate(Produits=str_to_lower(Produits))
 
 ## Remplacement des prix null dans prix par NA
 priceGlob <- priceGlob |> mutate(PRIX=replace(priceGlob$PRIX,which(priceGlob$PRIX==0),NA))
-# priceGlob
+
 ```
 
 ## Transformation des colonnes
