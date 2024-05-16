@@ -218,6 +218,7 @@ for (ville in cities) {
 
 ```
 
+
 ```{r}
 #Trier le jeu de données par PRODUITS et DATE
 priceGlob_visuel_m <- priceGlob_visuel_m |>

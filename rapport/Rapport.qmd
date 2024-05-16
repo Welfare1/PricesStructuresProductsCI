@@ -55,6 +55,8 @@ L'ensemble des tâches effectuées passe par un travail de fond sur les différe
 
 ## Calcul des indicateurs
 
+La notion de meilleur produit est donc le produit qui a le taux de variation moyen le plus petit et le taux de variation en valeur absolue le plus grand.
+
 # REFERENCE
 
 [@stringdist]

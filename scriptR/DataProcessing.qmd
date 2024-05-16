@@ -28,23 +28,31 @@ priceGlob <- unique(priceGlob)
 CatProd <- read_csv("../data/CatProduit.csv", locale = locale())
 
 # Jeu de données contenant les produits inexistant dans CatProd
-CatProdSupp <- read_csv2("../data/CatProduitSupp.csv", locale = locale())
 priceGlob <- read_csv("../data/ECHO_DU_MARCHE.csv",locale = locale())
 
-CatProd <- read_csv("../data/CatProduit.csv", locale = locale())
+# Chargement du jeu de données contenant les catégories supplémentaires absents dans CatProd
 CatProdSupp <- read_delim("../data/CatProduitSupp.csv", delim = ";", locale = locale())
 
+# Changement des noms des colonnes de CatProdSupp pour la jointure
 colnames(CatProdSupp) <- c("Categories","Produits")
 
 # Concaténation des jeux de données CatProd et CatProdSupp
 CatProd <- bind_rows(CatProd,CatProdSupp)
 
-# Transformation de la colonne PRODUITS en miniscule afin de faciliter le matching
-
+# Tranformation :
+## Transformation de la colonne PRODUITS en miniscule afin de faciliter le matching
 priceGlob <- priceGlob |> mutate(PRODUITS=str_to_lower(PRODUITS))
+# priceGlob
 
+## Transformation du mois en format date
+priceGlob <- priceGlob |> mutate(MOIS=month(DATE,label=TRUE))
+
+## Transformation de la colonne `Produits` du dataset CatProd en miniscule
 CatProd <- CatProd |> mutate(Produits=str_to_lower(Produits))
 
+## Remplacement des prix null dans prix par NA
+priceGlob <- priceGlob |> mutate(PRIX=replace(priceGlob$PRIX,which(priceGlob$PRIX==0),NA))
+# priceGlob
 ```
 
 ## Transformation des colonnes
@@ -256,4 +264,50 @@ VillePaysVilleProche <- MatriceDistance  |>
 # Jointure avec la base de données sf des villes de la côte d'ivoire
 dpt2 <- left_join(dpt,VillePaysVilleProche,join_by(ADM3_FR==VillePays))
 dpt2
+```
+
+
+
+# Calcul des indicateurs
+
+Trois indicateurs feront l'objet d'analyse dans un premier temps. Il s'agit entre autre de:
+- Le prix moyen
+- Le taux de variation moyen;
+- Le taux de variation moyen en valeur absolue.
+
+## Format initial du dataset
+```{r}
+# pivotement du dataset
+priceGlobClean <- priceGlob_visuel_m |>
+  pivot_longer(!(PRODUITS:DATE),
+               names_to = "VILLE",
+               values_to = "PRIX")
+
+# Jointure au dataset initial
+priceGlobCleanFull <- left_join(priceGlob |>
+                                  select(c(MOIS:VILLE,MOISNum)),
+                                priceGlobClean,
+                                join_by(PRODUITS,DATE,VILLE)
+                                )
+```
+
+## Variation des prix par (Dimension)
+Le calcul de ces indicateurs sur les autres axes pourra être obtenu moyennant un changement d'axe d'analyse (Date, Ville, Produits etc.)
+```{r}
+# A une date pour un produit un seul prix est défini
+# Dataset de base
+priceGlobCleanFull <- priceGlobCleanFull |>
+  group_by(PRODUITS,VILLE) |>
+  mutate(PRIXPREC=lag(PRIX,order_by = DATE)) # Dataset de base
+  # Indicateur
+priceGlobCleanFull |>
+  filter(CATEGORIE!="PRODUITS MANUFACTURES") |>
+  mutate(MoisAn=as.yearmon(DATE, "%m/%Y"),
+         TauxVar=round((PRIX-PRIXPREC)/PRIXPREC,2),
+         ANNEE=as.character(ANNEE),
+         ) |>
+  group_by(MOIS,ANNEE) |>
+  summarise(PrixMoy=mean(PRIX,na.rm = TRUE),
+            VarMoy=mean(TauxVar,na.rm =TRUE),
+            VarMoyAbs=mean(abs(TauxVar),na.rm =TRUE))
 ```
