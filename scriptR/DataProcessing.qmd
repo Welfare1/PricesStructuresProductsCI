@@ -128,6 +128,8 @@ namesCol <- colnames(priceGlob)
 # Changement de nom de la colonne `catégories`
 colnames(priceGlob)<- c(namesCol[1:(length(namesCol)-1)],"SPECIFICITE")
 
+priceGlob
+
 # Creating a tibble
 priceGlob_visuel <- tibble(
   PRODUITS = priceGlob$PRODUITS,
@@ -288,10 +290,12 @@ priceGlobClean <- priceGlob_visuel_m |>
 
 # Jointure au dataset initial
 priceGlobCleanFull <- left_join(priceGlob |>
-                                  select(c(MOIS:VILLE,MOISNum)),
+                                  select(c(MOIS:VILLE,MOISNum,SPECIFICITE)),
                                 priceGlobClean,
                                 join_by(PRODUITS,DATE,VILLE)
                                 )
+priceGlobCleanFull
+
 ```
 
 ## Variation des prix par (Dimension)
