@@ -315,7 +315,7 @@ priceGlobClean <- priceGlob_visuel_m |>
 
 # Jointure au dataset initial
 priceGlobCleanFull <- left_join(priceGlob |>
-                                  select(c(MOIS:VILLE,MOISNum)),
+                                  select(c(MOIS:VILLE,MOISNum,SPECIFICITE)),
                                 priceGlobClean,
                                 join_by(PRODUITS,DATE,VILLE)
                                 )
@@ -355,6 +355,63 @@ Nous exportons les données transformer afin d'en faire la visualisation dans l'
 
 
 dygraph
+
+Fonction pour l'annotation
+
+```{r}
+addShadNot <- function(dygraph,tabl){
+  
+  # Initialisation des variables
+  dateDebutInit <- tabl |> pluck(1,1)
+  dateFinInit <- tabl |> pluck(2,1)
+  dateMil <- tabl |> pluck(6,1)
+  dateQuarter <- tabl |> pluck(4,1)
+  textAbrev <- tabl |> pluck(7,1) |> substr(1,5)
+  textFull <- tabl |> pluck(7,1) |> substr(1,5)
+  
+  
+  obj <- dygraph |> dyShading(from =dateDebutInit, to = dateFinInit,color = "#CCEBD6")
+  obj <- obj |> dyAnnotation(dateMil,
+                               text = textAbrev,
+                               tooltip = str_c("les ",
+                                               textFull,
+                                               "S sont plus accessibles \n au ",
+                                               dateQuarter),
+                               attachAtBottom = TRUE,
+                               width = 40)
+  
+  for (i in 2:dim(tabl)[1]){
+    # Ensemble de couleur
+    color = c("#FFE6E6","#CCEBD6")
+    # choix de la couleur
+    color =color[c(i%%2==0,i%%2==1)]
+    
+    # Récupération des dates de débuts et de fin
+    dateDebutInit <- tabl |> pluck(1,i)
+    dateFinInit <- tabl |> pluck(2,i)
+    dateMil <- tabl |> pluck(6,i)
+    dateQuarter <- tabl |> pluck(4,i)
+    textAbrev <- tabl |> pluck(7,i) |> substr(1,5)
+    textFull <- tabl |> pluck(7,i)
+    
+    # Add shading
+    obj <- obj |> dyShading(from = dateDebutInit, to = dateFinInit,color = color)
+    
+    # Add notation
+    obj <- obj |> dyAnnotation(dateMil,
+                               text = textAbrev,
+                               tooltip = str_c("les ",
+                                               textFull,
+                                               "S sont plus accessibles \n au ",
+                                               dateQuarter),
+                               attachAtBottom = TRUE,
+                               width = 40)
+  }
+  return(obj)
+}
+
+```
+
 ```{r}
 library(dygraphs)
 priceGlobCleanFull |>
@@ -370,52 +427,13 @@ priceGlobCleanFull |>
             VarMoyAbs=mean(abs(TauxVar),na.rm =TRUE)) |> 
   select(DATE,PrixMoy) |> 
   dygraph() |> 
-  addShadNot(SemestreTable)
+  addShadNot(ranKTable)
   
 ```
 
 
 
 
-```{r}
-addShadNot <- function(dygraph,tabl){
-  
-  # Initialisation des variables
-  dateDebutInit <- tabl |> pluck(1,1)
-  dateFinInit <- tabl |> pluck(2,1)
-  dateMil <- tabl |> pluck(6,1)
-  obj <- dygraph |> dyShading(from =dateDebutInit, to = dateFinInit,color = "#CCEBD6")
-  obj <- obj |> dyAnnotation(dateMil,
-                               text = "Prod",
-                               tooltip = "Produits frais",
-                               attachAtBottom = TRUE,
-                               width = 40)
-  
-  for (i in 2:dim(tabl)[1]){
-    # Ensemble de couleur
-    color = c("#FFE6E6","#CCEBD6")
-    # choix de la couleur
-    color =color[c(i%%2==0,i%%2==1)]
-    
-    # Récupération des dates de débuts et de fin
-    dateDebutInit <- tabl |> pluck(1,i)
-    dateFinInit <- tabl |> pluck(2,i)
-    dateMil <- tabl |> pluck(6,i)
-    
-    # Add shading
-    obj <- obj |> dyShading(from = dateDebutInit, to = dateFinInit,color = color)
-    
-    # Add notation
-    obj <- obj |> dyAnnotation(dateMil,
-                               text = "Prod",
-                               tooltip = "Produits frais",
-                               attachAtBottom = TRUE,
-                               width = 40)
-  }
-  return(obj)
-}
-
-```
 
 Affichage du classement des produits et catégories
 ```{r}
@@ -476,4 +494,152 @@ SemestreTable
 
 ```
 
+# récupération du classement des produits
+```{r}
+indicateur <- priceGlobCleanFull |>
+  # filter(ANNEE==2020) |>
+  filter(CATEGORIE!="PRODUITS MANUFACTURES") |>
+  mutate(MoisAn=as.yearmon(DATE),
+         QuarterAn=as.yearqtr(DATE),
+         TauxVar=round((PRIX-PRIXPREC)/PRIXPREC,2),
+         ) |>
+  group_by(ANNEE,QuarterAn,`SOUS-CATEGORIE`) |> 
+  summarise(PrixMoy=mean(PRIX,na.rm = TRUE),
+            VarMoy=mean(TauxVar,na.rm =TRUE),
+            VarMoyAbs=mean(abs(TauxVar),na.rm =TRUE)) |> 
+  mutate(Rank=min_rank(VarMoy)) |>
+  filter(Rank==1)|> 
+  ungroup() |>
+  distinct(QuarterAn,.keep_all=TRUE)
+
+ranKTable <- left_join(SemestreTable,indicateur |> select(QuarterAn,`SOUS-CATEGORIE`),
+          join_by(Quarter==QuarterAn),
+          keep = FALSE)
+
+```
+
+
+```{r}
+SaisonMois <- priceGlobCleanFull |>
+  # filter(ANNEE==2020) |>
+  filter(CATEGORIE!="PRODUITS MANUFACTURES") |>
+  mutate(MoisAn=as.yearmon(DATE),
+         QuarterAn=as.yearqtr(DATE),
+         TauxVar=round((PRIX-PRIXPREC)/PRIXPREC,2),
+         ) |>ungroup() |> 
+  summarize(PrixMoy=mean(PRIX,na.rm = TRUE),
+            VarMoy=mean(TauxVar,na.rm =TRUE),
+            VarMoyAbs=mean(abs(TauxVar),na.rm =TRUE),
+            .by = c(ANNEE,MOIS)) 
+SaisonMois
+
+```
+
+```{r}
+library(gt)
+towny |>
+  dplyr::select(name, census_div, population_2021, density_2021) |>
+  dplyr::arrange(desc(population_2021)) |>
+  dplyr::filter(census_div %in% c(
+    "Toronto", "Peel", "York", "Durham", "Halton"
+  )) |>
+  dplyr::mutate(density_2021_sqmi = density_2021 / 0.3861) |>
+  # Début des syntaxes gt
+  gt(rowname_col = "name", groupname_col = "census_div") |>
+  tab_header(title = "Population Summary of the Greater Toronto Area") |>
+  row_group_order(groups = c(
+    "Toronto", "Peel", "York", "Durham", "Halton"
+  )) |>
+  fmt_number(columns = starts_with("density"), decimals = 1) |>
+  fmt_integer(columns = c(population_2021, density_2021_sqmi)) |>
+  text_replace(
+    pattern = "Toronto",
+    replacement = "City of Toronto (single-tier)",
+    locations = cells_row_groups(groups = "Toronto")
+  ) |>
+  tab_stub_indent(rows = everything(), indent = 2) |>
+  cols_label(
+    population_2021 ~ md("Population"),
+    density_2021 ~ md("ppl/km^2^"),
+    density_2021_sqmi ~ md("ppl/mi^2^")
+  ) |>
+  cols_width(
+    stub() ~ px(200),
+    everything() ~ px(100)
+  ) |>
+  tab_spanner(
+    label = "Density",
+    columns = starts_with("density")
+  ) |>
+  grand_summary_rows(
+    columns = population_2021,
+    fns = list(
+      list(label = "Total Population", id = "total_pop", fn = "sum"),
+      list(label = "Percentage of Province", id = "pct") ~ sum(.) / 14.2E6
+    ),
+    fmt = list(
+      ~ fmt_integer(., rows = "total_pop"),
+      ~ fmt_percent(., rows = "pct", decimals = 1)
+    ),
+    side = "top",
+    missing_text = ""
+  ) |>
+  summary_rows(
+    columns = population_2021,
+    groups = c("Peel", "York", "Durham", "Halton"),
+    fns = list(
+      list(label = "Regional Population", id = "pop_region") ~ sum(.),
+      list(label = "Percentage of GTA", id = "pct_gta") ~ sum(.) / 6711985
+    ),
+    fmt = list(
+      ~ fmt_integer(., rows = "pop_region"),
+      ~ fmt_percent(., rows = "pct_gta", decimals = 1)
+    ),
+    side = "top",
+    missing_text = "",
+  ) |>
+  opt_stylize(style = 1, color = "cyan")
+```
+
+
+
+```{r}
+RankTableSai <- priceGlobCleanFull |>
+  # filter(ANNEE==2020) |>
+  filter(CATEGORIE!="PRODUITS MANUFACTURES") |>
+  ungroup() |> 
+  mutate(MoisAn=as.yearmon(DATE),
+         QuarterAn=as.yearqtr(DATE),
+         TauxVar=round((PRIX-PRIXPREC)/PRIXPREC,2),
+         QuarterName=str_c("Semestre ",quarter(DATE))
+         ) |> 
+  group_by(ANNEE,QuarterName,MOIS,SPECIFICITE) |> 
+  summarise(PrixMoy=mean(PRIX,na.rm = TRUE),
+            VarMoy=mean(TauxVar,na.rm =TRUE),
+            VarMoyAbs=mean(abs(TauxVar),na.rm =TRUE)
+            ) |> 
+  mutate(Rank=min_rank(VarMoy)) |>
+  filter(Rank==1)|> 
+  ungroup() |> 
+  distinct(ANNEE,QuarterName,MOIS,.keep_all = TRUE) |> 
+  pivot_wider(names_from = ANNEE,
+              values_from = SPECIFICITE,
+              id_cols =c(QuarterName,MOIS)
+              )
+
+```
+
+```{r}
+RankTableSai |>
+   # Début des syntaxes gt
+  gt(rowname_col = "MOIS", groupname_col = "QuarterName") |>
+  cols_label(
+    `2020` ~ md(">**2020**"),
+    `2021` ~ md(">**2021**"),
+    `2022` ~ md(">**2022**")
+  ) |> 
+  opt_stylize(style = 6, color = "pink")
+  
+```
+```
 

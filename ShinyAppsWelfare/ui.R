@@ -295,23 +295,48 @@ fluidPage(
                             column(width=1,
                                    "Commentaire")
                           ),
+                          # Séries temporelles des produits par saison
                           fluidRow(
                             column(width=8,
                                    dygraphOutput("wel_dygraphMois")),
                             column(width=4,
-                                   "Commentaire")
+                                   "Commentaire"
+                                   )
                           )
-                          
+                     
                  ),
                  
                  # TabPanel 2
                  tabPanel("Saisonnalité", 
                           fluidRow(
-                            column(width=11,
+                            column(width=9,
                                    dygraphOutput("wel_dygraphSai")),
-                            column(width=1,
-                                   "Commentaire")
+                            column(width=3,
+                                   div(
+                                     radioButtons(inputId = "wel_selectSai",
+                                                  label = "Retrouver",
+                                                  selected = "Region",
+                                                  choices = c("region", "Une culture" )
+                                     ),
+                                     
+                                     selectizeInput(inputId = "wel_indicateurSai",
+                                                    label = "Choisir un indicateur: ",
+                                                    selected = "indicateur1",
+                                                    choices = c("indicateur1", "indicateur2", "indicateur3")),
+                                     
+                                     actionButton(inputId = "wel_submit", label = "Obtenir")
+                                     
+                                   )
+                                   )
                           ),
+                          # fluidRow(
+                          #   column(width=9,
+                          #          gt_output(outputId = "wel_tableSai")),
+                          #   column(width=3,
+                          #          gt_output(outputId = "wel_tableSaiRecap"))
+                          # ),
+                          gt_output(outputId = "wel_tableSai")
+                          
                           
                  )
                )
