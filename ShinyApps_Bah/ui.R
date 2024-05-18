@@ -198,8 +198,8 @@ fluidPage(
                            
                             div(
                               style = "background-color: #A09D9E; padding: 15px; margin-bottom: 15px;",
-                              selectizeInput(inputId = "indicateur", label = "Choisir un indicateur: ", selected = "PrixMoy",
-                                             choices = c("PrixMoy","VarMoy","VarMoyAbs"))
+                              selectizeInput(inputId = "indicateur", label = "Choisir un indicateur: ", selected = colnames(indicateurs_recap)[2],
+                                             choices = colnames(indicateurs_recap)[2:4])
                             ),
                             
                             
@@ -260,14 +260,14 @@ fluidPage(
                                      div(
                                        style = "background-color: #FFFFFF;margin-right: 10px; text-align:center",
                                        h6("DISTRIBUTION DES PRIX SELON LES REGIONS DE LA CI"),
-                                       plotOutput("aRegionP"),
+                                       plotlyOutput("aRegionP"),
                                        ),
                                     
                                     ),
                             ),
                             fluidRow(
                             div(
-                              style = "background-color: #FFFFFF;width:45%; text-align:center;margin-left:250px",
+                              style = "background-color: #FFFFFF;width:40%; text-align:center;margin-left:250px",
                               h5("Table"),
                               tableOutput(outputId = "table")
                             )
@@ -291,7 +291,7 @@ fluidPage(
                                        radioButtons(inputId = "select", label = "Retrouver", selected = "Region",
                                                           choices = c("region", "Une culture" )),
                                        
-                                       selectizeInput(inputId = "indicateur", label = "Choisir un indicateur: ", selected = "indicateur1",
+                                       selectizeInput(inputId = "indicateur1", label = "Choisir un indicateur: ", selected = "indicateur1",
                                                       choices = c("indicateur1", "indicateur2", "indicateur3")),
                                        actionButton(inputId = "submit", label = "Obtenir")
                                        
@@ -305,7 +305,7 @@ fluidPage(
                               column(width = 6,
                                      div(
                                       
-                                       leafletOutput("ARegionM"),
+                                       leafletOutput("aRegionMr"),
                                        p("La palettte verte désigne les zones au prix moyen en dessous du prix moyen général.
                                          A contrario, une couleur rouge désignera les zones aux moyen dépassant le prix moyen global.")
                                      ),

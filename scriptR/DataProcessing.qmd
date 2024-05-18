@@ -56,6 +56,9 @@ CatProd <- CatProd |> mutate(Produits=str_to_lower(Produits))
 ## Remplacement des prix null dans prix par NA
 priceGlob <- priceGlob |> mutate(PRIX=replace(priceGlob$PRIX,which(priceGlob$PRIX==0),NA))
 
+# Remplacement de toutes les occurrences de "SANPEDRO" par "SAN-PEDRO"
+priceGlob$VILLE <- gsub("SANPEDRO", "SAN-PEDRO", priceGlob$VILLE)
+
 ```
 
 ## Transformation des colonnes
@@ -143,7 +146,7 @@ priceGlob_visuel <- priceGlob_visuel %>%
   pivot_wider(names_from = VILLE, values_from = PRIX)
 
 # Specify the cities for extraction
-cities <- c("ABIDJAN", "SANPEDRO", "BOUAKE", "YAMOUSSOUKRO", "MAN", "KORHOGO")
+cities <- c("ABIDJAN", "SAN-PEDRO", "BOUAKE", "YAMOUSSOUKRO", "MAN", "KORHOGO")
 
 # Loop through each city and extract the first number from each element in the corresponding column
 for (city in cities) {
@@ -151,8 +154,7 @@ for (city in cities) {
 }
 
 
-priceGlob_visuel<- priceGlob_visuel %>%
-  rename("SAN-PEDRO" = "SANPEDRO")
+
 print(priceGlob_visuel)
 
 
@@ -174,7 +176,7 @@ Le prix absent est imputé à travers le prix observé chez la ville la plus pro
 
 ```{r,warning=FALSE}
 region <- unique(priceGlob$VILLE) |> as_tibble()
-region$value[2] <- "SAN-PEDRO"
+
 region <- region |> mutate(pays = "Cote d'Ivoire")
 # region
 
@@ -271,16 +273,12 @@ dpt2 <- left_join(dpt,VillePaysVilleProche,join_by(ADM3_FR==VillePays))
 dpt2
 ```
 
-
-
 # Calcul des indicateurs
 
-Trois indicateurs feront l'objet d'analyse dans un premier temps. Il s'agit entre autre de:
-- Le prix moyen
-- Le taux de variation moyen;
-- Le taux de variation moyen en valeur absolue.
+Trois indicateurs feront l'objet d'analyse dans un premier temps. Il s'agit entre autre de: - Le prix moyen - Le taux de variation moyen; - Le taux de variation moyen en valeur absolue.
 
 ## Format initial du dataset
+
 ```{r}
 # pivotement du dataset
 priceGlobClean <- priceGlob_visuel_m |>
@@ -299,7 +297,9 @@ priceGlobCleanFull
 ```
 
 ## Variation des prix par (Dimension)
+
 Le calcul de ces indicateurs sur les autres axes pourra être obtenu moyennant un changement d'axe d'analyse (Date, Ville, Produits etc.)
+
 ```{r}
 # A une date pour un produit un seul prix est défini
 # Dataset de base
