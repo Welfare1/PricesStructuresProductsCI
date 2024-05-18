@@ -56,6 +56,11 @@ CatProd <- CatProd |> mutate(Produits=str_to_lower(Produits))
 ## Remplacement des prix null dans prix par NA
 priceGlob <- priceGlob |> mutate(PRIX=replace(priceGlob$PRIX,which(priceGlob$PRIX==0),NA))
 
+# Remplacement de toutes les occurrences de "SANPEDRO" par "SAN-PEDRO"
+
+priceGlob$VILLE <- gsub("SANPEDRO", "SAN-PEDRO", priceGlob$VILLE)
+
+
 ```
 
 ## Transformation des colonnes
@@ -141,7 +146,7 @@ priceGlob_visuel <- priceGlob_visuel %>%
   pivot_wider(names_from = VILLE, values_from = PRIX)
 
 # Specify the cities for extraction
-cities <- c("ABIDJAN", "SANPEDRO", "BOUAKE", "YAMOUSSOUKRO", "MAN", "KORHOGO")
+cities <- c("ABIDJAN", "SAN-PEDRO", "BOUAKE", "YAMOUSSOUKRO", "MAN", "KORHOGO")
 
 # Loop through each city and extract the first number from each element in the corresponding column
 for (city in cities) {
@@ -149,8 +154,7 @@ for (city in cities) {
 }
 
 
-priceGlob_visuel<- priceGlob_visuel %>%
-  rename("SAN-PEDRO" = "SANPEDRO")
+
 print(priceGlob_visuel)
 
 
@@ -319,59 +323,56 @@ priceGlobCleanFull
 
 ```
 ```{r}
+library(leaflet)
+library(dplyr)
+#Carte 1
+adressRegion
 priceGlobCleanFull <- priceGlobCleanFull |>
   group_by(PRODUITS,VILLE) |>
   mutate(PRIXPREC=lag(PRIX,order_by = DATE)) # Dataset de base
 priceGlobCleanFull
   # Indicateur
 indicateurs <- priceGlobCleanFull |>
-  filter(CATEGORIE!="PRODUITS MANUFACTURES") |>
+  filter(CATEGORIE!="PRODUITS MANUFACTURES" & SPECIFICITE!="PRODUITS LAITIERS" & SPECIFICITE!="SUCRES") |>
   mutate(MoisAn=as.yearmon(DATE, "%m/%Y"),
          TauxVar=round((PRIX-PRIXPREC)/PRIXPREC,2),
          ANNEE=as.character(ANNEE),
          ) |>
-  group_by(VILLE,SPECIFICITE) |>
+  group_by(VILLE,CATEGORIE,SPECIFICITE,PRODUITS) |>
+  summarise(PrixMoy=mean(PRIX,na.rm = TRUE),
+            VarMoy=mean(TauxVar,na.rm =TRUE),
+            VarMoyAbs=mean(abs(TauxVar),na.rm =TRUE))
+indicateurs
+
+############
+indicateurs2 <- priceGlobCleanFull |>
+  filter(CATEGORIE!="PRODUITS MANUFACTURES" & SPECIFICITE!="PRODUITS LAITIERS" & SPECIFICITE!="SUCRES") |>
+  mutate(MoisAn=as.yearmon(DATE, "%m/%Y"),
+         TauxVar=round((PRIX-PRIXPREC)/PRIXPREC,2),
+         ANNEE=as.character(ANNEE),
+         ) |>
+  group_by(CATEGORIE,PRODUITS,VILLE) |>
   summarise(PrixMoy=mean(PRIX,na.rm = TRUE),
             VarMoy=mean(TauxVar,na.rm =TRUE),
             VarMoyAbs=mean(abs(TauxVar),na.rm =TRUE))
 
-library(leaflet)
-library(dplyr)
-adressRegion <- adressRegion|>select(-pays)
 # Filtrer les données pour les villes où VarMoyAbs est la plus petite
 indicateurs <- left_join(indicateurs,adressRegion, by=c("VILLE"="value"))
 
-villes_min_VarMoyAb <- indicateurs%>%
-  group_by(SPECIFICITE) %>%
-  filter(min_rank(VarMoyAbs) == 1)
-villes_min_VarMoyAb 
-
-
-# Créer une carte Leaflet
- leaflet() %>%
-  addProviderTiles("OpenStreetMap.Mapnik") %>%
-  addPolygons(data = dpt2,
-              fillColor = "blue",
-              fillOpacity = 0.2,
-              stroke = FALSE) %>%
-  addCircleMarkers(data = villes_min_VarMoyAb,
-                   lng = ~long,
-                   lat = ~lat,
-                   popup = ~paste(VILLE, " - ", c(SPECIFICITE), "<br>VarMoyAbs: ", VarMoyAbs),
-                   color = "red",
-                   radius = 5)
-
-
-
+villes_min_VarMoy <- indicateurs%>%
+  group_by(VILLE,SPECIFICITE) %>%
+  mutate(rank=min_rank(VarMoy))|>
+  filter(rank==1)|>
+  distinct(PRODUITS,.keep_all=TRUE)
 ```
 
 ```{r}
-villes_min_VarMoyAb
+villes_min_VarMoy
 # Agréger les spécificités par ville
-villes_agg <- villes_min_VarMoyAb %>%
-  group_by(VILLE, lat, long) %>%
-  summarise(SPECIFICITE = paste(SPECIFICITE, collapse = ", "))
-
+villes_agg <- villes_min_VarMoy %>%
+  group_by(VILLE,SPECIFICITE, lat, long) %>%
+  summarise()
+villes_agg
 # Définir une palette de couleurs
 palette_couleurs <- rainbow(length(unique(villes_agg$VILLE)))
 
@@ -379,7 +380,7 @@ palette_couleurs <- rainbow(length(unique(villes_agg$VILLE)))
 carte <- leaflet() %>%
   addProviderTiles("OpenStreetMap.Mapnik") %>%
   addPolygons(data = dpt2,
-              stroke = TRUE,
+              stroke = FALSE,
               color = palette_couleurs[match(dpt2$VilleProche, villes_agg$VILLE)]) %>%
   addMarkers(data = villes_agg,
                    lng = ~long,
@@ -395,4 +396,76 @@ carte <- leaflet() %>%
 carte
 ```
 
+```{r}
+indicateurs_recap<- priceGlobCleanFull |>
+  filter(CATEGORIE!="PRODUITS MANUFACTURES" & SPECIFICITE!="PRODUITS LAITIERS" & SPECIFICITE!="SUCRES") |>
+  mutate(MoisAn=as.yearmon(DATE, "%m/%Y"),
+         TauxVar=round((PRIX-PRIXPREC)/PRIXPREC,2),
+         ANNEE=as.character(ANNEE)
+  ) |>
+  group_by(VILLE) |>
+  summarise(PrixMoy=mean(PRIX,na.rm = TRUE),
+            VarMoy=mean(TauxVar,na.rm =TRUE),
+            VarMoyAbs=mean(abs(TauxVar),na.rm =TRUE))
+
+indicateurs_recap <- left_join(indicateurs_recap,adressRegion, by=c("VILLE"="value"))
+indicateurs_recap
+
+# Charger les bibliothèques nécessaires
+library(leaflet)
+library(dplyr)
+library(sp)
+
+# Les données des villes
+
+
+dpt1<- left_join(dpt2, indicateurs_recap, by = c("VilleProche" = "VILLE"))
+# Créer une fonction pour assigner les couleurs selon le prix moyen
+pal <- colorNumeric(
+  palette = "YlOrRd",
+  domain = villes$PrixMoy,
+  na.color = "transparent"
+)
+
+
+# Créer la carte leaflet
+leaflet(dpt1) %>%
+  addProviderTiles("OpenStreetMap") %>%
+  addPolygons(
+    fillColor = ~pal(PrixMoy),
+    weight = 2,
+    opacity = 1,
+    color = "white",
+    dashArray = "3",
+    fillOpacity = 0.7,
+    highlight = highlightOptions(
+      weight = 5,
+      color = "#666",
+      dashArray = "",
+      fillOpacity = 0.7,
+      bringToFront = TRUE
+    ),
+    label = ~paste0(PrixMoy),
+    labelOptions = labelOptions(
+      style = list("font-weight" = "normal", padding = "3px 8px"),
+      textsize = "15px",
+      direction = "auto"
+    )
+  ) %>%
+  addMarkers(
+    data = indicateurs_recap,
+    lng = ~long,
+    lat = ~lat,
+    popup = ~paste0("<strong>", VILLE, "</strong><br>Prix Moy: ", PrixMoy),
+    
+  ) %>%
+  addLegend(
+    pal = pal,
+    values = indicateurs_recap$PrixMoy,
+    opacity = 0.7,
+    title = "Prix Moyens",
+    position = "bottomright"
+  )
+
+```
 

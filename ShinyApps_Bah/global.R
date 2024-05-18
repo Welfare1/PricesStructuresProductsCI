@@ -11,6 +11,8 @@ library(bslib)
 library(leaflet)
 library(DT)
 library(zoo)
+library(rAmCharts)
+library(sp)
 
 dpt <- read_sf("data/civ")
 priceGlob <- read.csv("data/priceGlobCleanFull.csv")
@@ -46,29 +48,53 @@ dpt2 <- left_join(dpt,VillePaysVilleProche,join_by(ADM3_FR==VillePays))
 
 ###############################"""
 #Indicateur
-
+adressRegion$value[2] <- "SANPEDRO"
 priceGlobCleanFull <- priceGlob |>
   group_by(PRODUITS,VILLE) |>
   mutate(PRIXPREC=lag(PRIX,order_by = DATE)) # Dataset de base
 
-# Indicateur
+# Indicateur_recap
 indicateurs_recap <- priceGlobCleanFull |>
+  filter(CATEGORIE!="PRODUITS MANUFACTURES" & SPECIFICITE!="PRODUITS LAITIERS" & SPECIFICITE!="SUCRES") |>
   mutate(MoisAn=as.yearmon(DATE, "%m/%Y"),
          TauxVar=round((PRIX-PRIXPREC)/PRIXPREC,2),
-         ANNEE=as.character(ANNEE),
+         ANNEE=as.character(ANNEE)
   ) |>
   group_by(VILLE) |>
   summarise(PrixMoy=mean(PRIX,na.rm = TRUE),
             VarMoy=mean(TauxVar,na.rm =TRUE),
             VarMoyAbs=mean(abs(TauxVar),na.rm =TRUE))
+indicateurs_recap0 <- left_join(indicateurs_recap,adressRegion, by=c("VILLE"="value"))
 
-indicateurs<- priceGlobCleanFull |>
+# Indicateur carte recherche
+
+
+indicateurs <- priceGlobCleanFull |>
+  filter(CATEGORIE!="PRODUITS MANUFACTURES" & SPECIFICITE!="PRODUITS LAITIERS" & SPECIFICITE!="SUCRES") |>
   mutate(MoisAn=as.yearmon(DATE, "%m/%Y"),
          TauxVar=round((PRIX-PRIXPREC)/PRIXPREC,2),
          ANNEE=as.character(ANNEE),
   ) |>
-  group_by(VILLE,SPECIFICITE) |>
+  group_by(VILLE,CATEGORIE,SPECIFICITE,PRODUITS) |>
   summarise(PrixMoy=mean(PRIX,na.rm = TRUE),
             VarMoy=mean(TauxVar,na.rm =TRUE),
             VarMoyAbs=mean(abs(TauxVar),na.rm =TRUE))
+
+# Filtrer les données pour les villes où VarMoyAbs est la plus petite
+indicateurs <- left_join(indicateurs,adressRegion, by=c("VILLE"="value"))
+
+villes_min_VarMoy <- indicateurs%>%
+  group_by(VILLE) %>%
+  mutate(rank=min_rank(VarMoy))|>
+  filter(rank==1)|>
+  distinct(PRODUITS,.keep_all=TRUE)
+
+# Agréger les spécificités par ville
+villes_agg <- villes_min_VarMoy %>%
+  group_by(VILLE,SPECIFICITE,PRODUITS, lat, long) %>%
+  summarise()
+
+# Définir une palette de couleurs
+palette_couleurs <- rainbow(length(unique(villes_agg$VILLE)))
+
 
