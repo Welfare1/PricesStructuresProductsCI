@@ -13,13 +13,13 @@ library(DT)
 library(zoo)
 library(rAmCharts)
 library(sp)
+library(shinycssloaders)
 
 dpt <- read_sf("data/civ")
-priceGlob <- read.csv("data/priceGlobCleanFull.csv")
+priceGlob <- read.csv("data/priceGlobCleanFully.csv")
 
 # Géolocalisation des villes de bases
 region <- unique(priceGlob$VILLE) |> as_tibble()
-region$value[2] <- "SAN-PEDRO"
 region <- region |> mutate(pays = "Cote d'Ivoire")
 adressRegion <- geocode(region,city = value, country = pays)
 
@@ -48,7 +48,7 @@ dpt2 <- left_join(dpt,VillePaysVilleProche,join_by(ADM3_FR==VillePays))
 
 ###############################"""
 #Indicateur
-adressRegion$value[2] <- "SANPEDRO"
+
 priceGlobCleanFull <- priceGlob |>
   group_by(PRODUITS,VILLE) |>
   mutate(PRIXPREC=lag(PRIX,order_by = DATE)) # Dataset de base
