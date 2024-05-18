@@ -92,14 +92,13 @@ function(input, output, session) {
       labs(title = paste("Boîte à moustaches des prix pour", input$produit, "en", input$date),
            x = "Ville", y = "Prix")+
       scale_fill_brewer(palette = "Set3")
-    
     # Convertir le graphique ggplot en un graphique interactif Plotly
     ggplotly(p)
   })
 
   ###############################"
   #Tableau indicateur
-  output$table <- renderTable({
+  output$table <- renderDT({
     indicateurs_recap
   })
   

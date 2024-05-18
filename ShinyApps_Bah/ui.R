@@ -191,7 +191,8 @@ fluidPage(
       #######################################################################################################
       # Page 2
       tabPanel(title = "Analyse par région",
-               
+               fluidRow(
+                 column(width = 12,
                # Sidebar page 2
                sidebarPanel("SIDEBAR Page 2", width = 3,
                            
@@ -238,7 +239,8 @@ fluidPage(
                    
                    # TabPanel 1
                    tabPanel("Général",
-                            style = "background-color: #A09D9E;",
+                            style = "background-color: #A09D9E;width:1000px",
+                            
                             div(
                               style = "background-color: #FFFFFF;padding: 10px;",
                               p("Trois indicateurs sont utilisés dans la mise en évidence des différentes variations
@@ -250,8 +252,7 @@ fluidPage(
                               column(width = 6,
                                      div(
                                        style = "background-color: #FFFFFF;margin-left: 10px",
-                                       
-                                       leafletOutput("aRegionM"),
+                                       withSpinner(leafletOutput("aRegionM"), type = 6),
                                        p("La palettte verte désigne les zones au prix moyen en dessous du prix moyen général.
                                          A contrario, une couleur rouge désignera les zones aux moyen dépassant le prix moyen global.")
                                      ),
@@ -259,33 +260,33 @@ fluidPage(
                               column(width = 6,
                                      div(
                                        style = "background-color: #FFFFFF;margin-right: 10px; text-align:center",
+                                       br(),
                                        h6("DISTRIBUTION DES PRIX SELON LES REGIONS DE LA CI"),
-                                       plotlyOutput("aRegionP"),
+                                       withSpinner(plotlyOutput("aRegionP"), type = 6),
+                                       
                                        ),
                                     
                                     ),
-                            ),
-                            fluidRow(
+                            column(width = 12,
                             div(
-                              style = "background-color: #FFFFFF;width:40%; text-align:center;margin-left:250px",
+                              style = "background-color: #FFFFFF; text-align:center;padding:10px",
                               h5("Table"),
-                              tableOutput(outputId = "table")
-                            )
+                              withSpinner(DTOutput("table"), type = 6),
+                            ))
                             ),
                             ),
                    
                    # TabPanel 2
                    tabPanel("Rechercher", 
-                            
-                            div(
-                              style = "background-color: #FFFFFF;padding: 15px;",
-                              p("Trois indicateurs sont utilisés dans la mise en évidence des différentes variations
-                                des prix selon les régions. L’intensité des couleurs sur les cartes est proportionnelle
-                                à la valeur prise par l’indicateur. Les aproximations des prix sur toute l’étendue du 
-                                térritoire se fait aux moyens de prévisions de prix selon leur proximité")
-                            ),
+                            style = "width:1000px",
                             fluidRow(
-                              
+                                  div(
+                                    style = "background-color: #FFFFFF;padding: 15px ",
+                                    p("Trois indicateurs sont utilisés dans la mise en évidence des différentes variations
+                                    des prix selon les régions. L’intensité des couleurs sur les cartes est proportionnelle
+                                    à la valeur prise par l’indicateur. Les aproximations des prix sur toute l’étendue du 
+                                    térritoire se fait aux moyens de prévisions de prix selon leur proximité")
+                                  ),
                               column(width = 6,
                                      div(
                                        radioButtons(inputId = "select", label = "Retrouver", selected = "Region",
@@ -299,13 +300,14 @@ fluidPage(
                                      div(
                                       
                                        h6("Table"),
-                                       tableOutput(outputId = "table2")
+                                       withSpinner(DTOutput(outputId = "table2"), type = 6)
+                                       
                                      ),
                               ),
                               column(width = 6,
-                                     div(
-                                      
-                                       leafletOutput("aRegionMr"),
+                                     div(  
+                                       withSpinner(leafletOutput("aRegionMr"), type = 6)
+                                       ,
                                        p("La palettte verte désigne les zones au prix moyen en dessous du prix moyen général.
                                          A contrario, une couleur rouge désignera les zones aux moyen dépassant le prix moyen global.")
                                      ),
@@ -316,25 +318,28 @@ fluidPage(
                  )
                )
                
-               ),
+               ))),
       
-      #########################################################################################################"""
+      #########################################################################################################
       
       # Page 3
       tabPanel(title = "Analyse par date",
                
-               # Sidebar page 3
-               sidebarPanel("SIDEBAR Page 3", width = 2),
-               mainPanel(
-                 tabsetPanel(
+                 
+                           # Sidebar page 3
+                           sidebarPanel("SIDEBAR Page 3", width = 2),
+                           mainPanel(
+                             
+                             tabsetPanel(
+                              
+                               tabPanel("Général",
+                                        "Menu Général"),
+                               
+                               tabPanel("Saisonnalité",
+                                        "Menu Saisonnalité")
+                             )
+                           )
                    
-                   tabPanel("Général",
-                            "Menu Général"),
-                   
-                   tabPanel("Saisonnalité",
-                            "Menu Saisonnalité")
-                 )
-               )
                )
     )
 )
