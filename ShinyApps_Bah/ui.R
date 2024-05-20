@@ -239,7 +239,7 @@ fluidPage(
                    
                    # TabPanel 1
                    tabPanel("Général",
-                            style = "background-color: #A09D9E;width:1000px",
+                            style = "background-color: #A09D9E;width:1060px",
                             
                             div(
                               style = "background-color: #FFFFFF;padding: 10px;",
@@ -278,7 +278,7 @@ fluidPage(
                    
                    # TabPanel 2
                    tabPanel("Rechercher", 
-                            style = "width:1000px",
+                            style = "width:1060px",
                             fluidRow(
                                   div(
                                     style = "background-color: #FFFFFF;padding: 15px ",
