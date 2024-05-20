@@ -351,16 +351,16 @@ indicateurs2 <- priceGlobCleanFull |>
          TauxVar=round((PRIX-PRIXPREC)/PRIXPREC,2),
          ANNEE=as.character(ANNEE),
          ) |>
-  group_by(CATEGORIE,PRODUITS,VILLE) |>
+  group_by(VILLE,SPECIFICITE,PRODUITS) |>
   summarise(PrixMoy=mean(PRIX,na.rm = TRUE),
             VarMoy=mean(TauxVar,na.rm =TRUE),
             VarMoyAbs=mean(abs(TauxVar),na.rm =TRUE))
 
 # Filtrer les données pour les villes où VarMoyAbs est la plus petite
-indicateurs <- left_join(indicateurs,adressRegion, by=c("VILLE"="value"))
-
-villes_min_VarMoy <- indicateurs%>%
-  group_by(VILLE,SPECIFICITE) %>%
+indicateurs <- left_join(indicateurs2,adressRegion, by=c("VILLE"="value"))
+indicateurs
+villes_min_VarMoy <- indicateurs|>
+  group_by(VILLE,SPECIFICITE) |>
   mutate(rank=min_rank(VarMoy))|>
   filter(rank==1)|>
   distinct(PRODUITS,.keep_all=TRUE)
@@ -370,8 +370,10 @@ villes_min_VarMoy <- indicateurs%>%
 villes_min_VarMoy
 # Agréger les spécificités par ville
 villes_agg <- villes_min_VarMoy %>%
-  group_by(VILLE,SPECIFICITE, lat, long) %>%
-  summarise()
+  group_by(VILLE) %>%
+  slice_min(PrixMoy, with_ties = FALSE) %>%
+  ungroup()
+
 villes_agg
 # Définir une palette de couleurs
 palette_couleurs <- rainbow(length(unique(villes_agg$VILLE)))
@@ -409,7 +411,7 @@ indicateurs_recap<- priceGlobCleanFull |>
             VarMoyAbs=mean(abs(TauxVar),na.rm =TRUE))
 
 indicateurs_recap <- left_join(indicateurs_recap,adressRegion, by=c("VILLE"="value"))
-indicateurs_recap
+indicateurs_recap[,"PrixMoy"]
 
 # Charger les bibliothèques nécessaires
 library(leaflet)
@@ -423,10 +425,10 @@ dpt1<- left_join(dpt2, indicateurs_recap, by = c("VilleProche" = "VILLE"))
 # Créer une fonction pour assigner les couleurs selon le prix moyen
 pal <- colorNumeric(
   palette = "YlOrRd",
-  domain = villes$PrixMoy,
+  domain = indicateurs$PrixMoy,
   na.color = "transparent"
 )
-
+pal 
 
 # Créer la carte leaflet
 leaflet(dpt1) %>%

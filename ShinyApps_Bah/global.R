@@ -46,7 +46,7 @@ VillePaysVilleProche <- MatriceDistance  |>
 # Jointure avec la base de données sf des villes de la côte d'ivoire
 dpt2 <- left_join(dpt,VillePaysVilleProche,join_by(ADM3_FR==VillePays))
 
-###############################"""
+###############################
 #Indicateur
 
 priceGlobCleanFull <- priceGlob |>
@@ -75,7 +75,7 @@ indicateurs <- priceGlobCleanFull |>
          TauxVar=round((PRIX-PRIXPREC)/PRIXPREC,2),
          ANNEE=as.character(ANNEE),
   ) |>
-  group_by(VILLE,CATEGORIE,SPECIFICITE,PRODUITS) |>
+  group_by(VILLE,SPECIFICITE,PRODUITS) |>
   summarise(PrixMoy=mean(PRIX,na.rm = TRUE),
             VarMoy=mean(TauxVar,na.rm =TRUE),
             VarMoyAbs=mean(abs(TauxVar),na.rm =TRUE))
@@ -83,18 +83,6 @@ indicateurs <- priceGlobCleanFull |>
 # Filtrer les données pour les villes où VarMoyAbs est la plus petite
 indicateurs <- left_join(indicateurs,adressRegion, by=c("VILLE"="value"))
 
-villes_min_VarMoy <- indicateurs%>%
-  group_by(VILLE) %>%
-  mutate(rank=min_rank(VarMoy))|>
-  filter(rank==1)|>
-  distinct(PRODUITS,.keep_all=TRUE)
 
-# Agréger les spécificités par ville
-villes_agg <- villes_min_VarMoy %>%
-  group_by(VILLE,SPECIFICITE,PRODUITS, lat, long) %>%
-  summarise()
-
-# Définir une palette de couleurs
-palette_couleurs <- rainbow(length(unique(villes_agg$VILLE)))
 
 
