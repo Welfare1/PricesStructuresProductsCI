@@ -268,9 +268,12 @@ VillePaysVilleProche <- MatriceDistance  |>
   select(V1) |> 
   mutate(VillePays=dpt$ADM3_FR,VilleProche=map_chr(V1,~region$value[.x])) |> select(2:3)
 
+write.csv(VillePaysVilleProche, "../ShinyApps_Bah/data/VillePaysVilleProche.csv")
+
+write.csv(adressRegion, "../ShinyApps_Bah/data/adressRegion.csv")
 # Jointure avec la base de données sf des villes de la côte d'ivoire
 dpt2 <- left_join(dpt,VillePaysVilleProche,join_by(ADM3_FR==VillePays))
-dpt2
+
 ```
 
 
