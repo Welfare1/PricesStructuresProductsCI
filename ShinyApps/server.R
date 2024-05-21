@@ -11,6 +11,24 @@
 
 # Define server logic required to draw a histogram
 function(input, output, session) {
+  # p("Trois indicateurs sont utilisés dans la mise en évidence des différentes variations
+  #                               des prix selon les régions. L’intensité des couleurs sur les cartes est proportionnelle
+  #                               à la valeur prise par l’indicateur. Les aproximations des prix sur toute l’étendue du 
+  #                               térritoire se fait aux moyens de prévisions de prix selon leur proximité")
+  texteReactive <- reactive({
+    if (input$indicateur == "PrixMoy") {
+      "Vous avez choisi l'Option 1."
+    } else if (input$indicateur == "VarMoy") {
+      "Vous avez choisi l'Option 2."
+    } else if (input$indicateur == "VarMoyAbs") {
+      "Vous avez choisi l'Option 3."
+    } 
+  })
+  # Mettre à jour le texte affiché
+  output$texteAffiche <- renderText({
+    texteReactive()
+  })
+  
   
   #Scrapping des prix recents du marché
   output$table_prix <- renderDT({
@@ -51,13 +69,26 @@ function(input, output, session) {
   
   # Sidebar action
       # Met à jour les choix des produits en fonction de la catégorie sélectionnée
-      observeEvent(input$categorie, {
-        # Filtrer les produits en fonction de la catégorie sélectionnée
-        filtered_products <- priceGlob[priceGlob$SPECIFICITE == input$categorie, "PRODUITS"]
-        
-        # Mettre à jour les choix du selectizeInput des produits
-        updateSelectizeInput(session, "produit", choices = unique(filtered_products), selected = unique(filtered_products)[1])
-      })
+  observeEvent(input$Specificite, {
+    ### Filtrer les produits en fonction de la catégorie sélectionnée
+    if(input$Specificite=="TOUT"){
+      filtered_products <- priceGlob |>
+        select(PRODUITS)
+    }else{
+      filtered_products <- priceGlob |>
+        filter(SPECIFICITE==input$Specificite) |>
+        select(PRODUITS)
+    }
+    
+    ### Mettre à jour les choix du selectizeInput des produits
+    ### Vecteur unique des produits filtrés
+    Prod <- c("TOUT",unique(filtered_products))
+    updateSelectizeInput(session,
+                         "produit",
+                         selected = Prod[1],
+                         choices = Prod
+    )
+  })
   
   
   # Carte1
@@ -121,19 +152,21 @@ function(input, output, session) {
   ###############################""
   # Boxplot
   # Rendre le boxplot basé sur le produit et la ville sélectionnés
-  output$aRegionP <- renderPlotly({
+  
+ 
+  output$aRegionP <-  renderAmCharts({
     # Filtrer les données priceGlob en fonction du produit et de la date sélectionnés
     
-    filtered_data <- priceGlob|>filter(PRODUITS == input$produit & ANNEE == input$date)|>select(c(VILLE,PRODUITS,ANNEE,PRIX))
+    filtered_data <- priceGlob|>
+      filterOption(input$wel_produit,"PRODUITS") |>
+      filterOption(input$date,"ANNEE")
+    # Créer un graphique de boîte à moustaches avec amBoxplot
+    amBoxplot(PRIX ~ VILLE, data = filtered_data,
+                   main = paste("Boîte à moustaches des prix des produits en fonction des années"),
+                   xlab = "Ville", ylab = "Prix")
     
-    # Créer un graphique de boîte à moustaches avec 
-    p <- ggplot(filtered_data, aes(x = VILLE, y = PRIX, fill = VILLE)) +
-      geom_boxplot() +
-      labs(title = paste("Boîte à moustaches des prix pour",input$produit,"en",input$date),
-           x = "Ville", y = "Prix") +
-      scale_fill_brewer(palette = "Set3")
-    # Convertir le graphique ggplot en un graphique interactif Plotly
-    ggplotly(p)
+    
+    
   })
 
   ###############################"
@@ -203,7 +236,7 @@ function(input, output, session) {
     villes_min_indicateur0 <-  villes_min_indicateur|>select(VILLE,SPECIFICITE,!!selected_indicateur)
     
     villes_pivot <- villes_min_indicateur0 %>%
-      pivot_wider(names_from = VILLE, values_from = !!sym(selected_indicateur))
+      pivot_wider(names_from = VILLE, values_from = !!sym(selected_indicateur),values_fn = ~mean(.x,na.rm=TRUE))
     villes_pivot
     
   })
