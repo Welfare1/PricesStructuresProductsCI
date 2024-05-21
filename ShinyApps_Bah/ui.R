@@ -189,6 +189,98 @@ fluidPage(
                  ),
                )),
       #######################################################################################################
+      #Page prix actuel
+      tabPanel(title = "Prix du marché",
+               fluidRow(
+                 column(width = 12,
+                        div(
+                          style="margin:10px 60px 30px 60px; text-align:center",
+                          h3("Prix des produits de grande consommation"),
+                          p("Consultez l'évolution des prix des produits de grande consommation dans les principales villes de la Côte d'Ivoire"),
+                          withSpinner(DTOutput(outputId = "table_prix"), type = 6)
+                          
+                        ),
+                        
+                        )
+               ),
+               fluidRow(
+                 #Footer
+                 
+                 class="footer",
+                 column(width = 4,
+                        fluidRow(
+                          column(width = 6,
+                                 p("Amadou BAH",
+                                   style = "color : black;
+                                     font-size:19px;
+                                     font-weight: bold;
+                                     font-style: italic;
+                                     "),
+                                 p("Frederic AKADJE",
+                                   style = "color : black;
+                                     font-size: 19px;
+                                     font-weight: bold;
+                                     font-style: italic; 
+                                     "),
+                          ),
+                          
+                          column(width = 5,
+                                 
+                                 img(src="img/LogoLinkedin.png",
+                                     title="Popup",
+                                     width = "20%"),
+                                 
+                                 img(src="img/logoGithub.png",
+                                     title="Popup",
+                                     width = "20%"),
+                                 
+                                 img(src="img/logoGmail.png",
+                                     title="Popup",
+                                     width = "20%"),
+                                 
+                                 br(),
+                                 img(src="img/LogoLinkedin.png",
+                                     title="Popup",
+                                     width = "20%"),
+                                 
+                                 img(src="img/logoGithub.png",
+                                     title="Popup",
+                                     width = "20%"),
+                                 
+                                 img(src="img/logoGmail.png",
+                                     title="Popup",
+                                     width = "20%"),
+                                 
+                          ),
+                          column(width = 1,)
+                          
+                        )
+                        
+                 ),
+                 
+                 column(width = 8,
+                        style="display: flex;
+                                    justify-content: space-between;",
+                        img(src="img/logoOpendata.png",
+                            title="Popup",
+                            width = "20%"),
+                        
+                        img(src="img/logoOcpv.png",
+                            title="Popup",
+                            width = "20%"),
+                        
+                        img(src="img/logoCnlvc.png",
+                            title="Popup", 
+                            width = "20%"),
+                        
+                        img(src="img/logoSikaF.png",
+                            title="Popup",
+                            width = "20%")
+                 )
+                 
+               ),
+      ),
+      
       # Page 2
       tabPanel(title = "Analyse par région",
                fluidRow(
@@ -207,7 +299,7 @@ fluidPage(
                             div(
                               style = "background-color: #478FFC; padding: 15px; margin-bottom: 15px;",
                               selectizeInput(inputId = "ville", label = "Ville: ", selected = "Ville1",
-                                             choices = priceGlob$VILLE)
+                                             choices = unique(priceGlob$VILLE))
                             ),
                             
                            
@@ -218,13 +310,13 @@ fluidPage(
                                              choices = unique(priceGlob$SPECIFICITE)),
                             
                               selectizeInput(inputId = "produit", label = "Produits: ", selected = NULL,
-                                             choices = NULL)
+                                            choices = NULL)
                             ),
                             
                             div(
                               style = "background-color: #FCE147; padding: 15px; margin-bottom: 15px;",
                               selectizeInput(inputId = "date", label = "Annee: ", selected = priceGlob$ANNEE[0],
-                                             choices = priceGlob$ANNEE)
+                                             choices = unique(priceGlob$ANNEE) )
                             )
                             
                             ),
@@ -261,7 +353,7 @@ fluidPage(
                                      div(
                                        style = "background-color: #FFFFFF;margin-right: 10px; text-align:center",
                                        br(),
-                                       h6("DISTRIBUTION DES PRIX SELON LES REGIONS DE LA CI"),
+                                       h6("DISTRIBUTION DES PRIX DES PRODUITS SELON LES REGIONS DE LA CI PAR ANNEE"),
                                        withSpinner(plotlyOutput("aRegionP"), type = 6),
                                        
                                        ),
@@ -270,7 +362,7 @@ fluidPage(
                             column(width = 12,
                             div(
                               style = "background-color: #FFFFFF; text-align:center;padding:10px",
-                              h5("Table"),
+                              h4("Tableau recapitulatif des indicateurs en fontion des villes"),
                               withSpinner(DTOutput("table"), type = 6),
                             ))
                             ),
@@ -299,7 +391,7 @@ fluidPage(
                                      ),
                                      div(
                                       
-                                       h6("Table"),
+                                       h4("Table"),
                                        withSpinner(DTOutput(outputId = "table2"), type = 6)
                                        
                                      ),
@@ -308,8 +400,6 @@ fluidPage(
                                      div(  
                                        withSpinner(leafletOutput("aRegionMr"), type = 6)
                                        ,
-                                       p("La palettte verte désigne les zones au prix moyen en dessous du prix moyen général.
-                                         A contrario, une couleur rouge désignera les zones aux moyen dépassant le prix moyen global.")
                                      ),
                               ),
                             ),

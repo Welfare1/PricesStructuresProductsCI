@@ -13,14 +13,7 @@ library(rvest)
 library(dplyr)
 ```
 
-# chargement des données
 
-```{r, warning=FALSE, message=FALSE}
-data <- read_delim("../data/ECHO_DU_MARCHE.csv")
-data_cat <- read_delim("../data/catProduit.csv")
-data |> head(6)
-data_cat |> head(6)
-```
 
 # Scraping des données sur la page de Sika Finance
 
@@ -29,22 +22,20 @@ data_cat |> head(6)
 url_sika<- "https://www.sikafinance.com/conso/liste_des_prix"
 data_html <- read_html(url_sika)
 
-data_0 <- data_html |> html_elements( "td , th") |>
+prix_recent <- data_html |> html_elements( "td , th") |>
           html_text2() |> matrix(ncol=9,byrow=TRUE)|> as.data.frame()
 
-# Assign the first row as column names
-colnames(data_0) <- data_0[1, ]
-# Remove the first row since it's now column names
-data_0 <- data_0[-1, ]
-# Remove spaces from columns 3 to 8
+# Assignation de la premiere ligne en tant que nom des colonnes 
+colnames(prix_recent) <- prix_recent[1, ]
+prix_recent <- prix_recent[-1, ]
+
 for (i in 3:8) {
   data_0[[i]] <- gsub("\\s+", "", data_0[[i]])
 }
-# Change the type of columns 3 to 8 to double
-data_0 <- data_0 |> mutate_at(vars(3:8), as.double)
+# Changement du type des colonnes 3 à 8 en numeric
+prix_recent <- prix_recent |> mutate_at(vars(3:8), as.double)
 
-data_0|>head(10)
-head(data_0)
+prix_recent|>head(10)
+head(prix_recent)
 
 ```
-

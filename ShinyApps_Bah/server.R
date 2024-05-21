@@ -11,7 +11,41 @@
 
 # Define server logic required to draw a histogram
 function(input, output, session) {
+  #Scrapping des prix recents du marché
+  
+  output$table_prix <- renderDT({
+    # Lire le contenu HTML à partir de l'URL
+    url_sika <- "https://www.sikafinance.com/conso/liste_des_prix"
+    data_html <- read_html(url_sika)
     
+    # Extraire et nettoyer les données du tableau
+    prix_recent <- data_html |> 
+      html_elements("td , th") |> 
+      html_text2() |> 
+      matrix(ncol = 9, byrow = TRUE) |> 
+      as.data.frame()
+    
+    # Assigner la première ligne en tant que noms de colonnes
+    colnames(prix_recent) <- prix_recent[1, ]
+    prix_recent <- prix_recent[-1, ]
+    
+    # Nettoyer et convertir les colonnes 3 à 8 en numériques
+    for (i in 3:8) {
+      # Supprimer les espaces
+      prix_recent[[i]] <- gsub("\\s+", "", prix_recent[[i]])
+      # Supprimer tous les caractères non numériques (optionnel, dépend de vos données)
+      prix_recent[[i]] <- gsub("[^0-9.]", "", prix_recent[[i]])
+    }
+    # Convertir les colonnes 3 à 8 en numériques, gérer les avertissements
+    prix_recent <- prix_recent |> 
+      mutate_at(vars(3:8), ~ as.double(.))
+    # Trier les données par ordre alphabétique de la première colonne
+    prix_recent <- prix_recent |> arrange(prix_recent[[1]])
+    
+    # Afficher le tableau trié
+    prix_recent
+  })
+  
   ##########################################################""
   # Analyse par region
   # Sidebar action
@@ -94,8 +128,8 @@ function(input, output, session) {
     # Créer un graphique de boîte à moustaches avec 
     p <- ggplot(filtered_data, aes(x = VILLE, y = PRIX, fill = VILLE)) +
       geom_boxplot() +
-      labs(title = paste("Boîte à moustaches des prix pour", input$produit, "en", input$date),
-           x = "Ville", y = "Prix")+
+      labs(title = paste("Boîte à moustaches des prix pour",input$produit,"en",input$date),
+           x = "Ville", y = "Prix") +
       scale_fill_brewer(palette = "Set3")
     # Convertir le graphique ggplot en un graphique interactif Plotly
     ggplotly(p)
