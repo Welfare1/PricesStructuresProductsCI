@@ -379,7 +379,7 @@ fluidPage(
                                     à la valeur prise par l’indicateur. Les aproximations des prix sur toute l’étendue du 
                                     térritoire se fait aux moyens de prévisions de prix selon leur proximité")
                                   ),
-                              column(width = 6,
+                              column(width = 4,
                                      div(
                                        radioButtons(inputId = "select", label = "Retrouver", selected = "Region",
                                                           choices = c("region", "Une culture" )),
@@ -389,19 +389,22 @@ fluidPage(
                                        actionButton(inputId = "submit", label = "Obtenir")
                                        
                                      ),
-                                     div(
-                                      
-                                       h4("Table"),
-                                       withSpinner(DTOutput(outputId = "table2"), type = 6)
-                                       
-                                     ),
+                                     
                               ),
-                              column(width = 6,
+                              column(width = 8,
                                      div(  
                                        withSpinner(leafletOutput("aRegionMr"), type = 6)
                                        ,
                                      ),
                               ),
+                              column(width = 12,
+                                     div(
+                                       style="margin-top:50px; text-align:center",
+                                       h4("Tableau "),
+                                       withSpinner(DTOutput(outputId = "table2"), type = 6)
+                                       
+                                     ),
+                                     )
                             ),
                             
                    )

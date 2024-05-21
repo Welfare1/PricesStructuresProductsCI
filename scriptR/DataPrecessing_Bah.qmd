@@ -241,7 +241,7 @@ Les prix initialement capturés sur 6 villes de la côte d'ivoire, sont à prés
 
 ```{r}
 dpt <- sf::read_sf("../data/civ")
-
+dpt
 # Géolocalisation des villes de bases
 region <- unique(priceGlob$VILLE) |> as_tibble()
 region$value[2] <- "SAN-PEDRO"

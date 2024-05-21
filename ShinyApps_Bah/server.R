@@ -198,7 +198,13 @@ function(input, output, session) {
     #Selection de l'indicateur choisi
     selected_indicateur <- indicateur()
     villes_min_indicateur <- villes_min_indicateur()
-    villes_min_indicateur|>select(VILLE,SPECIFICITE,!!selected_indicateur)
+    
+    villes_min_indicateur0 <-  villes_min_indicateur|>select(VILLE,SPECIFICITE,!!selected_indicateur)
+    
+    villes_pivot <- villes_min_indicateur0 %>%
+      pivot_wider(names_from = VILLE, values_from = !!sym(selected_indicateur))
+    villes_pivot
+    
   })
   
   
