@@ -346,16 +346,20 @@ fluidPage(
                               column(width = 6,
                                      div(
                                        style = "background-color: #FFFFFF;margin-left: 10px",
+                                       h4(" Prix moyen sur de 2020 à 2022 en Côte d’Ivoire"),
                                        withSpinner(leafletOutput("aRegionM"), type = 6),
-                                       p("La palettte verte désigne les zones au prix moyen en dessous du prix moyen général.
-                                         A contrario, une couleur rouge désignera les zones aux moyen dépassant le prix moyen global.")
+                                       p("Trois indicateurs sont utilisés dans la mise en évidence des différentes variations
+                                    des prix selon les régions. L’intensité des couleurs sur les cartes est proportionnelle
+                                    à la valeur prise par l’indicateur. Les aproximations des prix sur toute l’étendue du 
+                                    térritoire se fait aux moyens de prévisions de prix selon leur proximité.")
+                                       
                                      ),
                               ),
                               column(width = 6,
                                      div(
                                        style = "background-color: #FFFFFF;margin-right: 10px; text-align:center",
                                        br(),
-                                       h6("DISTRIBUTION DES PRIX DES PRODUITS SELON LES REGIONS DE LA CI PAR ANNEE"),
+                                       h6("DISTRIBUTION DES PRIX DES PRODUITS SELON LES REGIONS DE LA CI"),
                                        withSpinner(amChartsOutput("aRegionP"), type = 6),
                                        
                                        ),
@@ -364,7 +368,7 @@ fluidPage(
                             column(width = 12,
                             div(
                               style = "background-color: #FFFFFF; text-align:center;padding:10px",
-                              h4("Tableau recapitulatif des indicateurs en fontion des villes"),
+                              h4("Tableau recapitulatif des indicateurs pour chaque ville"),
                               withSpinner(DTOutput("table"), type = 6),
                             ))
                             ),
@@ -374,27 +378,25 @@ fluidPage(
                    tabPanel("Rechercher", 
                             style = "width:1060px",
                             fluidRow(
-                                  div(
-                                    style = "background-color: #FFFFFF;padding: 15px ",
-                                    p("Trois indicateurs sont utilisés dans la mise en évidence des différentes variations
-                                    des prix selon les régions. L’intensité des couleurs sur les cartes est proportionnelle
-                                    à la valeur prise par l’indicateur. Les aproximations des prix sur toute l’étendue du 
-                                    térritoire se fait aux moyens de prévisions de prix selon leur proximité")
-                                  ),
-                              column(width = 4,
+                                  
+                              column(width = 5,
+                                     style = "padding: 15px ",
                                      div(
-                                       radioButtons(inputId = "select", label = "Retrouver", selected = "Region",
-                                                          choices = c("region", "Une culture" )),
-                                       
-                                       selectizeInput(inputId = "indicateur1", label = "Choisir un indicateur: ", selected = "indicateur1",
-                                                      choices = c("indicateur1", "indicateur2", "indicateur3")),
-                                       actionButton(inputId = "submit", label = "Obtenir")
-                                       
+                                       h4("Commentaire"),
+                                       p(" Les prix moyens des denrées alimentaires en Côte d’Ivoire présentent des disparités
+                                       significatives d’une région à l’autre. Cette inégalité de répartition s’explique par plusieurs
+                                       facteurs endogènes, c’est-à-dire des facteurs internes au pays et au système économique.
+                                         Parmi ces facteurs, on peut citer:"),
+                                       p("1. Différences de production agricole"),
+                                       p("2. Difficultés d’accès aux marchés"),
+                                        p("  3. Facteurs de demande "),
+                                         p(" 4. Politiques gouvernementales"),
                                      ),
                                      
                               ),
-                              column(width = 8,
+                              column(width = 7,
                                      div(  
+                                       h4("Spécificité des produits les plus accessibles selon les régions"),
                                        withSpinner(leafletOutput("aRegionMr"), type = 6)
                                        ,
                                      ),
@@ -402,7 +404,7 @@ fluidPage(
                               column(width = 12,
                                      div(
                                        style="margin-top:50px; text-align:center",
-                                       h4("Tableau "),
+                                       h4("Tableau de visualisation des prix pour les Spécificités des produits"),
                                        withSpinner(DTOutput(outputId = "table2"), type = 6)
                                        
                                      ),
@@ -517,14 +519,12 @@ fluidPage(
                             border-radius: 10px;
                             box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
                             ",
-                              column(width=10,
+                              column(width=12,
                                      withSpinner(dygraphOutput("wel_dygraph"),type=1,
                                                  color = getOption("spinner.color", default = "pink")
                                      ),
                                 ),
-                              column(width=2,
-                                     "Commentaire")
-                            ),
+                              
                             # Séries temporelles des produits par saison
                             br(),
                             
@@ -569,7 +569,7 @@ fluidPage(
                               )
                             )
                             
-                   ),
+                   )),
                    
                    # TabPanel 2
                    tabPanel("Saisonnalité",

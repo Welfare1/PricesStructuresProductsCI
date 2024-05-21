@@ -5,7 +5,7 @@ account: bah-amadou-ali-datascience2024
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 12042379
-bundleId: 8643860
+bundleId: 8644480
 url: https://bah-amadou-ali-datascience2024.shinyapps.io/Projet_Visualisation_Shiny/
 version: 1
 asMultiple: FALSE
