@@ -15,18 +15,19 @@ function(input, output, session) {
   #                               des prix selon les régions. L’intensité des couleurs sur les cartes est proportionnelle
   #                               à la valeur prise par l’indicateur. Les aproximations des prix sur toute l’étendue du 
   #                               térritoire se fait aux moyens de prévisions de prix selon leur proximité")
-  texteReactive <- reactive({
-    if (input$indicateur == "PrixMoy") {
-      "Vous avez choisi l'Option 1."
-    } else if (input$indicateur == "VarMoy") {
-      "Vous avez choisi l'Option 2."
-    } else if (input$indicateur == "VarMoyAbs") {
-      "Vous avez choisi l'Option 3."
-    } 
-  })
+  
   # Mettre à jour le texte affiché
   output$texteAffiche <- renderText({
-    texteReactive()
+    "En première ligne on note les régions du Tonpki et le « Grand Abidjan » (réunion de la
+     ville d’Abidjan, ainsi de villes adjacentes). Considéré comme épicentre de la propagation
+    virale, « le grand Abidjan » est isolé du reste du territoire nationale à partir du 15 juillet.
+    Le District Autonome d’Abidjan, capitale économique ivoirienne, détient la plus forte
+    concentration d’habitants avec 2 994 Habitant/km2 (avec un total de 5 616 633 habitants,
+    Abidjan est la ville la plus peuplée). Elle constitue ainsi une demande importante, qui 
+    contribue à la hausse des prix au sein du district. Pour compte, Abidjan détient le prix
+   moyen le plus élevés sur chaque sur la période de 2021. Avec des pics du prix moyen
+   atteignant jusqu’à 1385 FCFA au 12/07/2021 contre 1045 FCFA sur l’année 2020 soit
+   une croissance de 34%."
   })
   
   
@@ -98,10 +99,28 @@ function(input, output, session) {
   
   
   # Carte1
-  
+  indicateurs_recap <- reactive({
+    priceGlobCleanFull |>
+      filterOption(input$date,"ANNEE")|>
+      filter(CATEGORIE!="PRODUITS MANUFACTURES" & SPECIFICITE!="PRODUITS LAITIERS" & SPECIFICITE!="SUCRES") |>
+      mutate(MoisAn=as.yearmon(DATE, "%m/%Y"),
+             TauxVar=round((PRIX-PRIXPREC)/PRIXPREC,2),
+             ANNEE=as.character(ANNEE)
+      ) |>
+      group_by(VILLE) |>
+      summarise(PrixMoy=round(mean(PRIX,na.rm = TRUE),4),
+                VarMoy=round(mean(TauxVar,na.rm =TRUE),4),
+                VarMoyAbs=round(mean(abs(TauxVar),na.rm =TRUE),4))
+    
+  })
   output$aRegionM <- renderLeaflet({
+    # Indicateur_recap
+    indicateurs_recap <- indicateurs_recap()
+    indicateurs_recap0 <- left_join(indicateurs_recap,adressRegion1, by=c("VILLE"="value"))
+    
     #Selection de l'indicateur choisi
     selected_indicateur <- input$indicateur
+    
     
     # Joindre les données
     dpt1 <- left_join(dpt2, indicateurs_recap, by = c("VilleProche" = "VILLE"))
@@ -178,6 +197,7 @@ function(input, output, session) {
   ###############################"
   #Tableau indicateur
   output$table <- renderDT({
+    indicateurs_recap <- indicateurs_recap()
     datatable(indicateurs_recap, options = list(
       initComplete = JS(
         "function(settings, json) {",
