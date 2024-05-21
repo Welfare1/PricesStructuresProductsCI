@@ -61,7 +61,13 @@ function(input, output, session) {
     prix_recent <- prix_recent |> arrange(prix_recent[[1]])
     
     # Afficher le tableau trié
-    prix_recent
+    
+    datatable(prix_recent, options = list(
+      initComplete = JS(
+        "function(settings, json) {",
+        "$(this.api().table().header()).css({'background-color': '#FE8700', 'color': '#fff'});",
+        "}")
+    ))
   })
   
   ##########################################################""
@@ -172,7 +178,13 @@ function(input, output, session) {
   ###############################"
   #Tableau indicateur
   output$table <- renderDT({
-    indicateurs_recap
+    datatable(indicateurs_recap, options = list(
+      initComplete = JS(
+        "function(settings, json) {",
+        "$(this.api().table().header()).css({'background-color': '#FE8700', 'color': '#fff'});",
+        "}")
+    ))
+    
   })
   
 #####################################""
@@ -237,7 +249,13 @@ function(input, output, session) {
     
     villes_pivot <- villes_min_indicateur0 %>%
       pivot_wider(names_from = VILLE, values_from = !!sym(selected_indicateur),values_fn = ~mean(.x,na.rm=TRUE))
-    villes_pivot
+    
+    datatable(villes_pivot, options = list(
+      initComplete = JS(
+        "function(settings, json) {",
+        "$(this.api().table().header()).css({'background-color': '#FE8700', 'color': '#fff'});",
+        "}")
+    ))
     
   })
   

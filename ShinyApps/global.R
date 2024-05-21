@@ -19,7 +19,7 @@ library(lubridate)
 library(dygraphs)
 library(gt)
 library(rmapshaper)
-
+library(shinythemes)
 #########################################################################""
 
 ### Analyse par Region

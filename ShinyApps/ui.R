@@ -8,6 +8,7 @@
 #
 
 fluidPage(
+   theme = shinytheme("cerulean"),
 
     # Sidebar with a slider input for number of bins
     navbarPage(
