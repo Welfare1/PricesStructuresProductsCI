@@ -515,13 +515,13 @@ fluidPage(
                             border-radius: 10px;
                             box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
                             ",
-                              column(width=10,
+                              column(width=9,
                                      withSpinner(dygraphOutput("wel_dygraph"),type=1,
                                                  color = getOption("spinner.color", default = "pink")
                                      ),
                                 ),
-                              column(width=2,
-                                     "Commentaire")
+                              column(width=3,
+                                     textOutput(outputId="wel_TimesSeriesComm1"))
                             ),
                             # Séries temporelles des produits par saison
                             br(),

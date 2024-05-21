@@ -539,39 +539,24 @@ priceGlobCleanFull |>
 
 ```
 ```{r}
-up_arrow <- "<span style=\"color:green\">&#9701;</span>"
-down_arrow <- "<span style=\"color:red\">&#9698;</span>"
-priceGlobCleanFull|>
-  group_by(PRODUITS,VILLE) |>
-  mutate(PRIXPREC=lag(PRIX,order_by = DATE)) |> 
-  mutate(MoisAn=as.yearmon(DATE, "%m/%Y"),
-         MOIS=month(DATE,label=TRUE),
-         TauxVar=round((PRIX-PRIXPREC)/PRIXPREC,2)) |> 
-  filter(CATEGORIE!="PRODUITS MANUFACTURES") |> 
-      group_by(ANNEE,MOIS) |>
-      summarise(PrixMoy=mean(PRIX,na.rm = TRUE),
-                VarMoy=mean(TauxVar,na.rm =TRUE),
-                VarMoyAbs=mean(abs(TauxVar),na.rm =TRUE)) |>
-      pivot_wider(names_from =ANNEE,values_from = PrixMoy,id_cols = MOIS ) |> 
-      gt() |> 
-  text_transform(
-        locations = cells_body(
-          columns = `2020`,
-          rows = `2021` > `2020`
-        ),
-        fn = function(x) paste(x, up_arrow)
-      ) |>
-      text_transform(
-        locations = cells_body(
-          columns = `2020`,
-          rows = `2020` < `2021`
-        ),
-        fn = function(x) paste(x, down_arrow)
-      ) |> 
-      opt_interactive(
-        use_filters = FALSE,
-        use_search = FALSE,
-        use_compact_mode = TRUE,
-        use_text_wrapping = FALSE
-      ) 
+priceGlobCleanFull |>
+  # filter(ANNEE==2020) |>
+  mutate(MoisAn=as.yearmon(DATE),
+         QuarterAn=as.yearqtr(DATE),
+         TauxVar=round((PRIX-PRIXPREC)/PRIXPREC,2),
+         
+         ) |>
+  group_by(DATE) |> 
+  summarise(PrixMoy=mean(PRIX,na.rm = TRUE),
+            VarMoy=mean(TauxVar,na.rm =TRUE),
+            VarMoyAbs=mean(abs(TauxVar),na.rm =TRUE)) |> 
+  select(DATE,PrixMoy) |> 
+  ggplot(aes(x = DATE, y = PrixMoy)) +
+  geom_area(fill = "lightblue", alpha = 0.5) +
+  theme_minimal() +
+  labs(
+       x = "Date",
+       y = "Prix Moyen") 
+  # scale_x_date(date_breaks = "6 months", date_labels = "%b %Y") +
+  # theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```

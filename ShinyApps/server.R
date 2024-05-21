@@ -438,7 +438,17 @@ function(input, output, session) {
             main = str_c(input$wel_indicateur," sur les différentes années")) |> 
       dyRangeSelector() |> 
       dyOptions(stackedGraph = TRUE) |> 
-      addMinMax(RankTableMinMax())
+      addMinMax(RankTableMinMax()) |> 
+      dyEvent("2020-7-30", "Isolement du grand Abidjan Covid 19", labelLoc = "bottom")
+  })
+  
+  # TextOuptRender
+  output$wel_TimesSeriesComm1 <- renderText({
+    "Un important émerge pic émerge sur
+    la période de l'année 2021. Les différentes mesures 
+    d'isolement sont alors appliquées, dans le but
+    de contenir l'épidémie au prix d'une flambée du
+    coût des denrées alimentaires."
   })
   
   # Times series secondaires
