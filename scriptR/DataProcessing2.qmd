@@ -56,6 +56,9 @@ CatProd <- CatProd |> mutate(Produits=str_to_lower(Produits))
 ## Remplacement des prix null dans prix par NA
 priceGlob <- priceGlob |> mutate(PRIX=replace(priceGlob$PRIX,which(priceGlob$PRIX==0),NA))
 
+## Remplacement de toutes les occurrences de "SANPEDRO" par "SAN-PEDRO"
+priceGlob$VILLE <- gsub("SANPEDRO", "SAN-PEDRO", priceGlob$VILLE)
+
 ```
 
 ## Transformation des colonnes
@@ -143,17 +146,12 @@ priceGlob_visuel <- priceGlob_visuel |>
   pivot_wider(names_from = VILLE, values_from = PRIX)
 
 # Specify the cities for extraction
-cities <- c("ABIDJAN", "SANPEDRO", "BOUAKE", "YAMOUSSOUKRO", "MAN", "KORHOGO")
+cities <- c("ABIDJAN", "SAN-PEDRO", "BOUAKE", "YAMOUSSOUKRO", "MAN", "KORHOGO")
 
 for (city in cities) {
   priceGlob_visuel[[city]] <- as.numeric(str_extract(priceGlob_visuel[[city]], "\\d+"))
 }
 
-
-priceGlob_visuel<- priceGlob_visuel %>%
-  rename("SAN-PEDRO" = "SANPEDRO")
-print(priceGlob_visuel)
-######### 
 
 
 # Résultat
@@ -197,6 +195,7 @@ names(matching) <- region$value
 ```
 
 **Récupération de la géolocalisation des villes**
+
 ```{r,warning=FALSE}
 region <- unique(priceGlob$VILLE) |> as_tibble()
 region$value[2] <- "SAN-PEDRO"
@@ -229,6 +228,7 @@ matching <- matching[-1, ]
 ```
 
 **Imputations**
+
 ```{r,warning=FALSE}
 # Villes de base
 cities <- c("ABIDJAN", "SAN-PEDRO", "BOUAKE", "YAMOUSSOUKRO", "MAN", "KORHOGO")
@@ -259,11 +259,9 @@ for (ville in cities) {
 
 ```
 
-
 ## Traitement des données géographiques
-Les prix initialement capturés sur 6 villes de la côte d'ivoire, sont à présent repartis sur tout l'ensemble du territoire ivoirien. il ne s'agira pas seulement des prix, mais de tout indicateur calculé dans la perspertive de l'analyse.
-Pour cela la correspondance de chaque ville par rapport à sa ville la plus proche est alors appliquée.Environ 3658600 en tout seront générées dans un nouveau dataset.
 
+Les prix initialement capturés sur 6 villes de la côte d'ivoire, sont à présent repartis sur tout l'ensemble du territoire ivoirien. il ne s'agira pas seulement des prix, mais de tout indicateur calculé dans la perspertive de l'analyse. Pour cela la correspondance de chaque ville par rapport à sa ville la plus proche est alors appliquée.Environ 3658600 en tout seront générées dans un nouveau dataset.
 
 ```{r}
 # Chargement des données géographique de la Côte d'Ivoire
@@ -296,16 +294,12 @@ dpt2 <- left_join(dpt,VillePaysVilleProche,join_by(ADM3_FR==VillePays))
 dpt2
 ```
 
-
 # Calcul des indicateurs
 
-Trois indicateurs feront l'objet d'analyse dans un premier temps. Il s'agit entre autre de:
-- Taux de variation du prix par date;
-- Taux de variation moyen;
-- Taux de variation moyen en valeur absolue;
-- Prix du panier moyen (*).
+Trois indicateurs feront l'objet d'analyse dans un premier temps. Il s'agit entre autre de: - Taux de variation du prix par date; - Taux de variation moyen; - Taux de variation moyen en valeur absolue; - Prix du panier moyen (\*).
 
 ## Format initial du dataset
+
 ```{r}
 # pivotement du dataset
 priceGlobClean <- priceGlob_visuel_m |>
@@ -322,6 +316,7 @@ priceGlobCleanFull <- left_join(priceGlob |>
 ```
 
 ## Variation des prix par (Dimension)
+
 ```{r}
 # A une date pour un produit un seul prix est défini
 # Dataset de base
@@ -348,11 +343,12 @@ priceGlobCleanFull |>
 ```
 
 ## Exportation
+
 Nous exportons les données transformer afin d'en faire la visualisation dans l'application shiny.
+
 ```{r}
 # write.csv(priceGlobCleanFull, "priceGlobCleanFull.csv", row.names = FALSE)
 ```
-
 
 dygraph
 
@@ -410,6 +406,15 @@ addShadNot <- function(dygraph,tabl){
   return(obj)
 }
 
+addMinMax <- function(dygraph,tbl){
+  dateMin <- tbl |> pluck(1,1) |> as.character()
+  dateMax <- tbl |> pluck(1,2) |> as.character()
+  obj <- dygraph |> 
+    dyAnnotation(dateMin, text = "Min", tooltip = "Prix moyen minimum",width = 30) |> 
+    dyAnnotation(dateMax, text = "Max", tooltip = "Prix moyen maximum",width = 30)
+  return(obj)
+}
+
 ```
 
 ```{r}
@@ -429,13 +434,11 @@ priceGlobCleanFull |>
   dygraph() |> 
   addShadNot(ranKTable)
   
+  
 ```
 
-
-
-
-
 Affichage du classement des produits et catégories
+
 ```{r}
 priceGlobCleanFull |>
   # filter(ANNEE==2020) |>
@@ -456,8 +459,8 @@ priceGlobCleanFull |>
 
 ```
 
-
 Les saisons et leur périodes
+
 ```{r}
 SemestreTable <- tibble(
   debut=c("2020-1-1","2020-4-1","2020-7-1","2020-10-1",
@@ -474,6 +477,7 @@ SemestreTable <- tibble(
 ```
 
 Afin de retrouver les dates du dataset qui sont plus proches des dates du milieu
+
 ```{r}
 # Fonction pour trouver la date la plus proche dans vecB pour une date donnée
 find_closest_date <- function(date, vec) {
@@ -495,6 +499,7 @@ SemestreTable
 ```
 
 # récupération du classement des produits
+
 ```{r}
 indicateur <- priceGlobCleanFull |>
   # filter(ANNEE==2020) |>
@@ -518,128 +523,55 @@ ranKTable <- left_join(SemestreTable,indicateur |> select(QuarterAn,`SOUS-CATEGO
 
 ```
 
-
 ```{r}
-SaisonMois <- priceGlobCleanFull |>
+priceGlobCleanFull |>
   # filter(ANNEE==2020) |>
   filter(CATEGORIE!="PRODUITS MANUFACTURES") |>
   mutate(MoisAn=as.yearmon(DATE),
          QuarterAn=as.yearqtr(DATE),
          TauxVar=round((PRIX-PRIXPREC)/PRIXPREC,2),
-         ) |>ungroup() |> 
-  summarize(PrixMoy=mean(PRIX,na.rm = TRUE),
-            VarMoy=mean(TauxVar,na.rm =TRUE),
-            VarMoyAbs=mean(abs(TauxVar),na.rm =TRUE),
-            .by = c(ANNEE,MOIS)) 
-SaisonMois
-
-```
-
-```{r}
-library(gt)
-towny |>
-  dplyr::select(name, census_div, population_2021, density_2021) |>
-  dplyr::arrange(desc(population_2021)) |>
-  dplyr::filter(census_div %in% c(
-    "Toronto", "Peel", "York", "Durham", "Halton"
-  )) |>
-  dplyr::mutate(density_2021_sqmi = density_2021 / 0.3861) |>
-  # Début des syntaxes gt
-  gt(rowname_col = "name", groupname_col = "census_div") |>
-  tab_header(title = "Population Summary of the Greater Toronto Area") |>
-  row_group_order(groups = c(
-    "Toronto", "Peel", "York", "Durham", "Halton"
-  )) |>
-  fmt_number(columns = starts_with("density"), decimals = 1) |>
-  fmt_integer(columns = c(population_2021, density_2021_sqmi)) |>
-  text_replace(
-    pattern = "Toronto",
-    replacement = "City of Toronto (single-tier)",
-    locations = cells_row_groups(groups = "Toronto")
-  ) |>
-  tab_stub_indent(rows = everything(), indent = 2) |>
-  cols_label(
-    population_2021 ~ md("Population"),
-    density_2021 ~ md("ppl/km^2^"),
-    density_2021_sqmi ~ md("ppl/mi^2^")
-  ) |>
-  cols_width(
-    stub() ~ px(200),
-    everything() ~ px(100)
-  ) |>
-  tab_spanner(
-    label = "Density",
-    columns = starts_with("density")
-  ) |>
-  grand_summary_rows(
-    columns = population_2021,
-    fns = list(
-      list(label = "Total Population", id = "total_pop", fn = "sum"),
-      list(label = "Percentage of Province", id = "pct") ~ sum(.) / 14.2E6
-    ),
-    fmt = list(
-      ~ fmt_integer(., rows = "total_pop"),
-      ~ fmt_percent(., rows = "pct", decimals = 1)
-    ),
-    side = "top",
-    missing_text = ""
-  ) |>
-  summary_rows(
-    columns = population_2021,
-    groups = c("Peel", "York", "Durham", "Halton"),
-    fns = list(
-      list(label = "Regional Population", id = "pop_region") ~ sum(.),
-      list(label = "Percentage of GTA", id = "pct_gta") ~ sum(.) / 6711985
-    ),
-    fmt = list(
-      ~ fmt_integer(., rows = "pop_region"),
-      ~ fmt_percent(., rows = "pct_gta", decimals = 1)
-    ),
-    side = "top",
-    missing_text = "",
-  ) |>
-  opt_stylize(style = 1, color = "cyan")
-```
-
-
-
-```{r}
-RankTableSai <- priceGlobCleanFull |>
-  # filter(ANNEE==2020) |>
-  filter(CATEGORIE!="PRODUITS MANUFACTURES") |>
-  ungroup() |> 
-  mutate(MoisAn=as.yearmon(DATE),
-         QuarterAn=as.yearqtr(DATE),
-         TauxVar=round((PRIX-PRIXPREC)/PRIXPREC,2),
-         QuarterName=str_c("Semestre ",quarter(DATE))
-         ) |> 
-  group_by(ANNEE,QuarterName,MOIS,SPECIFICITE) |> 
+         ) |>
+  group_by(ANNEE,MOIS) |> 
   summarise(PrixMoy=mean(PRIX,na.rm = TRUE),
             VarMoy=mean(TauxVar,na.rm =TRUE),
-            VarMoyAbs=mean(abs(TauxVar),na.rm =TRUE)
-            ) |> 
-  mutate(Rank=min_rank(VarMoy)) |>
-  filter(Rank==1)|> 
-  ungroup() |> 
-  distinct(ANNEE,QuarterName,MOIS,.keep_all = TRUE) |> 
-  pivot_wider(names_from = ANNEE,
-              values_from = SPECIFICITE,
-              id_cols =c(QuarterName,MOIS)
-              )
+            VarMoyAbs=mean(abs(TauxVar),na.rm =TRUE)) |> 
+  select("VarMoyAbs")
 
 ```
-
 ```{r}
-RankTableSai |>
-   # Début des syntaxes gt
-  gt(rowname_col = "MOIS", groupname_col = "QuarterName") |>
-  cols_label(
-    `2020` ~ md(">**2020**"),
-    `2021` ~ md(">**2021**"),
-    `2022` ~ md(">**2022**")
-  ) |> 
-  opt_stylize(style = 6, color = "pink")
-  
+up_arrow <- "<span style=\"color:green\">&#9701;</span>"
+down_arrow <- "<span style=\"color:red\">&#9698;</span>"
+priceGlobCleanFull|>
+  group_by(PRODUITS,VILLE) |>
+  mutate(PRIXPREC=lag(PRIX,order_by = DATE)) |> 
+  mutate(MoisAn=as.yearmon(DATE, "%m/%Y"),
+         MOIS=month(DATE,label=TRUE),
+         TauxVar=round((PRIX-PRIXPREC)/PRIXPREC,2)) |> 
+  filter(CATEGORIE!="PRODUITS MANUFACTURES") |> 
+      group_by(ANNEE,MOIS) |>
+      summarise(PrixMoy=mean(PRIX,na.rm = TRUE),
+                VarMoy=mean(TauxVar,na.rm =TRUE),
+                VarMoyAbs=mean(abs(TauxVar),na.rm =TRUE)) |>
+      pivot_wider(names_from =ANNEE,values_from = PrixMoy,id_cols = MOIS ) |> 
+      gt() |> 
+  text_transform(
+        locations = cells_body(
+          columns = `2020`,
+          rows = `2021` > `2020`
+        ),
+        fn = function(x) paste(x, up_arrow)
+      ) |>
+      text_transform(
+        locations = cells_body(
+          columns = `2020`,
+          rows = `2020` < `2021`
+        ),
+        fn = function(x) paste(x, down_arrow)
+      ) |> 
+      opt_interactive(
+        use_filters = FALSE,
+        use_search = FALSE,
+        use_compact_mode = TRUE,
+        use_text_wrapping = FALSE
+      ) 
 ```
-```
-

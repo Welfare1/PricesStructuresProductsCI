@@ -10,7 +10,6 @@
 
 
 fluidPage(
-  
   # Sidebar with a slider input for number of bins
   navbarPage(
     title = "",
@@ -103,9 +102,9 @@ fluidPage(
                  # colonne 2
                  column(width =6,
                         style="
-                                    display: inline-flex;
-                                    justify-content: space-evenly;
-                                    width: 50%;",
+                          display: inline-flex;
+                          justify-content: space-evenly;
+                          width: 50%;",
                         img(src="img/marche.png",
                             title="Popup",
                             width="70%"
@@ -222,64 +221,64 @@ fluidPage(
     tabPanel(title = "Analyse par date",
              
              # Sidebar page 2
-             sidebarPanel(
-                          selectInput(inputId = "wel_selIndic",
-                                      label = "Indicateur: ",
-                                      selected = 1,
-                                      choices = c("Prix moyen" = 1,
-                                                  "Taux de variation moyen" = 2,
-                                                  "Taux de variation moy (abs)" = 3)
-                                      ),
-                          selectInput(inputId = "wel_selAnnee",
-                                      label = "Année: ",
-                                      selected = 1,
-                                      choices = c("2020" = 1,
-                                                  "2021" = 2,
-                                                  "2022" = 3)
-                          ),
-                          dateRangeInput(
-                            inputId= "wel_selDateRange",
-                            start="2020-01-01",
-                            end = "2023-01-01",
-                            language = "fr",
-                            label = "Plage date :"),
+             sidebarPanel("SIDEBAR Page 2", width = 3,
                           
-                          selectInput(inputId = "wel_selMois",
-                                      label = "Mois : ",
-                                      selected = NULL,
-                                      choices = c("Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
-                                                  "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre")
+                          
+                          div(
+                            style = "background-color: #A09D9E; padding: 15px; margin-bottom: 15px;",
+                            selectizeInput(inputId = "wel_indicateur",
+                                           label = "Choisir un indicateur: ",
+                                           selected = "Prix Moyen",
+                                           choices = c("Prix Moyen",
+                                                       "Taux de variat. moy.",
+                                                       "Taux de variat. moy. (absolu)"))
                           ),
                           
-                          selectInput(inputId = "wel_semaine",
-                                      label = "Semaine : ",
-                                      selected = NULL,
-                                      choices = str_c("Semaine ", 1:52)
+                          
+                          div(
+                            style = "background-color: #478FFC; padding: 15px; margin-bottom: 15px;",
+                            selectizeInput(inputId = "wel_ville",
+                                           label = "Ville: ",
+                                           selected = NULL,
+                                           choices = uniqueVille),
+                                             # DatasetPrice$VILLE)
                           ),
                           
-                          selectInput(inputId = "wel_ville",
-                                      label = "Ville : ",
-                                      selected = NULL,
-                                      choices = str_c("Ville ", 1:6)
+                          
+                          div(
+                            style = "background-color:#50FC47; padding: 15px; margin-bottom: 15px;",
+                            
+                            selectizeInput(inputId = "wel_categorie",
+                                           label = "Categorie: ",
+                                           selected = NULL,
+                                           choices = uniqueCateg),
+                                           
+                            selectizeInput(inputId = "wel_SousCat",
+                                           label = "Sous-catégorie: ",
+                                           selected = NULL,
+                                           choices = uniqueSousCat),
+                            
+                            selectizeInput(inputId = "wel_Specificite",
+                                           label = "Spécificté ",
+                                           selected = NULL,
+                                           choices = uniqueSpecifite),
+                            
+                    
+                            selectizeInput(inputId = "wel_produit", label = "Produits: ",
+                                           selected = NULL,
+                                           choices = uniqueProd)
                           ),
                           
-                          selectInput(inputId = "wel_Categorie",
-                                      label = "Catégorie : ",
-                                      selected = NULL,
-                                      choices = str_c("Catégorie ", 1:9)
-                          ),
+                          div(
+                            style = "background-color: #FCE147; padding: 15px; margin-bottom: 15px;",
+                            selectizeInput(inputId = "wel_date",
+                                           label = "Annee: ",
+                                           selected = NULL,
+                                           choices = uniqueAnnee)
+                                           # choices = DatasetPrice$ANNEE)
+                          )
                           
-                          selectInput(inputId = "wel_produit",
-                                      label = "Produit : ",
-                                      selected = NULL,
-                                      choices = str_c("Produit ", 1:20)
-                          ),
-                          
-                                         
-                                        
-                          # Largeur du panel
-                          width = 2
-                          ),
+             ),
              
              # Menu principal page 2
              mainPanel(
@@ -288,29 +287,120 @@ fluidPage(
                  
                  # TabPanel 1
                  tabPanel("Général",
+                          style = "width:1060px",
+                          div(
+                            style = "background-color: #FFFFFF;
+                            padding: 10px;
+                            font-size: 18px;
+                             text-align:justify;
+                            font-family: 'Trebuchet MS', Helvetica, sans-serif;
+                            border: 1px solid #000000;
+                            border-left: none;
+                            border-right: none;
+                            border-radius: 10px;
+                            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+                            ",
+                            p("Trois indicateurs sont utilisés dans la mise en évidence des différentes variations
+                                des prix selon les régions. L’intensité des couleurs sur les cartes est proportionnelle
+                                à la valeur prise par l’indicateur. Les aproximations des prix sur toute l’étendue du 
+                                térritoire se fait aux moyens de prévisions de prix selon leur proximité")
+                          ),
+                          br(style = "width: 0.5px;"),
                           # Grandes séries temporelles
                           fluidRow(
-                            column(width=11,
+                            style = "background-color: #FFFFFF;
+                            padding: 10px;
+                            font-size: 18px;
+                             text-align:justify;
+                            font-family: 'Trebuchet MS', Helvetica, sans-serif;
+                            border: none;
+                            border-radius: 10px;
+                            box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+                            ",
+                            column(width=10,
                                    dygraphOutput("wel_dygraph")),
-                            column(width=1,
+                            column(width=2,
                                    "Commentaire")
                           ),
                           # Séries temporelles des produits par saison
+                          br(),
+                          
                           fluidRow(
-                            column(width=8,
-                                   dygraphOutput("wel_dygraphMois")),
-                            column(width=4,
-                                   "Commentaire"
+                            column(
+                             div(
+                               style = "background-color: #FFFFFF;
+                            padding: 10px;
+                            font-size: 18px;
+                             text-align:justify;
+                            font-family: 'Trebuchet MS', Helvetica, sans-serif;
+                            border: border: none;
+                            border-radius: 10px;
+                            box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+                            ",
+                               dygraphOutput("wel_dygraphMois"),
+                               p("La palettte verte désigne les zones au prix moyen en dessous du prix moyen général.
+                                         A contrario, 
+                                 une couleur rouge désignera les zones aux moyen dépassant le prix moyen global.")
+                            
+                             ),
+                             width=7,
+                              ),
+                            
+                            column(
+                              style = "background-color: #FFFFFF;
+                            padding: 20px;
+                            font-size: 18px;
+                             text-align:justify;
+                            font-family: 'Trebuchet MS', Helvetica, sans-serif;
+                            border: border: none;
+                            border-radius: 10px;
+                            box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+                            ",
+                              width=5,
+                              withSpinner(gt_output(outputId = "wel_tableSaiRecap1"),
+                                          type=1,
+                                          color = getOption("spinner.color", default = "pink"))
                                    )
                           )
                      
                  ),
                  
                  # TabPanel 2
-                 tabPanel("Saisonnalité", 
+                 tabPanel("Saisonnalité",
+                          style = "width:1060px",
+                          div(
+                            style = "background-color: #FFFFFF;
+                            padding: 10px;
+                            font-size: 18px;
+                             text-align:justify;
+                            font-family: 'Trebuchet MS', Helvetica, sans-serif;
+                            border: 1px solid #000000;
+                            border-left: none;
+                            border-right: none;
+                            border-radius: 10px;
+                            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+                            ",
+                            p("Trois indicateurs sont utilisés dans la mise en évidence des différentes variations
+                                des prix selon les régions. L’intensité des couleurs sur les cartes est proportionnelle
+                                à la valeur prise par l’indicateur. Les aproximations des prix sur toute l’étendue du 
+                                térritoire se fait aux moyens de prévisions de prix selon leur proximité")
+                          ),
+                          br(),
                           fluidRow(
+                            style = "background-color: #FFFFFF;
+                            padding: 10px;
+                            font-size: 18px;
+                             text-align:justify;
+                            font-family: 'Trebuchet MS', Helvetica, sans-serif;
+                            border: none;
+                            border-radius: 10px;
+                            box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+                            ",
                             column(width=9,
-                                   dygraphOutput("wel_dygraphSai")),
+                                  withSpinner(dygraphOutput("wel_dygraphSai"),
+                                              type = 1,
+                                              color = getOption("spinner.color", default = "pink")
+                                              )  ),
                             column(width=3,
                                    div(
                                      radioButtons(inputId = "wel_selectSai",
@@ -329,14 +419,49 @@ fluidPage(
                                    )
                                    )
                           ),
-                          # fluidRow(
-                          #   column(width=9,
-                          #          gt_output(outputId = "wel_tableSai")),
-                          #   column(width=3,
-                          #          gt_output(outputId = "wel_tableSaiRecap"))
-                          # ),
-                          gt_output(outputId = "wel_tableSai")
+                         
+                          br(),
+                          div(
+                            style = "background-color: #FFFFFF;
+                            padding: 10px;
+                            font-size: 18px;
+                             text-align:justify;
+                            font-family: 'Trebuchet MS', Helvetica, sans-serif;
+                            border: none;
+                            border-radius: 10px;
+                            box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+                            ",
+                            withSpinner(gt_output(outputId = "wel_tableSai"),type=1,
+                                        color = getOption("spinner.color", default = "pink")
+                            ),
+                            p("Trois indicateurs sont utilisés dans la mise en évidence des différentes variations
+                                des prix selon les régions. ")
+                          ),
                           
+                          
+                          
+                 ),
+                 tabPanel("Recap",
+                          div(
+                            style = "background-color: #FFFFFF;
+                            padding: 10px;
+                            font-size: 18px;
+                             text-align:justify;
+                            font-family: 'Trebuchet MS', Helvetica, sans-serif;
+                            border: 1px solid #000000;
+                            border-left: none;
+                            border-right: none;
+                            border-radius: 10px;
+                            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
+                            ",
+                            p("Trois indicateurs sont utilisés dans la mise en évidence des différentes variations
+                                des prix selon les régions. L’intensité des couleurs sur les cartes est proportionnelle
+                                à la valeur prise par l’indicateur. Les aproximations des prix sur toute l’étendue du 
+                                térritoire se fait aux moyens de prévisions de prix selon leur proximité")
+                          ),
+                          br(),
+                          style = "width:1060px",
+                          gt_output(outputId = "wel_tableSaiRecap") 
                           
                  )
                )
