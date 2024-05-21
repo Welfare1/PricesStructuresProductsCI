@@ -1,24 +1,41 @@
 library(shiny)
 library(tidyverse)
 library(zoo)
+library(lubridate)
 library(plotly)
 library(bslib)
 library(dygraphs)
 library(gt)
+library(shinycssloaders)
 
 ##############################################################################
 
 # Importation du jeu de données
-DatasetPrice <- read_csv("data/priceGlobCleanFull.csv")
+DatasetPriceInit <- read_csv("data/priceGlobCleanFull.csv") |> 
+  filter(CATEGORIE!="PRODUITS MANUFACTURES")
+
+# Pour les formating
+up_arrow <- "<span style=\"color:red\">&#9650;</span>"
+down_arrow <- "<span style=\"color:green\">&#9660;</span>"
 
 # Processing
-DatasetPrice <- DatasetPrice |>
+DatasetPrice <- DatasetPriceInit |>
   group_by(PRODUITS,VILLE) |>
-  mutate(PRIXPREC=lag(PRIX,order_by = DATE))
-
-DatasetPrice <-DatasetPrice |>  mutate(MoisAn=as.yearmon(DATE, "%m/%Y"),
-       TauxVar=round((PRIX-PRIXPREC)/PRIXPREC,2)) |> 
+  mutate(PRIXPREC=lag(PRIX,order_by = DATE)) |> 
+  mutate(MoisAn=as.yearmon(DATE, "%m/%Y"),
+         MOIS=month(DATE,label=TRUE),
+         TauxVar=round((PRIX-PRIXPREC)/PRIXPREC,2)) |> 
   filter(CATEGORIE!="PRODUITS MANUFACTURES")
+
+
+# Chargement des ressources du SIDEBAR
+uniqueVille <- c("TOUT",unique(DatasetPriceInit$VILLE))
+uniqueCateg <- c("TOUT",unique(DatasetPriceInit$CATEGORIE))
+uniqueProd <- c("TOUT",unique(DatasetPriceInit$PRODUITS))
+uniqueSousCat <- c("TOUT",unique(DatasetPriceInit$`SOUS-CATEGORIE`))
+uniqueSpecifite <- c("TOUT",unique(DatasetPriceInit$SPECIFICITE))
+uniqueAnnee <- c("TOUT",unique(DatasetPriceInit$ANNEE ))
+
 
 # Fonction permettant l'annotation du graph
 
@@ -100,15 +117,70 @@ SemestreTable <- tibble(
 
 
 
-## Ajout des semestres à la table
-SemestreTable <- SemestreTable |> 
+# Ajout des semestres à la table (pas besoin de chargement ultérieur)
+SemestreTable <- SemestreTable |>
   mutate(Date=as.Date(fin)) |>
   mutate(Quarter=as.yearqtr(Date),
          DateMil=Date %m-% months(1),
          DateMilFind= sapply(DateMil,
-                             function(date) find_closest_date(date, priceGlobCleanFull$DATE))|>
+                             function(date) find_closest_date(date, DatasetPrice$DATE))|>
            as.Date()
          )
+
+# Fonction permettant d'avoir le min et le max sur le graph
+addMinMax <- function(dygraph,tbl){
+  
+  dateMin <- tbl |> pluck(1,1) |> as.character()
+    dateMax <- tbl |> pluck(1,2) |> as.character()
+    obj <- dygraph |>
+      dyAnnotation(dateMin, text = "Min", tooltip = "Prix moyen minimum",width = 30) |>
+      dyAnnotation(dateMax, text = "Max", tooltip = "Prix moyen maximum",width = 30)
+  
+  # if(colnames(tbl)[2]=="VarMoy"){
+  #   dateMin <- tbl |> pluck(1,1) |> as.character()
+  #   dateMax <- tbl |> pluck(1,2) |> as.character()
+  #   obj <- dygraph |> 
+  #     dyAnnotation(dateMin, text = "Min", tooltip = "Prix moyen minimum",width = 30) |> 
+  #     dyAnnotation(dateMax, text = "Max", tooltip = "Prix moyen maximum",width = 30)
+  # }else{
+  #   dateMin <- tbl |> pluck(1,1) |> as.character()
+  #   dateMax <- tbl |> pluck(1,2) |> as.character()
+  #   obj <- dygraph |> 
+  #     dyAnnotation(dateMin, text = "Min", tooltip = "Prix moyen minimum",width = 30) |> 
+  #     dyAnnotation(dateMax, text = "Max", tooltip = "Prix moyen maximum",width = 30)
+  # }
+  
+  return(obj)
+}
+
+# Fonction premettant de renommer les indicateurs
+renameIndicator <- function(ind){
+  ind <- switch(ind,
+                "Prix Moyen" = "PrixMoy",
+                "Taux de variat. moy." = "VarMoy",
+                "Taux de variat. moy. (absolu)" = "VarMoyAbs",
+                ind)
+  return(ind)
+}
+
+# Fonction pour le formatages des indicateurs
+formatingtable <- function(ind,prev,act){
+  ind <- switch(ind,
+                "Prix Moyen" = prev<act,
+                "Taux de variat. moy." = prev<act,
+                "Taux de variat. moy. (absolu)" = prev<act,
+                ind)
+  return(ind)
+}
+
+# Fonction pour l'ajout de filtre
+filterOption <- function(tidyExp,sideFilter,Var){
+  if(sideFilter=="TOUT"){
+    return(tidyExp)
+  }else{
+    return(tidyExp |> filter(!!sym(Var)==sideFilter))
+  }
+}
 
 
 
