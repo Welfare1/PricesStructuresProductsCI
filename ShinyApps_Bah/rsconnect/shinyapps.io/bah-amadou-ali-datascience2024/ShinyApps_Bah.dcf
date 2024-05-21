@@ -4,8 +4,8 @@ username: bah-amadou-ali-datascience2024
 account: bah-amadou-ali-datascience2024
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
-appId: 12027458
-bundleId: 8635533
+appId: 12038201
+bundleId: 8640025
 url: https://bah-amadou-ali-datascience2024.shinyapps.io/ShinyApps_Bah/
 version: 1
 asMultiple: FALSE
