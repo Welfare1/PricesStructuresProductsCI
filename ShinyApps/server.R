@@ -18,16 +18,11 @@ function(input, output, session) {
   
   # Mettre à jour le texte affiché
   output$texteAffiche <- renderText({
-    "En première ligne on note les régions du Tonpki et le « Grand Abidjan » (réunion de la
-     ville d’Abidjan, ainsi de villes adjacentes). Considéré comme épicentre de la propagation
-    virale, « le grand Abidjan » est isolé du reste du territoire nationale à partir du 15 juillet.
-    Le District Autonome d’Abidjan, capitale économique ivoirienne, détient la plus forte
-    concentration d’habitants avec 2 994 Habitant/km2 (avec un total de 5 616 633 habitants,
-    Abidjan est la ville la plus peuplée). Elle constitue ainsi une demande importante, qui 
-    contribue à la hausse des prix au sein du district. Pour compte, Abidjan détient le prix
-   moyen le plus élevés sur chaque sur la période de 2021. Avec des pics du prix moyen
-   atteignant jusqu’à 1385 FCFA au 12/07/2021 contre 1045 FCFA sur l’année 2020 soit
-   une croissance de 34%."
+    " Abidjan, la capitale économique de la Côte d'Ivoire, est très peuplée avec une densité de 2 994 habitants par km² 
+    et une population totale de 5 616 633 habitants, ce qui en fait la ville la plus peuplée. Cette forte concentration 
+    de population entraîne une demande élevée, contribuant à la hausse des prix dans le district. En 2021, Abidjan a 
+    enregistré le prix moyen le plus élevé, avec des pics atteignant 1 385 FCFA le 12 juillet 2021, contre 1 045 FCFA 
+    en 2020, soit une augmentation de 34%."
   })
   
   
@@ -187,7 +182,6 @@ function(input, output, session) {
       filterOption(input$date,"ANNEE")
     # Créer un graphique de boîte à moustaches avec amBoxplot
     amBoxplot(PRIX ~ VILLE, data = filtered_data,
-                   main = paste("Boîte à moustaches des prix des produits en fonction des années"),
                    xlab = "Ville", ylab = "Prix")
     
     
