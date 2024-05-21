@@ -298,25 +298,25 @@ fluidPage(
                             
                             div(
                               style = "background-color: #478FFC; padding: 15px; margin-bottom: 15px;",
-                              selectizeInput(inputId = "ville", label = "Ville: ", selected = "Ville1",
-                                             choices = unique(priceGlob$VILLE))
+                              selectizeInput(inputId = "ville", label = "Ville: ", selected = NULL,
+                                             choices = uniqueVille)
                             ),
                             
                            
                             div(
                               style = "background-color:#50FC47; padding: 15px; margin-bottom: 15px;",
                               
-                              selectizeInput(inputId = "categorie", label = "Categorie: ", selected = "Categorie1",
-                                             choices = unique(priceGlob$SPECIFICITE)),
+                              selectizeInput(inputId = "Specificite", label = "Specificite: ", selected = NULL,
+                                             choices = uniqueSpecifite),
                             
                               selectizeInput(inputId = "produit", label = "Produits: ", selected = NULL,
-                                            choices = NULL)
+                                            choices = uniqueProd)
                             ),
                             
                             div(
                               style = "background-color: #FCE147; padding: 15px; margin-bottom: 15px;",
-                              selectizeInput(inputId = "date", label = "Annee: ", selected = priceGlob$ANNEE[0],
-                                             choices = unique(priceGlob$ANNEE) )
+                              selectizeInput(inputId = "date", label = "Annee: ", selected = NULL,
+                                             choices =uniqueAnnee )
                             )
                             
                             ),
@@ -335,10 +335,11 @@ fluidPage(
                             
                             div(
                               style = "background-color: #FFFFFF;padding: 10px;",
-                              p("Trois indicateurs sont utilisés dans la mise en évidence des différentes variations
-                                des prix selon les régions. L’intensité des couleurs sur les cartes est proportionnelle
-                                à la valeur prise par l’indicateur. Les aproximations des prix sur toute l’étendue du 
-                                térritoire se fait aux moyens de prévisions de prix selon leur proximité")
+                              
+                              # Affichage du texte basé sur la sélection
+                              textOutput(outputId = "texteAffiche"),
+                              
+                              
                             ),
                             fluidRow(
                               column(width = 6,
@@ -354,7 +355,7 @@ fluidPage(
                                        style = "background-color: #FFFFFF;margin-right: 10px; text-align:center",
                                        br(),
                                        h6("DISTRIBUTION DES PRIX DES PRODUITS SELON LES REGIONS DE LA CI PAR ANNEE"),
-                                       withSpinner(plotlyOutput("aRegionP"), type = 6),
+                                       withSpinner(amChartsOutput("aRegionP"), type = 6),
                                        
                                        ),
                                     
@@ -663,15 +664,16 @@ fluidPage(
                                 à la valeur prise par l’indicateur. Les aproximations des prix sur toute l’étendue du 
                                 térritoire se fait aux moyens de prévisions de prix selon leur proximité")
                             ),
+                           
                             br(),
                             style = "width:1060px",
                             withSpinner(gt_output(outputId = "wel_tableSaiRecap"),type=1,
                                         color = getOption("spinner.color", default = "pink")
-                            ),    
+                            # ),    
                    )
                  )
                )
                
       ),
     )
-)
+))

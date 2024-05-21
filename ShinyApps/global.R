@@ -18,12 +18,14 @@ library(rvest)
 library(lubridate)
 library(dygraphs)
 library(gt)
+library(rmapshaper)
 
 #########################################################################""
 
 ### Analyse par Region
 
 dpt <- read_sf("data/civ")
+dpt <- ms_simplify(dpt)
 priceGlob <- read.csv("data/priceGlobCleanFull.csv")
 VillePaysVilleProche1 <- read_csv("data/VillePaysVilleProche.csv", show_col_types = FALSE)
 adressRegion1 <- read_csv("data/adressRegion.csv", show_col_types = FALSE)
