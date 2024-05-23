@@ -25,7 +25,7 @@ library(shinythemes)
 ### Analyse par Region
 
 dpt <- read_sf("data/civ")
-dpt <- ms_simplify(dpt)
+# dpt <- ms_simplify(dpt)
 priceGlob <- read.csv("data/priceGlobCleanFull.csv")
 VillePaysVilleProche1 <- read_csv("data/VillePaysVilleProche.csv")
 adressRegion1 <- read_csv("data/adressRegion.csv")
@@ -225,6 +225,16 @@ renameIndicator <- function(ind){
   return(ind)
 }
 
+# Fonction premettant de renommer les indicateurs depuis leur nom abrégé
+renameIndicatorInv <- function(indInv){
+  indInv <- switch(indInv,
+                "PrixMoy"="Prix Moyen",
+                "VarMoy"="Taux de variat. moy.",
+                "VarMoyAbs"="Taux de variat. moy. (absolu)",
+                indInv)
+  return(indInv)
+}
+
 # Fonction pour le formatages des indicateurs
 formatingtable <- function(ind,prev,act){
   ind <- switch(ind,
@@ -248,6 +258,3 @@ filterOption <- function(tidyExp,sideFilter,Var){
 
 
 ################################################################################
-
-
-

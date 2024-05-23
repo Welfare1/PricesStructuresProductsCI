@@ -1,6 +1,10 @@
 ---
 title: "Structure du prix des produits dans les différents marchés en Côte d'Ivoire"
+<<<<<<< HEAD
 author: " BAH Amadou Ali~ Frederic AKADJE"
+=======
+author: "BAH Amadou Ali ~ AKADJE Frederic"
+>>>>>>> e649757f43578baf7ce782cc2952fb4860905c5c
 documentclass: report
 format: pdf
 toc: true
@@ -19,7 +23,7 @@ Dans le contexte économique actuel, marqué par une inflation constante et une 
 
 Cette étude vise à analyser la structure des prix sur les différents marchés ivoiriens.
 
-Deux problématiques principales articuleront notre analyse: **comment les prix varie-t-ils** et **et qu'en est-il de leur accessibilité au sein des différents marchés en Côte d'Ivoire**.
+Deux principales problématiques articuleront notre analyse: **comment les prix varie-t-ils** **et qu'en est-il de leur accessibilité au sein des différents marchés en Côte d'Ivoire**.
 
 En fin de compte, cette analyse approfondie vise à fournir des informations précieuses qui pourraient aider à élaborer des politiques efficaces pour atténuer l'impact de l'inflation sur les populations vulnérables en Côte d'Ivoire.
 
@@ -27,7 +31,7 @@ En fin de compte, cette analyse approfondie vise à fournir des informations pr�
 
 ### Collaboration et contribution
 
-Le projet est disponible sur les repo github: \@ ou \@ . Aussi la mise place de ce projet a occasionné la conception d'une maqette pour l'application Shiny avant sa réalisation (maquette disponible sur : [ici](https://www.figma.com/file/IkEu8xdFRqfcr2R0eESQFC/Structure_Prix-team-library?type=design&mode=design&t=u1JtKOkRZorjGNiW-1)).
+Le projet est disponible sur le site : <https://bah-amadou-ali-datascience2024.shinyapps.io/Projet_Visualisation_Shiny/>. Les ressources de l'application sont disponible sur le repo github: git\@github.com:Welfare1/PricesStructuresProductsCI.git . Aussi la mise place de ce projet a occasionné la conception d'une maqette pour l'application Shiny avant sa réalisation (maquette disponible sur : [ici](https://www.figma.com/file/IkEu8xdFRqfcr2R0eESQFC/Structure_Prix-team-library?type=design&mode=design&t=u1JtKOkRZorjGNiW-1)).
 
 ### Source de données
 
@@ -41,22 +45,90 @@ Ce projet a nécessité l'utilisation des sources de données suivantes:
 
 -   Catégorisation des produits du marché (pdf), OCPV : <https://www.ocpv-ci.com/doc/SYNTHESE/2023/SYNTHESE_PRIX_MOYENS_S13_2023.pdf>
 
--   Estimation du panier moyen (csv) : voir dossier /data/name.csv
+### Data Processing
 
-# Data Processing
+L'ensemble des tâches effectuées passe par un travail de fond sur les différentes données collectées. Ces tâches s'étendent depuis la collecte jusqu'au calcul des indicateurs.
 
-L'ensemble des tâches effectuées passe par un travail de fond sur les différentes données collectées. Ces tâches s'étendent depuis la collecte jusqu'au aux calculs des indicateurs.
+### Transformation et nettoyage
 
-## Collecte des données
+**Gestion des valeurs manquantes**
 
-## Transformation et nettoyage
+Deux cas de figures s'assimilent à l'observation de valeurs manquantes dans notre dataset:\
+1. Une indisponibilité du produits dans la région concernée\
+2. Un défaut de mesure des prix sur la période concernée
 
-## Gestion des valeurs manquantes
+Par suite nous considérons le cas 2.
 
-## Calcul des indicateurs
+Pour chaque valeur manquante dans une région, une imputation est faite à travers la ville au prix non nul la plus proche.
 
-La notion de meilleur produit est donc le produit qui a le taux de variation moyen le plus petit et le taux de variation en valeur absolue le plus grand.
+**Traitement des données géographiques**
 
-# REFERENCE
+Les prix initialement capturés sur 6 villes de la côte d'ivoire, sont à présent repartis sur tout l'ensemble du territoire ivoirien. il ne s'agira pas seulement des prix, mais de tout indicateur calculé dans la perspective de l'analyse. Pour cela la correspondance de chaque ville par rapport à sa ville la plus proche est alors appliquée. Environ 3 658 600 de lignes, en tout seront générées dans un nouveau dataset.
 
-[@stringdist]
+#### Calcul des indicateurs
+
+Trois indicateurs feront l'objet d'analyse dans un premier temps. Il s'agit entre autre de:
+
+-   Taux de variation du prix par date;
+
+-   Taux de variation moyen;
+
+-   Taux de variation moyen en valeur absolue;
+
+### Quelques insights
+
+2020 à 2022 demeure une période marquée par des instabilités à la fois politiques et sanitaires. Ces instabilités ont d’importantes répercussions sur le coût de la vie en Côte d'Ivoire.
+
+**Des pics sans précedents**
+
+![Evolution du prix moyen de 2020 à 2022](images/clipboard-3244739585.png)
+
+Un important émerge pic émerge sur la période de l'année 2021. Conjointement, il correspondant à la progation de la Covid 19 en Côte d’Ivoire. Les différentes mesures d'isolement sont alors appliquées, dans le but de contenir l'épidémie au prix d'une flambée du coût des denrées alimentaires. La population alors désireuse de faire des provisions augmente drastiquement la demande, entraînant par ricochet, une augmentation du prix des différents produits du marchés.
+
+**Des impacts plus importantes dans certaines régions**
+
+Face au contexte de la propagation virale, certaines régions se retouvent plus exposées aux répercutions.
+
+![Repartition du prix moyen de 2020 à 2022 en Côte d'Ivoire](images/clipboard-1554367489.png)
+
+En première ligne on note les régions du Tonpki et le « Grand Abidjan » (réunion de la ville d’Abidjan, ainsi de villes adjacentes). Considéré comme épicentre de la propagation virale, « le grand Abidjan » est isolé du reste du territoire nationale à partir du 15 juillet. Le District Autonome d'Abidjan, capitale économique ivoirienne, détient la plus forte concentration d'habitants avec 2 994 Habitant/km2 (avec un total de 5 616 633 habitants, Abidjan est la ville la plus peuplée). Elle constitue ainsi une demande importante, qui contribue à la hausse des prix au sein du district. Pour compte, Abidjan détient le prix moyen le plus élevés sur chaque sur la période de 2021. Avec des pics du prix moyen atteignant jusqu’à 1385 FCFA au 12/07/2021 contre 1045 FCFA sur l’année 2020 soit une croissance de 34%.
+
+**Disparité des selon les régions**
+
+![Spécificité des produits les plus accessibles selon les régions](images/clipboard-3608732826.png)
+
+Les prix moyens des denrées alimentaires en Côte d'Ivoire présentent des disparités significatives d'une région à l'autre. Cette inégalité de répartition s'explique par plusieurs facteurs endogènes, c'est-à-dire des facteurs internes au pays et au système économique. Parmi ces facteurs, on peut citer.
+
+**1. Différences de production agricole :**
+
+-   **Productivité agricole :** Les régions avec une productivité agricole plus élevée ont généralement des prix des denrées alimentaires plus bas, car l'offre est plus abondante.
+
+-   **Conditions climatiques :** Les régions sujettes aux aléas climatiques, comme les sécheresses ou les inondations, peuvent connaître des baisses de production et des hausses de prix temporaires.
+
+-   **Accès aux intrants agricoles :** L'accès aux engrais, pesticides et semences de qualité peut influencer la productivité et les prix des denrées alimentaires.
+
+-   **Infrastructure agricole :** La qualité des routes, des systèmes d'irrigation et des installations de stockage peut affecter les coûts de transport et de conservation des produits, influençant ainsi les prix.
+
+**2. Difficultés d'accès aux marchés :**
+
+-   **État des infrastructures de transport :** Le manque de routes praticables, de ponts ou de moyens de transport adéquats peut augmenter les coûts de transport des denrées alimentaires, rendant les prix plus élevés dans certaines régions enclavées.
+
+-   **Insécurité :** Les conflits ou l'instabilité politique peuvent perturber les chaînes d'approvisionnement et limiter l'accès aux marchés, entraînant des prix plus élevés dans les zones affectées.
+
+-   **Manque d'information sur les prix :** Les agriculteurs et les consommateurs dans certaines régions peuvent avoir un accès limité aux informations sur les prix du marché, ce qui les rend plus vulnérables aux fluctuations et aux prix élevés.
+
+**3. Facteurs de demande :**
+
+-   **Densité de population :** Les zones densément peuplées ont généralement une demande plus élevée pour les denrées alimentaires, ce qui peut entraîner des prix plus élevés.
+
+-   **Niveau de vie :** Les régions avec un niveau de vie plus élevé ont généralement une capacité de consommation accrue, ce qui peut se traduire par des prix plus élevés pour certains produits.
+
+-   **Préférences alimentaires :** Les préférences alimentaires locales peuvent influencer la demande pour certains produits et, par conséquent, les prix.
+
+**4. Politiques gouvernementales :**
+
+-   **Subventions et taxes :** Les subventions gouvernementales sur certains produits alimentaires peuvent maintenir les prix bas dans certaines régions, tandis que les taxes peuvent les augmenter.
+
+# Conclusion
+
+cette analyse approfondie de la structure des prix des produits dans les différents marchés en Côte d'Ivoire révèle des dynamiques complexes influencées par divers facteurs économiques, politiques et sociaux. Les résultats montrent que les prix des denrées alimentaires ont subi des fluctuations significatives entre 2020 et 2022, principalement dues aux perturbations causées par la pandémie de COVID-19 et à d'autres instabilités. Les variations des prix ne sont pas uniformes à travers le pays, avec des disparités notables entre les régions, notamment dans le Grand Abidjan, où la densité de population et l'importance économique entraînent des prix plus élevés.
