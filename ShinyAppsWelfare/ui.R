@@ -7,15 +7,15 @@
 #    https://shiny.posit.co/
 #
 
-
-
 fluidPage(
+  theme = shinytheme("cerulean"),
+  
   # Sidebar with a slider input for number of bins
   navbarPage(
     title = "",
     position = "fixed-top",
     tags$style(type="text/css",
-               "body {padding-top: 70px;}"),
+               "body {padding-top: 60px;}"),
     
     ########################################################################################################
     # Page 1 
@@ -25,9 +25,9 @@ fluidPage(
                  tags$style(
                    HTML(
                      "
-                        .body_row {
-                          background: linear-gradient(to bottom, #007bff, #ffffff); 
-                        }
+                            .body_row {
+                              background: linear-gradient(to bottom, #007bff, #ffffff); 
+                            }
                             "
                    )
                  )
@@ -42,7 +42,7 @@ fluidPage(
                  column(width = 7,
                         h2("ANALYSE DES PRIX  DES PRODUITS ALIMENTAIRES SUR LES MARCHES IVOIRIENS", 
                            style = "
-                             color :#f77605;
+                             color :orange;
                              font-weight: bold;
                              text-align:center
                              "),
@@ -50,8 +50,8 @@ fluidPage(
                  
                  column(width = 2,
                         style="
-                          display: inline-flex;
-                          justify-content: space-evenly;",
+                                    display: inline-flex;
+                                    justify-content: space-evenly;",
                         img(src="img/AmoirCI.png",
                             title="Popup",
                             width = "60%"
@@ -83,7 +83,7 @@ fluidPage(
                         p("Ce projet s’inspire des directives de l’Etat de Côte d’ivoire dans
                                   la lutte contre la cherté de la vie.", 
                           style = "
-                            color : #f77605;
+                            color : orange;
                             font-size: 24px;
                             font-weight: bold ;
                             text-align:justify"
@@ -92,7 +92,7 @@ fluidPage(
                         p("Il offre un outil de restitution des prix des différentes
                                   denrées alimentaires dans les marchés, ainsi qu’une analyse portant sur leurs structures.", 
                           style = "
-                            color : #f77605;
+                            color : orange;
                             font-size: 24px;
                             font-weight: bold;
                             text-align:justify"
@@ -102,9 +102,9 @@ fluidPage(
                  # colonne 2
                  column(width =6,
                         style="
-                          display: inline-flex;
-                          justify-content: space-evenly;
-                          width: 50%;",
+                                    display: inline-flex;
+                                    justify-content: space-evenly;
+                                    width: 50%;",
                         img(src="img/marche.png",
                             title="Popup",
                             width="70%"
@@ -190,33 +190,235 @@ fluidPage(
                ),
              )),
     #######################################################################################################
-    # Page 2
-    tabPanel(title = "Analyse par région",
-             
-             # Sidebar page 2
-             sidebarPanel("SIDEBAR Page 2", width = 2),
-             
-             # Menu principal page 2
-             mainPanel(
-               # Tabset page 2
-               tabsetPanel(
-                 
-                 # TabPanel 1
-                 tabPanel("Général", 
-                          "Menu Général"
-                 ),
-                 
-                 # TabPanel 2
-                 tabPanel("Rechercher", 
-                          "Menu Rechercher"
-                          
-                 )
+    #Page prix actuel
+    tabPanel(title = "Prix du marché",
+             fluidRow(
+               column(width = 12,
+                      div(
+                        style="margin:10px 60px 30px 60px; text-align:center",
+                        h3("Prix des produits de grande consommation"),
+                        p("Consultez l'évolution des prix des produits de grande consommation dans les principales villes de la Côte d'Ivoire"),
+                        withSpinner(DTOutput(outputId = "table_prix"), type = 6)
+                        
+                      ),
+                      
                )
-             )
-             
+             ),
+             fluidRow(
+               #Footer
+               
+               class="footer",
+               column(width = 4,
+                      fluidRow(
+                        column(width = 6,
+                               p("Amadou BAH",
+                                 style = "color : black;
+                                     font-size:19px;
+                                     font-weight: bold;
+                                     font-style: italic;
+                                     "),
+                               p("Frederic AKADJE",
+                                 style = "color : black;
+                                     font-size: 19px;
+                                     font-weight: bold;
+                                     font-style: italic; 
+                                     "),
+                        ),
+                        
+                        column(width = 5,
+                               
+                               img(src="img/LogoLinkedin.png",
+                                   title="Popup",
+                                   width = "20%"),
+                               
+                               img(src="img/logoGithub.png",
+                                   title="Popup",
+                                   width = "20%"),
+                               
+                               img(src="img/logoGmail.png",
+                                   title="Popup",
+                                   width = "20%"),
+                               
+                               br(),
+                               img(src="img/LogoLinkedin.png",
+                                   title="Popup",
+                                   width = "20%"),
+                               
+                               img(src="img/logoGithub.png",
+                                   title="Popup",
+                                   width = "20%"),
+                               
+                               img(src="img/logoGmail.png",
+                                   title="Popup",
+                                   width = "20%"),
+                               
+                        ),
+                        column(width = 1,)
+                        
+                      )
+                      
+               ),
+               
+               column(width = 8,
+                      style="display: flex;
+                                    justify-content: space-between;",
+                      img(src="img/logoOpendata.png",
+                          title="Popup",
+                          width = "20%"),
+                      
+                      img(src="img/logoOcpv.png",
+                          title="Popup",
+                          width = "20%"),
+                      
+                      img(src="img/logoCnlvc.png",
+                          title="Popup", 
+                          width = "20%"),
+                      
+                      img(src="img/logoSikaF.png",
+                          title="Popup",
+                          width = "20%")
+               )
+               
+             ),
     ),
     
-    #######################################################################################################
+    # Page 2
+    tabPanel(title = "Analyse par région",
+             fluidRow(
+               column(width = 12,
+                      # Sidebar page 2
+                      sidebarPanel("SIDEBAR Page 2", width = 3,
+                                   
+                                   
+                                   div(
+                                     style = "background-color: #A09D9E; padding: 15px; margin-bottom: 15px;",
+                                     selectizeInput(inputId = "indicateur", label = "Choisir un indicateur: ", selected = colnames(indicateurs_recap)[2],
+                                                    choices = colnames(indicateurs_recap)[2:4])
+                                   ),
+                                   
+                                   
+                                   div(
+                                     style = "background-color: #478FFC; padding: 15px; margin-bottom: 15px;",
+                                     selectizeInput(inputId = "ville", label = "Ville: ", selected = NULL,
+                                                    choices = uniqueVille)
+                                   ),
+                                   
+                                   
+                                   div(
+                                     style = "background-color:#50FC47; padding: 15px; margin-bottom: 15px;",
+                                     
+                                     selectizeInput(inputId = "Specificite", label = "Specificite: ", selected = NULL,
+                                                    choices = uniqueSpecifite),
+                                     
+                                     selectizeInput(inputId = "produit", label = "Produits: ", selected = NULL,
+                                                    choices = uniqueProd)
+                                   ),
+                                   
+                                   div(
+                                     style = "background-color: #FCE147; padding: 15px; margin-bottom: 15px;",
+                                     selectizeInput(inputId = "date", label = "Annee: ", selected = NULL,
+                                                    choices =uniqueAnnee )
+                                   )
+                                   
+                      ),
+                      
+                      
+                      
+                      # Menu principal page 2
+                      mainPanel(
+                        # Tabset page 2
+                        
+                        tabsetPanel(
+                          
+                          # TabPanel 1
+                          tabPanel("Général",
+                                   style = "background-color: #A09D9E;width:1060px",
+                                   
+                                   div(
+                                     style = "background-color: #FFFFFF;padding: 10px;",
+                                     
+                                     # Affichage du texte basé sur la sélection
+                                     textOutput(outputId = "texteAffiche"),
+                                     
+                                     
+                                   ),
+                                   fluidRow(
+                                     column(width = 6,
+                                            div(
+                                              style = "background-color: #FFFFFF;margin-left: 10px",
+                                              h4(" Prix moyen sur de 2020 à 2022 en Côte d’Ivoire"),
+                                              withSpinner(leafletOutput("aRegionM"), type = 6),
+                                              p("Trois indicateurs sont utilisés dans la mise en évidence des différentes variations
+                                    des prix selon les régions. L’intensité des couleurs sur les cartes est proportionnelle
+                                    à la valeur prise par l’indicateur. Les aproximations des prix sur toute l’étendue du 
+                                    térritoire se fait aux moyens de prévisions de prix selon leur proximité.")
+                                              
+                                            ),
+                                     ),
+                                     column(width = 6,
+                                            div(
+                                              style = "background-color: #FFFFFF;margin-right: 10px; text-align:center",
+                                              br(),
+                                              h6("DISTRIBUTION DES PRIX DES PRODUITS SELON LES REGIONS DE LA CI"),
+                                              withSpinner(amChartsOutput("aRegionP"), type = 6),
+                                              
+                                            ),
+                                            
+                                     ),
+                                     column(width = 12,
+                                            div(
+                                              style = "background-color: #FFFFFF; text-align:center;padding:10px",
+                                              h4("Tableau recapitulatif des indicateurs pour chaque ville"),
+                                              withSpinner(DTOutput("table"), type = 6),
+                                            ))
+                                   ),
+                          ),
+                          
+                          # TabPanel 2
+                          tabPanel("Rechercher", 
+                                   style = "width:1060px",
+                                   fluidRow(
+                                     
+                                     column(width = 5,
+                                            style = "padding: 15px ",
+                                            div(
+                                              h4("Commentaire"),
+                                              p(" Les prix moyens des denrées alimentaires en Côte d’Ivoire présentent des disparités
+                                       significatives d’une région à l’autre. Cette inégalité de répartition s’explique par plusieurs
+                                       facteurs endogènes, c’est-à-dire des facteurs internes au pays et au système économique.
+                                         Parmi ces facteurs, on peut citer:"),
+                                              p("1. Différences de production agricole"),
+                                              p("2. Difficultés d’accès aux marchés"),
+                                              p("  3. Facteurs de demande "),
+                                              p(" 4. Politiques gouvernementales"),
+                                            ),
+                                            
+                                     ),
+                                     column(width = 7,
+                                            div(  
+                                              h4("Spécificité des produits les plus accessibles selon les régions"),
+                                              withSpinner(leafletOutput("aRegionMr"), type = 6)
+                                              ,
+                                            ),
+                                     ),
+                                     column(width = 12,
+                                            div(
+                                              style="margin-top:50px; text-align:center",
+                                              h4("Tableau de visualisation des prix pour les Spécificités des produits"),
+                                              withSpinner(DTOutput(outputId = "table2"), type = 6)
+                                              
+                                            ),
+                                     )
+                                   ),
+                                   
+                          )
+                        )
+                      )
+                      
+               ))),
+    
+    #########################################################################################################
+    
     # Page 3
     tabPanel(title = "Analyse par date",
              
@@ -241,7 +443,7 @@ fluidPage(
                                            label = "Ville: ",
                                            selected = NULL,
                                            choices = uniqueVille),
-                                             # DatasetPrice$VILLE)
+                            # DatasetPrice$VILLE)
                           ),
                           
                           
@@ -252,7 +454,7 @@ fluidPage(
                                            label = "Categorie: ",
                                            selected = NULL,
                                            choices = uniqueCateg),
-                                           
+                            
                             selectizeInput(inputId = "wel_SousCat",
                                            label = "Sous-catégorie: ",
                                            selected = NULL,
@@ -263,7 +465,7 @@ fluidPage(
                                            selected = NULL,
                                            choices = uniqueSpecifite),
                             
-                    
+                            
                             selectizeInput(inputId = "wel_produit", label = "Produits: ",
                                            selected = NULL,
                                            choices = uniqueProd)
@@ -275,7 +477,7 @@ fluidPage(
                                            label = "Annee: ",
                                            selected = NULL,
                                            choices = uniqueAnnee)
-                                           # choices = DatasetPrice$ANNEE)
+                            # choices = DatasetPrice$ANNEE)
                           )
                           
              ),
@@ -317,18 +519,19 @@ fluidPage(
                             border-radius: 10px;
                             box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
                             ",
-                            column(width=10,
-                                   dygraphOutput("wel_dygraph")),
-                            column(width=2,
-                                   "Commentaire")
-                          ),
-                          # Séries temporelles des produits par saison
-                          br(),
-                          
-                          fluidRow(
-                            column(
-                             div(
-                               style = "background-color: #FFFFFF;
+                            column(width=12,
+                                   withSpinner(dygraphOutput("wel_dygraph"),type=1,
+                                               color = getOption("spinner.color", default = "pink")
+                                   ),
+                            ),
+                            
+                            # Séries temporelles des produits par saison
+                            br(),
+                            
+                            fluidRow(
+                              column(
+                                div(
+                                  style = "background-color: #FFFFFF;
                             padding: 10px;
                             font-size: 18px;
                              text-align:justify;
@@ -337,17 +540,20 @@ fluidPage(
                             border-radius: 10px;
                             box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
                             ",
-                               dygraphOutput("wel_dygraphMois"),
-                               p("La palettte verte désigne les zones au prix moyen en dessous du prix moyen général.
+                                  withSpinner(dygraphOutput("wel_dygraphMois"),type=1,
+                                              color = getOption("spinner.color", default = "pink")
+                                  ),
+                                  
+                                  p("La palettte verte désigne les zones au prix moyen en dessous du prix moyen général.
                                          A contrario, 
                                  une couleur rouge désignera les zones aux moyen dépassant le prix moyen global.")
-                            
-                             ),
-                             width=7,
+                                  
+                                ),
+                                width=7,
                               ),
-                            
-                            column(
-                              style = "background-color: #FFFFFF;
+                              
+                              column(
+                                style = "background-color: #FFFFFF;
                             padding: 20px;
                             font-size: 18px;
                              text-align:justify;
@@ -356,14 +562,14 @@ fluidPage(
                             border-radius: 10px;
                             box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
                             ",
-                              width=5,
-                              withSpinner(gt_output(outputId = "wel_tableSaiRecap1"),
-                                          type=1,
-                                          color = getOption("spinner.color", default = "pink"))
-                                   )
-                          )
-                     
-                 ),
+                                width=5,
+                                withSpinner(gt_output(outputId = "wel_tableSaiRecap1"),
+                                            type=1,
+                                            color = getOption("spinner.color", default = "pink"))
+                              )
+                            )
+                            
+                          )),
                  
                  # TabPanel 2
                  tabPanel("Saisonnalité",
@@ -397,10 +603,10 @@ fluidPage(
                             box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
                             ",
                             column(width=9,
-                                  withSpinner(dygraphOutput("wel_dygraphSai"),
-                                              type = 1,
-                                              color = getOption("spinner.color", default = "pink")
-                                              )  ),
+                                   withSpinner(dygraphOutput("wel_dygraphSai"),
+                                               type = 1,
+                                               color = getOption("spinner.color", default = "pink")
+                                   )  ),
                             column(width=3,
                                    div(
                                      radioButtons(inputId = "wel_selectSai",
@@ -417,9 +623,9 @@ fluidPage(
                                      actionButton(inputId = "wel_submit", label = "Obtenir")
                                      
                                    )
-                                   )
+                            )
                           ),
-                         
+                          
                           br(),
                           div(
                             style = "background-color: #FFFFFF;
@@ -459,17 +665,16 @@ fluidPage(
                                 à la valeur prise par l’indicateur. Les aproximations des prix sur toute l’étendue du 
                                 térritoire se fait aux moyens de prévisions de prix selon leur proximité")
                           ),
+                          
                           br(),
                           style = "width:1060px",
-                          gt_output(outputId = "wel_tableSaiRecap") 
-                          
+                          withSpinner(gt_output(outputId = "wel_tableSaiRecap"),type=1,
+                                      color = getOption("spinner.color", default = "pink")
+                                      # ),    
+                          )
                  )
                )
-             )
-             
-    ),
-    
-    #########################################################################################################"""
-    
-  )
-)
+               
+             ),
+    )
+  ))
