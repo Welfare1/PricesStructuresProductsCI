@@ -25,7 +25,7 @@ library(shinythemes)
 ### Analyse par Region
 
 dpt <- read_sf("data/civ")
-# dpt <- ms_simplify(dpt)
+dpt <- ms_simplify(dpt)
 priceGlob <- read.csv("data/priceGlobCleanFull.csv")
 VillePaysVilleProche1 <- read_csv("data/VillePaysVilleProche.csv")
 adressRegion1 <- read_csv("data/adressRegion.csv")

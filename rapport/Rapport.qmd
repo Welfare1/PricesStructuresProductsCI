@@ -1,10 +1,6 @@
 ---
 title: "Structure du prix des produits dans les différents marchés en Côte d'Ivoire"
-<<<<<<< HEAD
-author: " BAH Amadou Ali~ Frederic AKADJE"
-=======
 author: "BAH Amadou Ali ~ AKADJE Frederic"
->>>>>>> e649757f43578baf7ce782cc2952fb4860905c5c
 documentclass: report
 format: pdf
 toc: true

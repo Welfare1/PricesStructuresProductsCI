@@ -1,0 +1,12 @@
+name: ShinyApps
+title: ShinyApps
+username: bah-amadou-ali-datascience2024
+account: bah-amadou-ali-datascience2024
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 12059078
+bundleId: 8652783
+url: https://bah-amadou-ali-datascience2024.shinyapps.io/ShinyApps/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
