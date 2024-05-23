@@ -18,15 +18,17 @@ library(rvest)
 library(lubridate)
 library(dygraphs)
 library(gt)
-
+library(rmapshaper)
+library(shinythemes)
 #########################################################################""
 
 ### Analyse par Region
 
 dpt <- read_sf("data/civ")
+# dpt <- ms_simplify(dpt)
 priceGlob <- read.csv("data/priceGlobCleanFull.csv")
-VillePaysVilleProche1 <- read_csv("data/VillePaysVilleProche.csv", show_col_types = FALSE)
-adressRegion1 <- read_csv("data/adressRegion.csv", show_col_types = FALSE)
+VillePaysVilleProche1 <- read_csv("data/VillePaysVilleProche.csv")
+adressRegion1 <- read_csv("data/adressRegion.csv")
 
 # Jointure avec la base de données sf des villes de la côte d'ivoire
 dpt2 <- left_join(dpt,VillePaysVilleProche1,join_by(ADM3_FR==VillePays))
@@ -37,8 +39,9 @@ priceGlobCleanFull <- priceGlob |>
   group_by(PRODUITS,VILLE) |>
   mutate(PRIXPREC=lag(PRIX,order_by = DATE)) # Dataset de base
 
+
 # Indicateur_recap
-indicateurs_recap <- priceGlobCleanFull |>
+indicateurs_recap<- priceGlobCleanFull |>
   filter(CATEGORIE!="PRODUITS MANUFACTURES" & SPECIFICITE!="PRODUITS LAITIERS" & SPECIFICITE!="SUCRES") |>
   mutate(MoisAn=as.yearmon(DATE, "%m/%Y"),
          TauxVar=round((PRIX-PRIXPREC)/PRIXPREC,2),
@@ -222,6 +225,16 @@ renameIndicator <- function(ind){
   return(ind)
 }
 
+# Fonction premettant de renommer les indicateurs depuis leur nom abrégé
+renameIndicatorInv <- function(indInv){
+  indInv <- switch(indInv,
+                "PrixMoy"="Prix Moyen",
+                "VarMoy"="Taux de variat. moy.",
+                "VarMoyAbs"="Taux de variat. moy. (absolu)",
+                indInv)
+  return(indInv)
+}
+
 # Fonction pour le formatages des indicateurs
 formatingtable <- function(ind,prev,act){
   ind <- switch(ind,
@@ -245,6 +258,3 @@ filterOption <- function(tidyExp,sideFilter,Var){
 
 
 ################################################################################
-
-
-

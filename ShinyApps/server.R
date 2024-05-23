@@ -12,6 +12,33 @@
 # Define server logic required to draw a histogram
 function(input, output, session) {
   
+  texteReactiveCarte1 <- reactive({
+    # Fonction pour le formatages des indicateurs
+    Value <- switch(input$indicateur,
+                  "PrixMoy" = "Concernant le prix moyen, on distingue en première ligne les régions du Tonpki
+                                        et le « Grand Abidjan » (réunion de la
+                                    ville d’Abidjan, ainsi de villes adjacentes). Considéré comme épicentre de la propagation
+                                    virale, « le grand Abidjan » est isolé du reste du territoire nationale à partir du 15 juillet 2021.
+                                    Le District Autonome d’Abidjan, capitale économique ivoirienne, détient la plus forte
+                                    concentration d’habitants avec 2 994 Habitant/km2. Une demande importante, qui
+                                    contribue à la hausse des prix au sein du district.",
+                  
+                  "VarMoy" = "Au niveau du taux de variation moyen, les plus grandes valeurs observées
+                                se trouvent au niveau de la régions du Tonpki. Ces valeurs suggèrent une augmentation générale des
+                                prix des denrées alimentaires sur la période observées. Le « Grand Abidjan » quant à lui, affiche
+                                les mesures de ce taux les plus bas. Rélvelant les efforts consentis afin de contenir l'inflation.",
+                  
+                  "VarMoyAbs" = " Une apmlitude maximale du taux de variation est observées au niveau de la région du Tonpki. Ces amplitudes
+                                  traduisent de fortes instabilités des prix dans la région. Par ailleurs, la positivé du taux de variation
+                                  moyen montre que la régions est sujette à des inflations du prix des denrées alimentaires sans précedanteSs.",
+                  "non trouvé")
+  })
+  # Mettre à jour le texte affiché
+  output$bah_texteAffichePage2 <- renderText({
+    texteReactiveCarte1()
+  })
+  
+  
   #Scrapping des prix recents du marché
   output$table_prix <- renderDT({
     # Lire le contenu HTML à partir de l'URL
@@ -43,28 +70,65 @@ function(input, output, session) {
     prix_recent <- prix_recent |> arrange(prix_recent[[1]])
     
     # Afficher le tableau trié
-    prix_recent
+    
+    datatable(prix_recent, options = list(
+      initComplete = JS(
+        "function(settings, json) {",
+        "$(this.api().table().header()).css({'background-color': '#FE8700', 'color': '#fff'});",
+        "}")
+    ))
   })
   
   ##########################################################""
   # Analyse par region
   
   # Sidebar action
-      # Met à jour les choix des produits en fonction de la catégorie sélectionnée
-      observeEvent(input$categorie, {
-        # Filtrer les produits en fonction de la catégorie sélectionnée
-        filtered_products <- priceGlob[priceGlob$SPECIFICITE == input$categorie, "PRODUITS"]
-        
-        # Mettre à jour les choix du selectizeInput des produits
-        updateSelectizeInput(session, "produit", choices = unique(filtered_products), selected = unique(filtered_products)[1])
-      })
+  # Met à jour les choix des produits en fonction de la catégorie sélectionnée
+  observeEvent(input$Specificite, {
+    ### Filtrer les produits en fonction de la catégorie sélectionnée
+    if(input$Specificite=="TOUT"){
+      filtered_products <- priceGlob |>
+        select(PRODUITS)
+    }else{
+      filtered_products <- priceGlob |>
+        filter(SPECIFICITE==input$Specificite) |>
+        select(PRODUITS)
+    }
+    
+    ### Mettre à jour les choix du selectizeInput des produits
+    ### Vecteur unique des produits filtrés
+    Prod <- c("TOUT",unique(filtered_products))
+    updateSelectizeInput(session,
+                         "produit",
+                         selected = Prod[1],
+                         choices = Prod
+    )
+  })
   
   
   # Carte1
-  
+  indicateurs_recap <- reactive({
+    priceGlobCleanFull |>
+      filterOption(input$date,"ANNEE")|>
+      filter(CATEGORIE!="PRODUITS MANUFACTURES" & SPECIFICITE!="PRODUITS LAITIERS" & SPECIFICITE!="SUCRES") |>
+      mutate(MoisAn=as.yearmon(DATE, "%m/%Y"),
+             TauxVar=round((PRIX-PRIXPREC)/PRIXPREC,2),
+             ANNEE=as.character(ANNEE)
+      ) |>
+      group_by(VILLE) |>
+      summarise(PrixMoy=round(mean(PRIX,na.rm = TRUE),4),
+                VarMoy=round(mean(TauxVar,na.rm =TRUE),4),
+                VarMoyAbs=round(mean(abs(TauxVar),na.rm =TRUE),4))
+    
+  })
   output$aRegionM <- renderLeaflet({
+    # Indicateur_recap
+    indicateurs_recap <- indicateurs_recap()
+    indicateurs_recap0 <- left_join(indicateurs_recap,adressRegion1, by=c("VILLE"="value"))
+    
     #Selection de l'indicateur choisi
     selected_indicateur <- input$indicateur
+    
     
     # Joindre les données
     dpt1 <- left_join(dpt2, indicateurs_recap, by = c("VilleProche" = "VILLE"))
@@ -93,19 +157,24 @@ function(input, output, session) {
           fillOpacity = 0.7,
           bringToFront = TRUE
         ),
-        label = ~paste0(get(selected_indicateur)),
+        label = ~paste0(get(selected_indicateur) |> round(2)),
         labelOptions = labelOptions(
           style = list("font-weight" = "normal", padding = "3px 8px"),
           textsize = "15px",
           direction = "auto"
         )
-      ) %>%
+      ) |> 
+      
       addMarkers(
         data = indicateurs_recap0,
         lng = ~long,
         lat = ~lat,
-        popup = ~paste0("<strong>", VILLE, "</strong><br>", selected_indicateur, ": ", get(selected_indicateur))
-      ) %>%
+        popup = ~paste0("<strong>",
+                        VILLE, "</strong><br>",
+                        selected_indicateur, ": ",
+                        get(selected_indicateur) |> 
+                          round(2))
+      ) |> 
       addLegend(
         pal = pal,
         values = indicateurs_recap0[[selected_indicateur]],
@@ -115,34 +184,47 @@ function(input, output, session) {
       )
   })
   
-
-    
+  # Titre de la première carte (Général)
+  output$bah_Titlecarte1 <- renderText({
+    paste("REPARTITION DU ",renameIndicatorInv(input$indicateur) |> toupper()," EN COTE D'IVOIRE ")
+  })
+  
+  
+  
   
   ###############################""
   # Boxplot
   # Rendre le boxplot basé sur le produit et la ville sélectionnés
-  output$aRegionP <- renderPlotly({
+  
+  
+  output$aRegionP <-  renderAmCharts({
     # Filtrer les données priceGlob en fonction du produit et de la date sélectionnés
     
-    filtered_data <- priceGlob|>filter(PRODUITS == input$produit & ANNEE == input$date)|>select(c(VILLE,PRODUITS,ANNEE,PRIX))
+    filtered_data <- priceGlob|>
+      filterOption(input$wel_produit,"PRODUITS") |>
+      filterOption(input$date,"ANNEE")
+    # Créer un graphique de boîte à moustaches avec amBoxplot
+    amBoxplot(PRIX ~ VILLE, data = filtered_data,
+              xlab = "Ville", ylab = "Prix",horiz = TRUE)
     
-    # Créer un graphique de boîte à moustaches avec 
-    p <- ggplot(filtered_data, aes(x = VILLE, y = PRIX, fill = VILLE)) +
-      geom_boxplot() +
-      labs(title = paste("Boîte à moustaches des prix pour",input$produit,"en",input$date),
-           x = "Ville", y = "Prix") +
-      scale_fill_brewer(palette = "Set3")
-    # Convertir le graphique ggplot en un graphique interactif Plotly
-    ggplotly(p)
+    
+    
   })
-
+  
   ###############################"
   #Tableau indicateur
   output$table <- renderDT({
-    indicateurs_recap
+    indicateurs_recap <- indicateurs_recap()
+    datatable(indicateurs_recap, options = list(
+      initComplete = JS(
+        "function(settings, json) {",
+        "$(this.api().table().header()).css({'background-color': '#FE8700', 'color': '#fff'});",
+        "}")
+    ))
+    
   })
   
-#####################################""
+  #####################################""
   #recherche
   
   #Selection de l'indicateur choisi
@@ -153,10 +235,10 @@ function(input, output, session) {
   villes_min_indicateur <- reactive({
     selected_indicateur <- indicateur()
     
-    indicateurs %>%
-      group_by(VILLE, SPECIFICITE) %>%
-      mutate(rank = min_rank(get(selected_indicateur))) %>%
-      filter(rank == 1) %>%
+    indicateurs |> 
+      group_by(VILLE, SPECIFICITE) |> 
+      mutate(rank = min_rank(get(selected_indicateur))) |> 
+      filter(rank == 1) |> 
       distinct(PRODUITS, .keep_all = TRUE)
   })
   
@@ -166,9 +248,9 @@ function(input, output, session) {
     villes_min_indicateur <- villes_min_indicateur()
     
     # Agréger les spécificités par ville
-    villes_agg <- villes_min_indicateur %>%
-      group_by(VILLE) %>%
-      slice_min(get(selected_indicateur), with_ties = FALSE) %>%
+    villes_agg <- villes_min_indicateur |> 
+      group_by(VILLE) |> 
+      slice_min(get(selected_indicateur), with_ties = FALSE) |> 
       ungroup()
     #####
     
@@ -176,7 +258,7 @@ function(input, output, session) {
     palette_couleurs <- rainbow(length(unique(villes_agg$VILLE)))
     
     
-      # Créer une carte Leaflet
+    # Créer une carte Leaflet
     leaflet() |>
       addProviderTiles("OpenStreetMap.Mapnik") |>
       addPolygons(data = dpt2,
@@ -203,8 +285,14 @@ function(input, output, session) {
     villes_min_indicateur0 <-  villes_min_indicateur|>select(VILLE,SPECIFICITE,!!selected_indicateur)
     
     villes_pivot <- villes_min_indicateur0 %>%
-      pivot_wider(names_from = VILLE, values_from = !!sym(selected_indicateur))
-    villes_pivot
+      pivot_wider(names_from = VILLE, values_from = !!sym(selected_indicateur),values_fn = ~mean(.x,na.rm=TRUE))
+    
+    datatable(villes_pivot, options = list(
+      initComplete = JS(
+        "function(settings, json) {",
+        "$(this.api().table().header()).css({'background-color': '#FE8700', 'color': '#fff'});",
+        "}")
+    ))
     
   })
   
@@ -283,7 +371,6 @@ function(input, output, session) {
   DatasetPriceSeries <- reactive({
     DatasetPriceSeries <- DatasetPrice|>
       filterOption(input$wel_ville,"VILLE") |> 
-      filterOption(input$wel_date,"ANNEE") |>
       filterOption(input$wel_categorie,"CATEGORIE") |>
       filterOption(input$wel_SousCat,"SOUS-CATEGORIE") |>
       filterOption(input$wel_Specificite,"SPECIFICITE") |>
@@ -410,6 +497,12 @@ function(input, output, session) {
   RankTableSai <- reactive({
     RankTableSai <-  DatasetPrice |>
       filter(CATEGORIE!="PRODUITS MANUFACTURES") |>
+      filterOption(input$wel_ville,"VILLE") |>
+      filterOption(input$wel_date,"ANNEE") |>
+      filterOption(input$wel_categorie,"CATEGORIE") |>
+      filterOption(input$wel_SousCat,"SOUS-CATEGORIE") |>
+      filterOption(input$wel_Specificite,"SPECIFICITE") |>
+      filter(CATEGORIE!="PRODUITS MANUFACTURES") |>
       ungroup() |> 
       mutate(MoisAn=as.yearmon(DATE),
              QuarterAn=as.yearqtr(DATE),
@@ -435,26 +528,17 @@ function(input, output, session) {
   # Times series principales
   output$wel_dygraph <- renderDygraph({
     dygraph(DatasetPriceSeries(),
-            main = str_c(input$wel_indicateur," sur les différentes années")) |> 
+            main = str_c(input$wel_indicateur," sur les différentes années") |> toupper()) |> 
       dyRangeSelector() |> 
       dyOptions(stackedGraph = TRUE) |> 
       addMinMax(RankTableMinMax()) |> 
-      dyEvent("2020-7-30", "Isolement du grand Abidjan Covid 19", labelLoc = "bottom")
-  })
-  
-  # TextOuptRender
-  output$wel_TimesSeriesComm1 <- renderText({
-    "Un important émerge pic émerge sur
-    la période de l'année 2021. Les différentes mesures 
-    d'isolement sont alors appliquées, dans le but
-    de contenir l'épidémie au prix d'une flambée du
-    coût des denrées alimentaires."
+      dyEvent("2020-07-15","Propagation de la covid 19", labelLoc = "bottom")
   })
   
   # Times series secondaires
   output$wel_dygraphMois <- renderDygraph({
     dygraph(DatasetPriceMois(),
-            main = str_c(input$wel_indicateur," par année")) |> 
+            main = str_c(input$wel_indicateur," par année") |> toupper()) |> 
       dyOptions(fillGraph = TRUE,
                 fillAlpha = 0.4,
                 colors = RColorBrewer::brewer.pal(1, "Dark2"))
@@ -462,7 +546,7 @@ function(input, output, session) {
   
   output$wel_dygraphSai <- renderDygraph({
     DatasetPriceSeries() |>
-      dygraph(main = "Produit par saison") |>
+      dygraph(main = "SPECIFICITE DES PRODUITS PAR SAISON") |>
       dyOptions(fillGraph = TRUE,
                 fillAlpha = 0.1,
                 colors = RColorBrewer::brewer.pal(1, "Dark2")) |>
@@ -546,6 +630,36 @@ function(input, output, session) {
                                            opt_stylize(style = 6, color = "pink")
                                          
   )
+  
+  texteReactiveTimesSeries1 <- reactive({
+    # Fonction pour le formatages des indicateurs
+    Value1 <- switch(renameIndicator(input$wel_indicateur),
+                     "PrixMoy" = "Un important émerge pic du prix moyen émerge sur la période de l’année 2021. Conjointement, il
+                                correspondant à la progation de la Covid 19 en Côte d’Ivoire. Les différentes mesures
+                                d’isolement sont alors appliquées, dans le but de contenir l’épidémie au prix d’une flambée
+                                du coût des denrées alimentaires. La population alors désireuse de faire des provisions
+                                augmente drastiquement la demande, entraînant par ricochet, une augmentation du prix
+                                des différents produits du marchés.",
+                     
+                     "VarMoy" = "Un pic du taux de variation moyen apparâit en fin d'année 2022. La positivité de ce pic suggère une augementation 
+                     drastique des prix des denrées alimentaires. Parallèlement en Europe se produit la guèrre en Ukraine, entrainant la
+                     stagnation des différentes exportations, et paralysant ainsi l'économie mondiale.",
+                     
+                     "VarMoyAbs" = " Une apmlitude maximale du taux de variation s'observe au niveau de la fin d'année 2022. Ces amplitudes
+                                  réflète les fortes instabilités des prix suggérées par les nombreuses incertitudes que connaît le monde à cette période",
+                     "non trouvé")
+  })
+  # Mettre à jour le texte affiché
+  output$wel_texteAfficheTimesSeries1 <- renderText({
+    texteReactiveTimesSeries1()
+  })
+  
+  # Titre de la première carte (Général)
+  output$wel_TitleTableSaiRecap <- renderText({
+    paste("REPARTITION DU ",renameIndicatorInv(input$wel_indicateur) |> toupper()," SELON LA PERIODE ")
+  })
+  
+  
   
   
   
