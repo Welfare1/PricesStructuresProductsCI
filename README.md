@@ -1,5 +1,5 @@
 # PricesStructuresProductsCI
-Product market price analysis in Côte d'Ivoire.
+Structure des prix des denrées alimentaires en Côte d'Ivoire.
 
 
 # Problématique:
