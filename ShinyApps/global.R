@@ -25,7 +25,7 @@ library(shinythemes)
 ### Analyse par Region
 
 dpt <- read_sf("data/civ")
-# dpt <- ms_simplify(dpt)
+dpt <- ms_simplify(dpt)
 priceGlob <- read.csv("data/priceGlobCleanFull.csv")
 VillePaysVilleProche1 <- read_csv("data/VillePaysVilleProche.csv")
 adressRegion1 <- read_csv("data/adressRegion.csv")
@@ -191,6 +191,9 @@ SemestreTable <- SemestreTable |>
 
 # Fonction permettant d'avoir le min et le max sur le graph
 addMinMax <- function(dygraph,tbl){
+  
+  # dygraph : graph dygraph pour le chainage
+  # tbl : tableau de minimum et maximum
   
   dateMin <- tbl |> pluck(1,1) |> as.character()
   dateMax <- tbl |> pluck(1,2) |> as.character()

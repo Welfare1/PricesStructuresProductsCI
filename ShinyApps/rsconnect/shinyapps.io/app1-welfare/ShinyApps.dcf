@@ -5,7 +5,7 @@ account: app1-welfare
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 12058155
-bundleId:
+bundleId: 8652807
 url: https://app1-welfare.shinyapps.io/ShinyApps/
 version: 1
 asMultiple: FALSE

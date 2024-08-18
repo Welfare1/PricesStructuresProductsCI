@@ -1,0 +1,2472 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.553">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Amadou BAH ~ Frederic AKADJE">
+
+<title>STRUCTURE DU PRIX DES DENREES ALIMENTAIRES EN COTE D’IVOIRE</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="TimeSeries_files/libs/clipboard/clipboard.min.js"></script>
+<script src="TimeSeries_files/libs/quarto-html/quarto.js"></script>
+<script src="TimeSeries_files/libs/quarto-html/popper.min.js"></script>
+<script src="TimeSeries_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="TimeSeries_files/libs/quarto-html/anchor.min.js"></script>
+<link href="TimeSeries_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="TimeSeries_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="TimeSeries_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="TimeSeries_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="TimeSeries_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">STRUCTURE DU PRIX DES DENREES ALIMENTAIRES EN COTE D’IVOIRE</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Amadou BAH ~ Frederic AKADJE </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="contexte" class="level2">
+<h2 class="anchored" data-anchor-id="contexte">Contexte</h2>
+<p>Dans le contexte économique actuel, marqué par une inflation constante et une incertitude croissante, la question de la variabilité des prix des produits et leur l’accessibilité dans les différents marchés est devenue cruciale. Les ménages sont contraints de jongler entre le désir de maintenir un certain niveau de vie et la nécessité de s’adapter à une réalité économique de plus en plus difficile. En Côte d’Ivoire, l’Etat s’engage résolument dans la lutte contre la vie chère, à travers certains organismes tels que le CNLVC (Conseil National de Lutte Contre la Vie Chère) et le OCPV (Office d’aide à la Commercialisation des Produits Vivriers). Ses actions visent à atténuer l’impact de l’inflation sur les populations vulnérables et à garantir l’accessibilité des produits de base à tous. Somme toute, ces initiatives sont précieuses pour assurer la stabilité économique et sociale en Côte d’Ivoire.</p>
+<section id="objectifs" class="level3">
+<h3 class="anchored" data-anchor-id="objectifs">Objectifs</h3>
+<ul>
+<li><p>Comprendre le structure des prix des denrées alimentaires en Côte d’Ivoire. Prédire les tendances futures des prix</p></li>
+<li><p>Une analyse de la structure globale des prix sur tout l’étendue du territoire sera premièrement abordée, avant de nous intéresser aux structures de ces prix en chacune des villes de bases étudiées.</p></li>
+</ul>
+</section>
+<section id="collecte-des-données-et-data-processing" class="level3">
+<h3 class="anchored" data-anchor-id="collecte-des-données-et-data-processing">Collecte des données et Data processing</h3>
+<p>Ce projet a nécessité l’utilisation des sources de données suivantes:</p>
+<ul>
+<li>Prix des produits dans les différents marchés en Côte d’Ivoire depuis Janvier 2022 (csv), OpendataCi : <a href="https://data.gouv.ci/datasets/echo-du-marche" class="uri">https://data.gouv.ci/datasets/echo-du-marche</a></li>
+<li>Catégorisation des produits du marché (pdf), OCPV : <a href="https://www.ocpv-ci.com/doc/SYNTHESE/2023/SYNTHESE_PRIX_MOYENS_S13_2023.pdf" class="uri">https://www.ocpv-ci.com/doc/SYNTHESE/2023/SYNTHESE_PRIX_MOYENS_S13_2023.pdf</a></li>
+</ul>
+<section id="gestion-des-valeurs-manquantes" class="level4">
+<h4 class="anchored" data-anchor-id="gestion-des-valeurs-manquantes">Gestion des valeurs manquantes</h4>
+<p>Deux cas de figures s’assimilent à l’observation de valeurs manquantes dans notre dataset:<br>
+1. Une indisponibilité du produit dans la région concernée<br>
+2. Un défaut de mesure des prix sur la période concernée</p>
+<p>Par suite nous considérons le cas 2.</p>
+<p>Pour chaque valeur manquante pour un produit donné dans une ville, une imputation est faite à travers la ville au prix non nul la plus proche géographiquement.</p>
+</section>
+<section id="jeu-de-données" class="level4">
+<h4 class="anchored" data-anchor-id="jeu-de-données">Jeu de données</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>PriceGlob <span class="sc">|&gt;</span> <span class="fu">head</span>() <span class="sc">|&gt;</span> <span class="fu">gt</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<div id="jrwkprmzgq" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#jrwkprmzgq table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#jrwkprmzgq thead, #jrwkprmzgq tbody, #jrwkprmzgq tfoot, #jrwkprmzgq tr, #jrwkprmzgq td, #jrwkprmzgq th {
+  border-style: none;
+}
+
+#jrwkprmzgq p {
+  margin: 0;
+  padding: 0;
+}
+
+#jrwkprmzgq .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#jrwkprmzgq .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#jrwkprmzgq .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#jrwkprmzgq .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#jrwkprmzgq .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#jrwkprmzgq .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#jrwkprmzgq .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#jrwkprmzgq .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#jrwkprmzgq .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#jrwkprmzgq .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#jrwkprmzgq .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#jrwkprmzgq .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#jrwkprmzgq .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#jrwkprmzgq .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#jrwkprmzgq .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#jrwkprmzgq .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#jrwkprmzgq .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#jrwkprmzgq .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#jrwkprmzgq .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jrwkprmzgq .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#jrwkprmzgq .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#jrwkprmzgq .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#jrwkprmzgq .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jrwkprmzgq .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#jrwkprmzgq .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#jrwkprmzgq .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#jrwkprmzgq .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jrwkprmzgq .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#jrwkprmzgq .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#jrwkprmzgq .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#jrwkprmzgq .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#jrwkprmzgq .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#jrwkprmzgq .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jrwkprmzgq .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#jrwkprmzgq .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#jrwkprmzgq .gt_left {
+  text-align: left;
+}
+
+#jrwkprmzgq .gt_center {
+  text-align: center;
+}
+
+#jrwkprmzgq .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#jrwkprmzgq .gt_font_normal {
+  font-weight: normal;
+}
+
+#jrwkprmzgq .gt_font_bold {
+  font-weight: bold;
+}
+
+#jrwkprmzgq .gt_font_italic {
+  font-style: italic;
+}
+
+#jrwkprmzgq .gt_super {
+  font-size: 65%;
+}
+
+#jrwkprmzgq .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#jrwkprmzgq .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#jrwkprmzgq .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#jrwkprmzgq .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#jrwkprmzgq .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#jrwkprmzgq .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#jrwkprmzgq .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+
+<table class="gt_table table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="header gt_col_headings">
+<th id="MOIS" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">MOIS</th>
+<th id="DATE" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">DATE</th>
+<th id="ANNEE" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">ANNEE</th>
+<th id="CATEGORIE" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">CATEGORIE</th>
+<th id="SOUS-CATEGORIE" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">SOUS-CATEGORIE</th>
+<th id="PRODUITS" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">PRODUITS</th>
+<th id="UNITE" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">UNITE</th>
+<th id="VILLE" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">VILLE</th>
+<th id="MOISNum" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">MOISNum</th>
+<th id="SPECIFICITE" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">SPECIFICITE</th>
+<th id="PRIX" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">PRIX</th>
+<th id="PRIXPREC" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">PRIXPREC</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="MOIS">Jan</td>
+<td class="gt_row gt_right" headers="DATE">2020-01-06</td>
+<td class="gt_row gt_right" headers="ANNEE">2020</td>
+<td class="gt_row gt_left" headers="CATEGORIE">PRODUITS VIVRIERS</td>
+<td class="gt_row gt_left" headers="SOUS-CATEGORIE">PRODUITS HORS SAISON</td>
+<td class="gt_row gt_left" headers="PRODUITS">kponan (kg)</td>
+<td class="gt_row gt_left" headers="UNITE">kilogramme</td>
+<td class="gt_row gt_left" headers="VILLE">ABIDJAN</td>
+<td class="gt_row gt_right" headers="MOISNum">1</td>
+<td class="gt_row gt_left" headers="SPECIFICITE">FECULENTS</td>
+<td class="gt_row gt_right" headers="PRIX">500</td>
+<td class="gt_row gt_right" headers="PRIXPREC">NA</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="MOIS">Jan</td>
+<td class="gt_row gt_right" headers="DATE">2020-01-06</td>
+<td class="gt_row gt_right" headers="ANNEE">2020</td>
+<td class="gt_row gt_left" headers="CATEGORIE">PRODUITS VIVRIERS</td>
+<td class="gt_row gt_left" headers="SOUS-CATEGORIE">PRODUITS DE SAISON</td>
+<td class="gt_row gt_left" headers="PRODUITS">igname klegle (kg)</td>
+<td class="gt_row gt_left" headers="UNITE">kilogramme</td>
+<td class="gt_row gt_left" headers="VILLE">ABIDJAN</td>
+<td class="gt_row gt_right" headers="MOISNum">1</td>
+<td class="gt_row gt_left" headers="SPECIFICITE">FECULENTS</td>
+<td class="gt_row gt_right" headers="PRIX">400</td>
+<td class="gt_row gt_right" headers="PRIXPREC">NA</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="MOIS">Jan</td>
+<td class="gt_row gt_right" headers="DATE">2020-01-06</td>
+<td class="gt_row gt_right" headers="ANNEE">2020</td>
+<td class="gt_row gt_left" headers="CATEGORIE">PRODUITS VIVRIERS</td>
+<td class="gt_row gt_left" headers="SOUS-CATEGORIE">PRODUITS HORS SAISON</td>
+<td class="gt_row gt_left" headers="PRODUITS">assawa</td>
+<td class="gt_row gt_left" headers="UNITE">kilogramme</td>
+<td class="gt_row gt_left" headers="VILLE">ABIDJAN</td>
+<td class="gt_row gt_right" headers="MOISNum">1</td>
+<td class="gt_row gt_left" headers="SPECIFICITE">FECULENTS</td>
+<td class="gt_row gt_right" headers="PRIX">450</td>
+<td class="gt_row gt_right" headers="PRIXPREC">NA</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="MOIS">Jan</td>
+<td class="gt_row gt_right" headers="DATE">2020-01-06</td>
+<td class="gt_row gt_right" headers="ANNEE">2020</td>
+<td class="gt_row gt_left" headers="CATEGORIE">PRODUITS VIVRIERS</td>
+<td class="gt_row gt_left" headers="SOUS-CATEGORIE">PRODUITS DE SAISON</td>
+<td class="gt_row gt_left" headers="PRODUITS">igname b&lt;U+00EA&gt;t&lt;U+00EA&gt; b&lt;U+00EA&gt;t&lt;U+00EA&gt; (kg)</td>
+<td class="gt_row gt_left" headers="UNITE">kilogramme</td>
+<td class="gt_row gt_left" headers="VILLE">ABIDJAN</td>
+<td class="gt_row gt_right" headers="MOISNum">1</td>
+<td class="gt_row gt_left" headers="SPECIFICITE">FECULENTS</td>
+<td class="gt_row gt_right" headers="PRIX">NA</td>
+<td class="gt_row gt_right" headers="PRIXPREC">NA</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="MOIS">Jan</td>
+<td class="gt_row gt_right" headers="DATE">2020-01-06</td>
+<td class="gt_row gt_right" headers="ANNEE">2020</td>
+<td class="gt_row gt_left" headers="CATEGORIE">PRODUITS VIVRIERS</td>
+<td class="gt_row gt_left" headers="SOUS-CATEGORIE">PRODUITS HORS SAISON</td>
+<td class="gt_row gt_left" headers="PRODUITS">manioc (kg)</td>
+<td class="gt_row gt_left" headers="UNITE">kilogramme</td>
+<td class="gt_row gt_left" headers="VILLE">ABIDJAN</td>
+<td class="gt_row gt_right" headers="MOISNum">1</td>
+<td class="gt_row gt_left" headers="SPECIFICITE">FECULENTS</td>
+<td class="gt_row gt_right" headers="PRIX">250</td>
+<td class="gt_row gt_right" headers="PRIXPREC">NA</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="MOIS">Jan</td>
+<td class="gt_row gt_right" headers="DATE">2020-01-06</td>
+<td class="gt_row gt_right" headers="ANNEE">2020</td>
+<td class="gt_row gt_left" headers="CATEGORIE">PRODUITS VIVRIERS</td>
+<td class="gt_row gt_left" headers="SOUS-CATEGORIE">PRODUITS DE SAISON</td>
+<td class="gt_row gt_left" headers="PRODUITS">citron (kg)</td>
+<td class="gt_row gt_left" headers="UNITE">kilogramme</td>
+<td class="gt_row gt_left" headers="VILLE">ABIDJAN</td>
+<td class="gt_row gt_right" headers="MOISNum">1</td>
+<td class="gt_row gt_left" headers="SPECIFICITE">FRUITS</td>
+<td class="gt_row gt_right" headers="PRIX">500</td>
+<td class="gt_row gt_right" headers="PRIXPREC">NA</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'SPECIFICITE', 'MOISNum'. You can override
+using the `.groups` argument.</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="transformation-du-dataset-en-objet-ts" class="level3">
+<h3 class="anchored" data-anchor-id="transformation-du-dataset-en-objet-ts">Transformation du Dataset en objet Ts</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>PriceTimesSeries <span class="ot">&lt;-</span> <span class="fu">ts</span>(IndexDataTimes, <span class="at">frequency =</span> <span class="dv">12</span> )[,<span class="st">"prixMoy"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="visualisation-des-données" class="level3">
+<h3 class="anchored" data-anchor-id="visualisation-des-données">Visualisation des données</h3>
+<p>Nous chargeons dans un premier temps les prix moyennes de l’ensemble des produits par années</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "CategorieFECULENTS"</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TimeSeries_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "CategorieFRUITS"</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TimeSeries_files/figure-html/unnamed-chunk-12-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "CategorieCEREALES"</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TimeSeries_files/figure-html/unnamed-chunk-12-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "CategorieLEGUMES"</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TimeSeries_files/figure-html/unnamed-chunk-12-4.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "CategorieOLEAGINEUX"</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TimeSeries_files/figure-html/unnamed-chunk-12-5.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="seasonal-plots" class="level1">
+<h1>Seasonal plots</h1>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>$`1`</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TimeSeries_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+$`2`</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TimeSeries_files/figure-html/unnamed-chunk-13-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+$`3`</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TimeSeries_files/figure-html/unnamed-chunk-13-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+attr(,"class")
+[1] "list"      "ggarrange"</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>g <span class="ot">&lt;-</span> PriceGlob <span class="sc">|&gt;</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">moisAN=</span><span class="fu">str_c</span>(<span class="st">"_"</span>,MOIS,<span class="st">""</span>,ANNEE)) <span class="sc">|&gt;</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(SPECIFICITE,ANNEE,MOISNum,moisAN) <span class="sc">|&gt;</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">moy=</span><span class="fu">mean</span>(PRIX,<span class="at">na.rm=</span><span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">id_cols =</span> SPECIFICITE,<span class="at">names_from =</span> moisAN,<span class="at">values_from =</span> moy) <span class="sc">|&gt;</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(SPECIFICITE <span class="sc">%in%</span> produitsLoc) <span class="sc">|&gt;</span> <span class="fu">ungroup</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'SPECIFICITE', 'ANNEE', 'MOISNum'. You can
+override using the `.groups` argument.</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>g <span class="sc">|&gt;</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>(<span class="at">rowname_col =</span> <span class="st">"test"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_header</span>(<span class="st">"Partial summary of daily tests performed on YF patient"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_stubhead</span>(<span class="at">label =</span> <span class="fu">md</span>(<span class="st">"**Test**"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_hide</span>(<span class="at">columns =</span> <span class="fu">c</span>(<span class="fu">starts_with</span>(<span class="st">"norm"</span>))) <span class="sc">|&gt;</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_nanoplot</span>(</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> <span class="fu">starts_with</span>(<span class="st">"_"</span>),</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">new_col_name =</span> <span class="st">"nanoplots"</span>,</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">new_col_label =</span> <span class="fu">md</span>(<span class="st">"*Progression*"</span>)</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_align</span>(<span class="at">align =</span> <span class="st">"center"</span>, <span class="at">columns =</span> nanoplots) <span class="sc">|&gt;</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_footnote</span>(</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">footnote =</span> <span class="st">""</span>,</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">locations =</span> <span class="fu">cells_column_labels</span>(<span class="at">columns =</span> nanoplots)</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<div id="dqjcraxfid" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#dqjcraxfid table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#dqjcraxfid thead, #dqjcraxfid tbody, #dqjcraxfid tfoot, #dqjcraxfid tr, #dqjcraxfid td, #dqjcraxfid th {
+  border-style: none;
+}
+
+#dqjcraxfid p {
+  margin: 0;
+  padding: 0;
+}
+
+#dqjcraxfid .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#dqjcraxfid .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#dqjcraxfid .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#dqjcraxfid .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#dqjcraxfid .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#dqjcraxfid .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#dqjcraxfid .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#dqjcraxfid .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#dqjcraxfid .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#dqjcraxfid .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#dqjcraxfid .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#dqjcraxfid .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#dqjcraxfid .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#dqjcraxfid .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#dqjcraxfid .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#dqjcraxfid .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#dqjcraxfid .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#dqjcraxfid .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#dqjcraxfid .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#dqjcraxfid .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#dqjcraxfid .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#dqjcraxfid .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#dqjcraxfid .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#dqjcraxfid .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#dqjcraxfid .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#dqjcraxfid .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#dqjcraxfid .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#dqjcraxfid .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#dqjcraxfid .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#dqjcraxfid .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#dqjcraxfid .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#dqjcraxfid .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#dqjcraxfid .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#dqjcraxfid .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#dqjcraxfid .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#dqjcraxfid .gt_left {
+  text-align: left;
+}
+
+#dqjcraxfid .gt_center {
+  text-align: center;
+}
+
+#dqjcraxfid .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#dqjcraxfid .gt_font_normal {
+  font-weight: normal;
+}
+
+#dqjcraxfid .gt_font_bold {
+  font-weight: bold;
+}
+
+#dqjcraxfid .gt_font_italic {
+  font-style: italic;
+}
+
+#dqjcraxfid .gt_super {
+  font-size: 65%;
+}
+
+#dqjcraxfid .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#dqjcraxfid .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#dqjcraxfid .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#dqjcraxfid .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#dqjcraxfid .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#dqjcraxfid .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#dqjcraxfid .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+
+<table class="gt_table table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header gt_heading">
+<th colspan="2" class="gt_heading gt_title gt_font_normal gt_bottom_border">Partial summary of daily tests performed on YF patient</th>
+</tr>
+<tr class="odd gt_col_headings">
+<th id="SPECIFICITE" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">SPECIFICITE</th>
+<th id="<em>Progression</em><span class=&quot;gt_footnote_marks&quot; style=&quot;white-space:nowrap;font-style:italic;font-weight:normal;&quot;><sup>1</sup></span>" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col"><em>Progression</em><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>1</sup></span></th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="SPECIFICITE">CEREALES</td>
+<td class="gt_row gt_center" headers="nanoplots" style="padding-top: 0; padding-bottom: 0; vertical-align: middle; overflow-x: visible"><div>
+<svg role="img" viewbox="0 0 1120 130" style="
+height:2em;
+margin-left:auto;
+margin-right:auto;
+font-size:inherit;
+overflow:visible;
+vertical-align:middle;
+position:relative;">
+<defs> <pattern id="area_pattern" width="8" height="8" patternunits="userSpaceOnUse"> <path class="pattern-line" d="M 0,8 l 8,-8 M -1,1 l 4,-4 M 6,10 l 4,-4" stroke="#FF0000" stroke-width="1.5" stroke-linecap="round" shape-rendering="geometricPrecision"> </path> </pattern> </defs>
+<style>text { font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace; stroke-width: 0.15em; paint-order: stroke; stroke-linejoin: round; cursor: default; } .vert-line:hover rect { fill: #911EB4; fill-opacity: 40%; stroke: #FFFFFF60; color: red; } .vert-line:hover text { stroke: white; fill: #212427; } .horizontal-line:hover text { stroke: white; fill: #212427; } .horizontal-line:hover rect { fill: transparent; stroke: transparent; color: blue; } .boxplot-line:hover text { stroke: white; fill: #212427; } .boxplot-line:hover rect { fill: transparent; stroke: transparent; } .horizontal-line:hover text { stroke: white; fill: #212427; } .ref-line:hover rect { stroke: #FFFFFF60; } .ref-line:hover line { stroke: #FF0000; } .ref-line:hover text { stroke: white; fill: #212427; } .y-axis-line:hover rect { fill: #EDEDED; fill-opacity: 60%; stroke: #FFFFFF60; color: red; } .y-axis-line:hover text { stroke: white; stroke-width: 0.20em; fill: #1A1C1F; } .ref-line:hover rect { stroke: #FFFFFF60; } .ref-line:hover line { stroke: #FF0000; } .ref-line:hover text { stroke: white; fill: #212427; }</style>
+<path class="area-closed" d="M50,15,80.9090909090909,31.0684425993196,111.818181818182,30.9949259067059,142.727272727273,30.9949259067059,173.636363636364,30.9949259067059,204.545454545455,30.9949259067059,235.454545454545,115,266.363636363636,25.8650944665475,297.272727272727,115,328.181818181818,115,359.090909090909,115,390,114.281170116666,420.909090909091,112.451421322724,451.818181818182,110.464836917873,482.727272727273,112.373003517269,513.636363636364,112.451421322724,544.545454545455,112.451421322724,575.454545454545,112.451421322724,606.363636363636,107.628726287263,637.272727272727,106.909896403929,668.181818181818,110.275327221357,699.090909090909,112.451421322724,730,103.747044917258,760.909090909091,103.747044917258,791.818181818182,110.883065213631,822.727272727273,100.321167041458,853.636363636364,103.041284668166,884.545454545455,88.9669222933364,915.454545454545,77.7147840627343,946.363636363636,81.8603086740087,977.272727272727,98.4832497261143,1008.18181818182,97.7830907488406,1039.09090909091,92.6719302147429,1070,99.1484007545243,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125Z" stroke="transparent" stroke-width="2" fill="url(#area_pattern)" fill-opacity="0.7"></path> <path d="M 50,15 C 65,15 65.9090909090909,31.0684425993196 80.9090909090909,31.0684425993196 C 95.9090909090909,31.0684425993196 96.8181818181818,30.9949259067059 111.818181818182,30.9949259067059 C 126.818181818182,30.9949259067059 127.727272727273,30.9949259067059 142.727272727273,30.9949259067059 C 157.727272727273,30.9949259067059 158.636363636364,30.9949259067059 173.636363636364,30.9949259067059 C 188.636363636364,30.9949259067059 189.545454545455,30.9949259067059 204.545454545455,30.9949259067059 C 219.545454545455,30.9949259067059 220.454545454545,115 235.454545454545,115 C 250.454545454545,115 251.363636363636,25.8650944665475 266.363636363636,25.8650944665475 C 281.363636363636,25.8650944665475 282.272727272727,115 297.272727272727,115 C 312.272727272727,115 313.181818181818,115 328.181818181818,115 C 343.181818181818,115 344.090909090909,115 359.090909090909,115 C 374.090909090909,115 375,114.281170116666 390,114.281170116666 C 405,114.281170116666 405.909090909091,112.451421322724 420.909090909091,112.451421322724 C 435.909090909091,112.451421322724 436.818181818182,110.464836917873 451.818181818182,110.464836917873 C 466.818181818182,110.464836917873 467.727272727273,112.373003517269 482.727272727273,112.373003517269 C 497.727272727273,112.373003517269 498.636363636364,112.451421322724 513.636363636364,112.451421322724 C 528.636363636364,112.451421322724 529.545454545455,112.451421322724 544.545454545455,112.451421322724 C 559.545454545455,112.451421322724 560.454545454545,112.451421322724 575.454545454545,112.451421322724 C 590.454545454545,112.451421322724 591.363636363636,107.628726287263 606.363636363636,107.628726287263 C 621.363636363636,107.628726287263 622.272727272727,106.909896403929 637.272727272727,106.909896403929 C 652.272727272727,106.909896403929 653.181818181818,110.275327221357 668.181818181818,110.275327221357 C 683.181818181818,110.275327221357 684.090909090909,112.451421322724 699.090909090909,112.451421322724 C 714.090909090909,112.451421322724 715,103.747044917258 730,103.747044917258 C 745,103.747044917258 745.909090909091,103.747044917258 760.909090909091,103.747044917258 C 775.909090909091,103.747044917258 776.818181818182,110.883065213631 791.818181818182,110.883065213631 C 806.818181818182,110.883065213631 807.727272727273,100.321167041458 822.727272727273,100.321167041458 C 837.727272727273,100.321167041458 838.636363636364,103.041284668166 853.636363636364,103.041284668166 C 868.636363636364,103.041284668166 869.545454545455,88.9669222933364 884.545454545455,88.9669222933364 C 899.545454545455,88.9669222933364 900.454545454545,77.7147840627343 915.454545454545,77.7147840627343 C 930.454545454545,77.7147840627343 931.363636363636,81.8603086740087 946.363636363636,81.8603086740087 C 961.363636363636,81.8603086740087 962.272727272727,98.4832497261143 977.272727272727,98.4832497261143 C 992.272727272727,98.4832497261143 993.181818181818,97.7830907488406 1008.18181818182,97.7830907488406 C 1023.18181818182,97.7830907488406 1024.09090909091,92.6719302147429 1039.09090909091,92.6719302147429 C 1054.09090909091,92.6719302147429 1055,99.1484007545243 1070,99.1484007545243" stroke="#4682B4" stroke-width="8" fill="none"></path> <circle cx="50" cy="15" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="80.9090909090909" cy="31.0684425993196" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="111.818181818182" cy="30.9949259067059" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="142.727272727273" cy="30.9949259067059" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="173.636363636364" cy="30.9949259067059" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="204.545454545455" cy="30.9949259067059" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="235.454545454545" cy="115" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="266.363636363636" cy="25.8650944665475" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="297.272727272727" cy="115" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="328.181818181818" cy="115" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="359.090909090909" cy="115" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="390" cy="114.281170116666" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="420.909090909091" cy="112.451421322724" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="451.818181818182" cy="110.464836917873" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="482.727272727273" cy="112.373003517269" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="513.636363636364" cy="112.451421322724" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="544.545454545455" cy="112.451421322724" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="575.454545454545" cy="112.451421322724" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="606.363636363636" cy="107.628726287263" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="637.272727272727" cy="106.909896403929" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="668.181818181818" cy="110.275327221357" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="699.090909090909" cy="112.451421322724" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="730" cy="103.747044917258" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="760.909090909091" cy="103.747044917258" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="791.818181818182" cy="110.883065213631" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="822.727272727273" cy="100.321167041458" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="853.636363636364" cy="103.041284668166" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="884.545454545455" cy="88.9669222933364" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="915.454545454545" cy="77.7147840627343" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="946.363636363636" cy="81.8603086740087" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="977.272727272727" cy="98.4832497261143" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="1008.18181818182" cy="97.7830907488406" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="1039.09090909091" cy="92.6719302147429" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="1070" cy="99.1484007545243" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <g class="y-axis-line"> <rect x="0" y="0" width="65" height="130" stroke="transparent" stroke-width="0" fill="transparent"></rect> <text x="0" y="19" fill="transparent" stroke="transparent" font-size="25">1.30K</text> <text x="0" y="126" fill="transparent" stroke="transparent" font-size="25">445</text></g> <g class="vert-line"> <rect x="40" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="60" y="20" fill="transparent" stroke="transparent" font-size="30px">1.30K</text></g> <g class="vert-line"> <rect x="70.9090909090909" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="90.9090909090909" y="20" fill="transparent" stroke="transparent" font-size="30px">1.16K</text></g> <g class="vert-line"> <rect x="101.818181818182" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="121.818181818182" y="20" fill="transparent" stroke="transparent" font-size="30px">1.16K</text></g> <g class="vert-line"> <rect x="132.727272727273" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="152.727272727273" y="20" fill="transparent" stroke="transparent" font-size="30px">1.16K</text></g> <g class="vert-line"> <rect x="163.636363636364" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="183.636363636364" y="20" fill="transparent" stroke="transparent" font-size="30px">1.16K</text></g> <g class="vert-line"> <rect x="194.545454545455" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="214.545454545455" y="20" fill="transparent" stroke="transparent" font-size="30px">1.16K</text></g> <g class="vert-line"> <rect x="225.454545454545" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="245.454545454545" y="20" fill="transparent" stroke="transparent" font-size="30px">445</text></g> <g class="vert-line"> <rect x="256.363636363636" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="276.363636363636" y="20" fill="transparent" stroke="transparent" font-size="30px">1.20K</text></g> <g class="vert-line"> <rect x="287.272727272727" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="307.272727272727" y="20" fill="transparent" stroke="transparent" font-size="30px">445</text></g> <g class="vert-line"> <rect x="318.181818181818" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="338.181818181818" y="20" fill="transparent" stroke="transparent" font-size="30px">445</text></g> <g class="vert-line"> <rect x="349.090909090909" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="369.090909090909" y="20" fill="transparent" stroke="transparent" font-size="30px">445</text></g> <g class="vert-line"> <rect x="380" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="400" y="20" fill="transparent" stroke="transparent" font-size="30px">451</text></g> <g class="vert-line"> <rect x="410.909090909091" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="430.909090909091" y="20" fill="transparent" stroke="transparent" font-size="30px">467</text></g> <g class="vert-line"> <rect x="441.818181818182" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="461.818181818182" y="20" fill="transparent" stroke="transparent" font-size="30px">484</text></g> <g class="vert-line"> <rect x="472.727272727273" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="492.727272727273" y="20" fill="transparent" stroke="transparent" font-size="30px">467</text></g> <g class="vert-line"> <rect x="503.636363636364" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="523.636363636364" y="20" fill="transparent" stroke="transparent" font-size="30px">467</text></g> <g class="vert-line"> <rect x="534.545454545455" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="554.545454545455" y="20" fill="transparent" stroke="transparent" font-size="30px">467</text></g> <g class="vert-line"> <rect x="565.454545454545" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="585.454545454545" y="20" fill="transparent" stroke="transparent" font-size="30px">467</text></g> <g class="vert-line"> <rect x="596.363636363636" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="616.363636363636" y="20" fill="transparent" stroke="transparent" font-size="30px">508</text></g> <g class="vert-line"> <rect x="627.272727272727" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="647.272727272727" y="20" fill="transparent" stroke="transparent" font-size="30px">514</text></g> <g class="vert-line"> <rect x="658.181818181818" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="678.181818181818" y="20" fill="transparent" stroke="transparent" font-size="30px">485</text></g> <g class="vert-line"> <rect x="689.090909090909" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="709.090909090909" y="20" fill="transparent" stroke="transparent" font-size="30px">467</text></g> <g class="vert-line"> <rect x="720" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="740" y="20" fill="transparent" stroke="transparent" font-size="30px">541</text></g> <g class="vert-line"> <rect x="750.909090909091" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="770.909090909091" y="20" fill="transparent" stroke="transparent" font-size="30px">541</text></g> <g class="vert-line"> <rect x="781.818181818182" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="801.818181818182" y="20" fill="transparent" stroke="transparent" font-size="30px">480</text></g> <g class="vert-line"> <rect x="812.727272727273" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="832.727272727273" y="20" fill="transparent" stroke="transparent" font-size="30px">570</text></g> <g class="vert-line"> <rect x="843.636363636364" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="863.636363636364" y="20" fill="transparent" stroke="transparent" font-size="30px">547</text></g> <g class="vert-line"> <rect x="874.545454545455" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="894.545454545455" y="20" fill="transparent" stroke="transparent" font-size="30px">666</text></g> <g class="vert-line"> <rect x="905.454545454545" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="925.454545454545" y="20" fill="transparent" stroke="transparent" font-size="30px">762</text></g> <g class="vert-line"> <rect x="936.363636363636" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="956.363636363636" y="20" fill="transparent" stroke="transparent" font-size="30px">727</text></g> <g class="vert-line"> <rect x="967.272727272727" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="987.272727272727" y="20" fill="transparent" stroke="transparent" font-size="30px">585</text></g> <g class="vert-line"> <rect x="998.181818181818" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="1018.18181818182" y="20" fill="transparent" stroke="transparent" font-size="30px">591</text></g> <g class="vert-line"> <rect x="1029.09090909091" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="1049.09090909091" y="20" fill="transparent" stroke="transparent" font-size="30px">635</text></g> <g class="vert-line"> <rect x="1060" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="1080" y="20" fill="transparent" stroke="transparent" font-size="30px">580</text></g>
+</svg>
+</div></td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="SPECIFICITE">FECULENTS</td>
+<td class="gt_row gt_center" headers="nanoplots" style="padding-top: 0; padding-bottom: 0; vertical-align: middle; overflow-x: visible"><div>
+<svg role="img" viewbox="0 0 1120 130" style="
+height:2em;
+margin-left:auto;
+margin-right:auto;
+font-size:inherit;
+overflow:visible;
+vertical-align:middle;
+position:relative;">
+<defs> <pattern id="area_pattern" width="8" height="8" patternunits="userSpaceOnUse"> <path class="pattern-line" d="M 0,8 l 8,-8 M -1,1 l 4,-4 M 6,10 l 4,-4" stroke="#FF0000" stroke-width="1.5" stroke-linecap="round" shape-rendering="geometricPrecision"> </path> </pattern> </defs>
+<style>text { font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace; stroke-width: 0.15em; paint-order: stroke; stroke-linejoin: round; cursor: default; } .vert-line:hover rect { fill: #911EB4; fill-opacity: 40%; stroke: #FFFFFF60; color: red; } .vert-line:hover text { stroke: white; fill: #212427; } .horizontal-line:hover text { stroke: white; fill: #212427; } .horizontal-line:hover rect { fill: transparent; stroke: transparent; color: blue; } .boxplot-line:hover text { stroke: white; fill: #212427; } .boxplot-line:hover rect { fill: transparent; stroke: transparent; } .horizontal-line:hover text { stroke: white; fill: #212427; } .ref-line:hover rect { stroke: #FFFFFF60; } .ref-line:hover line { stroke: #FF0000; } .ref-line:hover text { stroke: white; fill: #212427; } .y-axis-line:hover rect { fill: #EDEDED; fill-opacity: 60%; stroke: #FFFFFF60; color: red; } .y-axis-line:hover text { stroke: white; stroke-width: 0.20em; fill: #1A1C1F; } .ref-line:hover rect { stroke: #FFFFFF60; } .ref-line:hover line { stroke: #FF0000; } .ref-line:hover text { stroke: white; fill: #212427; }</style>
+<path class="area-closed" d="M50,111.203875605308,80.9090909090909,108.381708386091,111.818181818182,105.357455926756,142.727272727273,104.919158468881,173.636363636364,104.919158468881,204.545454545455,104.919158468881,235.454545454545,92.9974676146878,266.363636363636,92.9974676146878,297.272727272727,92.9974676146878,328.181818181818,92.9974676146878,359.090909090909,92.9974676146878,390,103.984123892081,420.909090909091,114.970780169475,451.818181818182,109.360572708678,482.727272727273,115,513.636363636364,107.907203746914,544.545454545455,107.630758741599,575.454545454545,108.425538131879,606.363636363636,103.049089315282,637.272727272727,102.932209993182,668.181818181818,105.507325380093,699.090909090909,108.425538131879,730,99.3089510080842,760.909090909091,99.3699315239624,791.818181818182,100.185545923834,822.727272727273,95.5688127008863,853.636363636364,94.5402746664069,884.545454545455,90.6131294438492,915.454545454545,84.5821564234927,946.363636363636,83.3198597448135,977.272727272727,76.2670275083833,1008.18181818182,70.439758449401,1039.09090909091,15,1070,72.6604655692997,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125Z" stroke="transparent" stroke-width="2" fill="url(#area_pattern)" fill-opacity="0.7"></path> <path d="M 50,111.203875605308 C 65,111.203875605308 65.9090909090909,108.381708386091 80.9090909090909,108.381708386091 C 95.9090909090909,108.381708386091 96.8181818181818,105.357455926756 111.818181818182,105.357455926756 C 126.818181818182,105.357455926756 127.727272727273,104.919158468881 142.727272727273,104.919158468881 C 157.727272727273,104.919158468881 158.636363636364,104.919158468881 173.636363636364,104.919158468881 C 188.636363636364,104.919158468881 189.545454545455,104.919158468881 204.545454545455,104.919158468881 C 219.545454545455,104.919158468881 220.454545454545,92.9974676146878 235.454545454545,92.9974676146878 C 250.454545454545,92.9974676146878 251.363636363636,92.9974676146878 266.363636363636,92.9974676146878 C 281.363636363636,92.9974676146878 282.272727272727,92.9974676146878 297.272727272727,92.9974676146878 C 312.272727272727,92.9974676146878 313.181818181818,92.9974676146878 328.181818181818,92.9974676146878 C 343.181818181818,92.9974676146878 344.090909090909,92.9974676146878 359.090909090909,92.9974676146878 C 374.090909090909,92.9974676146878 375,103.984123892081 390,103.984123892081 C 405,103.984123892081 405.909090909091,114.970780169475 420.909090909091,114.970780169475 C 435.909090909091,114.970780169475 436.818181818182,109.360572708678 451.818181818182,109.360572708678 C 466.818181818182,109.360572708678 467.727272727273,115 482.727272727273,115 C 497.727272727273,115 498.636363636364,107.907203746914 513.636363636364,107.907203746914 C 528.636363636364,107.907203746914 529.545454545455,107.630758741599 544.545454545455,107.630758741599 C 559.545454545455,107.630758741599 560.454545454545,108.425538131879 575.454545454545,108.425538131879 C 590.454545454545,108.425538131879 591.363636363636,103.049089315282 606.363636363636,103.049089315282 C 621.363636363636,103.049089315282 622.272727272727,102.932209993182 637.272727272727,102.932209993182 C 652.272727272727,102.932209993182 653.181818181818,105.507325380093 668.181818181818,105.507325380093 C 683.181818181818,105.507325380093 684.090909090909,108.425538131879 699.090909090909,108.425538131879 C 714.090909090909,108.425538131879 715,99.3089510080842 730,99.3089510080842 C 745,99.3089510080842 745.909090909091,99.3699315239624 760.909090909091,99.3699315239624 C 775.909090909091,99.3699315239624 776.818181818182,100.185545923834 791.818181818182,100.185545923834 C 806.818181818182,100.185545923834 807.727272727273,95.5688127008863 822.727272727273,95.5688127008863 C 837.727272727273,95.5688127008863 838.636363636364,94.5402746664069 853.636363636364,94.5402746664069 C 868.636363636364,94.5402746664069 869.545454545455,90.6131294438492 884.545454545455,90.6131294438492 C 899.545454545455,90.6131294438492 900.454545454545,84.5821564234927 915.454545454545,84.5821564234927 C 930.454545454545,84.5821564234927 931.363636363636,83.3198597448135 946.363636363636,83.3198597448135 C 961.363636363636,83.3198597448135 962.272727272727,76.2670275083833 977.272727272727,76.2670275083833 C 992.272727272727,76.2670275083833 993.181818181818,70.439758449401 1008.18181818182,70.439758449401 C 1023.18181818182,70.439758449401 1024.09090909091,15 1039.09090909091,15 C 1054.09090909091,15 1055,72.6604655692997 1070,72.6604655692997" stroke="#4682B4" stroke-width="8" fill="none"></path> <circle cx="50" cy="111.203875605308" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="80.9090909090909" cy="108.381708386091" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="111.818181818182" cy="105.357455926756" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="142.727272727273" cy="104.919158468881" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="173.636363636364" cy="104.919158468881" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="204.545454545455" cy="104.919158468881" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="235.454545454545" cy="92.9974676146878" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="266.363636363636" cy="92.9974676146878" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="297.272727272727" cy="92.9974676146878" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="328.181818181818" cy="92.9974676146878" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="359.090909090909" cy="92.9974676146878" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="390" cy="103.984123892081" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="420.909090909091" cy="114.970780169475" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="451.818181818182" cy="109.360572708678" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="482.727272727273" cy="115" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="513.636363636364" cy="107.907203746914" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="544.545454545455" cy="107.630758741599" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="575.454545454545" cy="108.425538131879" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="606.363636363636" cy="103.049089315282" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="637.272727272727" cy="102.932209993182" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="668.181818181818" cy="105.507325380093" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="699.090909090909" cy="108.425538131879" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="730" cy="99.3089510080842" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="760.909090909091" cy="99.3699315239624" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="791.818181818182" cy="100.185545923834" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="822.727272727273" cy="95.5688127008863" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="853.636363636364" cy="94.5402746664069" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="884.545454545455" cy="90.6131294438492" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="915.454545454545" cy="84.5821564234927" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="946.363636363636" cy="83.3198597448135" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="977.272727272727" cy="76.2670275083833" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="1008.18181818182" cy="70.439758449401" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="1039.09090909091" cy="15" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="1070" cy="72.6604655692997" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <g class="y-axis-line"> <rect x="0" y="0" width="65" height="130" stroke="transparent" stroke-width="0" fill="transparent"></rect> <text x="0" y="19" fill="transparent" stroke="transparent" font-size="25">671</text> <text x="0" y="126" fill="transparent" stroke="transparent" font-size="25">374</text></g> <g class="vert-line"> <rect x="40" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="60" y="20" fill="transparent" stroke="transparent" font-size="30px">385</text></g> <g class="vert-line"> <rect x="70.9090909090909" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="90.9090909090909" y="20" fill="transparent" stroke="transparent" font-size="30px">394</text></g> <g class="vert-line"> <rect x="101.818181818182" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="121.818181818182" y="20" fill="transparent" stroke="transparent" font-size="30px">403</text></g> <g class="vert-line"> <rect x="132.727272727273" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="152.727272727273" y="20" fill="transparent" stroke="transparent" font-size="30px">404</text></g> <g class="vert-line"> <rect x="163.636363636364" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="183.636363636364" y="20" fill="transparent" stroke="transparent" font-size="30px">404</text></g> <g class="vert-line"> <rect x="194.545454545455" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="214.545454545455" y="20" fill="transparent" stroke="transparent" font-size="30px">404</text></g> <g class="vert-line"> <rect x="225.454545454545" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="245.454545454545" y="20" fill="transparent" stroke="transparent" font-size="30px">440</text></g> <g class="vert-line"> <rect x="256.363636363636" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="276.363636363636" y="20" fill="transparent" stroke="transparent" font-size="30px">440</text></g> <g class="vert-line"> <rect x="287.272727272727" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="307.272727272727" y="20" fill="transparent" stroke="transparent" font-size="30px">440</text></g> <g class="vert-line"> <rect x="318.181818181818" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="338.181818181818" y="20" fill="transparent" stroke="transparent" font-size="30px">440</text></g> <g class="vert-line"> <rect x="349.090909090909" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="369.090909090909" y="20" fill="transparent" stroke="transparent" font-size="30px">440</text></g> <g class="vert-line"> <rect x="380" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="400" y="20" fill="transparent" stroke="transparent" font-size="30px">407</text></g> <g class="vert-line"> <rect x="410.909090909091" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="430.909090909091" y="20" fill="transparent" stroke="transparent" font-size="30px">374</text></g> <g class="vert-line"> <rect x="441.818181818182" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="461.818181818182" y="20" fill="transparent" stroke="transparent" font-size="30px">391</text></g> <g class="vert-line"> <rect x="472.727272727273" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="492.727272727273" y="20" fill="transparent" stroke="transparent" font-size="30px">374</text></g> <g class="vert-line"> <rect x="503.636363636364" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="523.636363636364" y="20" fill="transparent" stroke="transparent" font-size="30px">395</text></g> <g class="vert-line"> <rect x="534.545454545455" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="554.545454545455" y="20" fill="transparent" stroke="transparent" font-size="30px">396</text></g> <g class="vert-line"> <rect x="565.454545454545" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="585.454545454545" y="20" fill="transparent" stroke="transparent" font-size="30px">394</text></g> <g class="vert-line"> <rect x="596.363636363636" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="616.363636363636" y="20" fill="transparent" stroke="transparent" font-size="30px">410</text></g> <g class="vert-line"> <rect x="627.272727272727" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="647.272727272727" y="20" fill="transparent" stroke="transparent" font-size="30px">410</text></g> <g class="vert-line"> <rect x="658.181818181818" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="678.181818181818" y="20" fill="transparent" stroke="transparent" font-size="30px">402</text></g> <g class="vert-line"> <rect x="689.090909090909" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="709.090909090909" y="20" fill="transparent" stroke="transparent" font-size="30px">394</text></g> <g class="vert-line"> <rect x="720" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="740" y="20" fill="transparent" stroke="transparent" font-size="30px">421</text></g> <g class="vert-line"> <rect x="750.909090909091" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="770.909090909091" y="20" fill="transparent" stroke="transparent" font-size="30px">421</text></g> <g class="vert-line"> <rect x="781.818181818182" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="801.818181818182" y="20" fill="transparent" stroke="transparent" font-size="30px">418</text></g> <g class="vert-line"> <rect x="812.727272727273" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="832.727272727273" y="20" fill="transparent" stroke="transparent" font-size="30px">432</text></g> <g class="vert-line"> <rect x="843.636363636364" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="863.636363636364" y="20" fill="transparent" stroke="transparent" font-size="30px">435</text></g> <g class="vert-line"> <rect x="874.545454545455" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="894.545454545455" y="20" fill="transparent" stroke="transparent" font-size="30px">447</text></g> <g class="vert-line"> <rect x="905.454545454545" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="925.454545454545" y="20" fill="transparent" stroke="transparent" font-size="30px">465</text></g> <g class="vert-line"> <rect x="936.363636363636" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="956.363636363636" y="20" fill="transparent" stroke="transparent" font-size="30px">468</text></g> <g class="vert-line"> <rect x="967.272727272727" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="987.272727272727" y="20" fill="transparent" stroke="transparent" font-size="30px">489</text></g> <g class="vert-line"> <rect x="998.181818181818" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="1018.18181818182" y="20" fill="transparent" stroke="transparent" font-size="30px">507</text></g> <g class="vert-line"> <rect x="1029.09090909091" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="1049.09090909091" y="20" fill="transparent" stroke="transparent" font-size="30px">671</text></g> <g class="vert-line"> <rect x="1060" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="1080" y="20" fill="transparent" stroke="transparent" font-size="30px">500</text></g>
+</svg>
+</div></td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="SPECIFICITE">FRUITS</td>
+<td class="gt_row gt_center" headers="nanoplots" style="padding-top: 0; padding-bottom: 0; vertical-align: middle; overflow-x: visible"><div>
+<svg role="img" viewbox="0 0 1120 130" style="
+height:2em;
+margin-left:auto;
+margin-right:auto;
+font-size:inherit;
+overflow:visible;
+vertical-align:middle;
+position:relative;">
+<defs> <pattern id="area_pattern" width="8" height="8" patternunits="userSpaceOnUse"> <path class="pattern-line" d="M 0,8 l 8,-8 M -1,1 l 4,-4 M 6,10 l 4,-4" stroke="#FF0000" stroke-width="1.5" stroke-linecap="round" shape-rendering="geometricPrecision"> </path> </pattern> </defs>
+<style>text { font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace; stroke-width: 0.15em; paint-order: stroke; stroke-linejoin: round; cursor: default; } .vert-line:hover rect { fill: #911EB4; fill-opacity: 40%; stroke: #FFFFFF60; color: red; } .vert-line:hover text { stroke: white; fill: #212427; } .horizontal-line:hover text { stroke: white; fill: #212427; } .horizontal-line:hover rect { fill: transparent; stroke: transparent; color: blue; } .boxplot-line:hover text { stroke: white; fill: #212427; } .boxplot-line:hover rect { fill: transparent; stroke: transparent; } .horizontal-line:hover text { stroke: white; fill: #212427; } .ref-line:hover rect { stroke: #FFFFFF60; } .ref-line:hover line { stroke: #FF0000; } .ref-line:hover text { stroke: white; fill: #212427; } .y-axis-line:hover rect { fill: #EDEDED; fill-opacity: 60%; stroke: #FFFFFF60; color: red; } .y-axis-line:hover text { stroke: white; stroke-width: 0.20em; fill: #1A1C1F; } .ref-line:hover rect { stroke: #FFFFFF60; } .ref-line:hover line { stroke: #FF0000; } .ref-line:hover text { stroke: white; fill: #212427; }</style>
+<path class="area-closed" d="M50,88.8929114754212,80.9090909090909,79.1549033248972,111.818181818182,79.5092263050404,142.727272727273,79.4448039450144,173.636363636364,79.4448039450144,204.545454545455,79.4448039450144,235.454545454545,82.6471808961268,266.363636363636,82.6471808961268,297.272727272727,82.6471808961268,328.181818181818,82.6471808961268,359.090909090909,82.6471808961268,390,85.4618523714462,420.909090909091,82.5866328878226,451.818181818182,115,482.727272727273,81.5561394242677,513.636363636364,67.5424150282037,544.545454545455,67.5424150282037,575.454545454545,67.5424150282037,606.363636363636,53.846698489335,637.272727272727,62.8658288929803,668.181818181818,70.5487918294188,699.090909090909,67.5424150282037,730,71.5509174298239,760.909090909091,71.5509174298239,791.818181818182,83.9772748748462,822.727272727273,47.3495841800424,853.636363636364,15,884.545454545455,66.654818067845,915.454545454545,66.8051369079057,946.363636363636,85.8956295956215,977.272727272727,82.9236113864203,1008.18181818182,95.2739634612302,1039.09090909091,81.9604971040311,1070,105.522975283554,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125Z" stroke="transparent" stroke-width="2" fill="url(#area_pattern)" fill-opacity="0.7"></path> <path d="M 50,88.8929114754212 C 65,88.8929114754212 65.9090909090909,79.1549033248972 80.9090909090909,79.1549033248972 C 95.9090909090909,79.1549033248972 96.8181818181818,79.5092263050404 111.818181818182,79.5092263050404 C 126.818181818182,79.5092263050404 127.727272727273,79.4448039450144 142.727272727273,79.4448039450144 C 157.727272727273,79.4448039450144 158.636363636364,79.4448039450144 173.636363636364,79.4448039450144 C 188.636363636364,79.4448039450144 189.545454545455,79.4448039450144 204.545454545455,79.4448039450144 C 219.545454545455,79.4448039450144 220.454545454545,82.6471808961268 235.454545454545,82.6471808961268 C 250.454545454545,82.6471808961268 251.363636363636,82.6471808961268 266.363636363636,82.6471808961268 C 281.363636363636,82.6471808961268 282.272727272727,82.6471808961268 297.272727272727,82.6471808961268 C 312.272727272727,82.6471808961268 313.181818181818,82.6471808961268 328.181818181818,82.6471808961268 C 343.181818181818,82.6471808961268 344.090909090909,82.6471808961268 359.090909090909,82.6471808961268 C 374.090909090909,82.6471808961268 375,85.4618523714462 390,85.4618523714462 C 405,85.4618523714462 405.909090909091,82.5866328878226 420.909090909091,82.5866328878226 C 435.909090909091,82.5866328878226 436.818181818182,115 451.818181818182,115 C 466.818181818182,115 467.727272727273,81.5561394242677 482.727272727273,81.5561394242677 C 497.727272727273,81.5561394242677 498.636363636364,67.5424150282037 513.636363636364,67.5424150282037 C 528.636363636364,67.5424150282037 529.545454545455,67.5424150282037 544.545454545455,67.5424150282037 C 559.545454545455,67.5424150282037 560.454545454545,67.5424150282037 575.454545454545,67.5424150282037 C 590.454545454545,67.5424150282037 591.363636363636,53.846698489335 606.363636363636,53.846698489335 C 621.363636363636,53.846698489335 622.272727272727,62.8658288929803 637.272727272727,62.8658288929803 C 652.272727272727,62.8658288929803 653.181818181818,70.5487918294188 668.181818181818,70.5487918294188 C 683.181818181818,70.5487918294188 684.090909090909,67.5424150282037 699.090909090909,67.5424150282037 C 714.090909090909,67.5424150282037 715,71.5509174298239 730,71.5509174298239 C 745,71.5509174298239 745.909090909091,71.5509174298239 760.909090909091,71.5509174298239 C 775.909090909091,71.5509174298239 776.818181818182,83.9772748748462 791.818181818182,83.9772748748462 C 806.818181818182,83.9772748748462 807.727272727273,47.3495841800424 822.727272727273,47.3495841800424 C 837.727272727273,47.3495841800424 838.636363636364,15 853.636363636364,15 C 868.636363636364,15 869.545454545455,66.654818067845 884.545454545455,66.654818067845 C 899.545454545455,66.654818067845 900.454545454545,66.8051369079057 915.454545454545,66.8051369079057 C 930.454545454545,66.8051369079057 931.363636363636,85.8956295956215 946.363636363636,85.8956295956215 C 961.363636363636,85.8956295956215 962.272727272727,82.9236113864203 977.272727272727,82.9236113864203 C 992.272727272727,82.9236113864203 993.181818181818,95.2739634612302 1008.18181818182,95.2739634612302 C 1023.18181818182,95.2739634612302 1024.09090909091,81.9604971040311 1039.09090909091,81.9604971040311 C 1054.09090909091,81.9604971040311 1055,105.522975283554 1070,105.522975283554" stroke="#4682B4" stroke-width="8" fill="none"></path> <circle cx="50" cy="88.8929114754212" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="80.9090909090909" cy="79.1549033248972" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="111.818181818182" cy="79.5092263050404" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="142.727272727273" cy="79.4448039450144" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="173.636363636364" cy="79.4448039450144" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="204.545454545455" cy="79.4448039450144" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="235.454545454545" cy="82.6471808961268" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="266.363636363636" cy="82.6471808961268" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="297.272727272727" cy="82.6471808961268" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="328.181818181818" cy="82.6471808961268" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="359.090909090909" cy="82.6471808961268" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="390" cy="85.4618523714462" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="420.909090909091" cy="82.5866328878226" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="451.818181818182" cy="115" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="482.727272727273" cy="81.5561394242677" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="513.636363636364" cy="67.5424150282037" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="544.545454545455" cy="67.5424150282037" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="575.454545454545" cy="67.5424150282037" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="606.363636363636" cy="53.846698489335" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="637.272727272727" cy="62.8658288929803" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="668.181818181818" cy="70.5487918294188" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="699.090909090909" cy="67.5424150282037" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="730" cy="71.5509174298239" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="760.909090909091" cy="71.5509174298239" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="791.818181818182" cy="83.9772748748462" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="822.727272727273" cy="47.3495841800424" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="853.636363636364" cy="15" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="884.545454545455" cy="66.654818067845" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="915.454545454545" cy="66.8051369079057" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="946.363636363636" cy="85.8956295956215" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="977.272727272727" cy="82.9236113864203" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="1008.18181818182" cy="95.2739634612302" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="1039.09090909091" cy="81.9604971040311" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="1070" cy="105.522975283554" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <g class="y-axis-line"> <rect x="0" y="0" width="65" height="130" stroke="transparent" stroke-width="0" fill="transparent"></rect> <text x="0" y="19" fill="transparent" stroke="transparent" font-size="25">678</text> <text x="0" y="126" fill="transparent" stroke="transparent" font-size="25">447</text></g> <g class="vert-line"> <rect x="40" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="60" y="20" fill="transparent" stroke="transparent" font-size="30px">507</text></g> <g class="vert-line"> <rect x="70.9090909090909" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="90.9090909090909" y="20" fill="transparent" stroke="transparent" font-size="30px">530</text></g> <g class="vert-line"> <rect x="101.818181818182" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="121.818181818182" y="20" fill="transparent" stroke="transparent" font-size="30px">529</text></g> <g class="vert-line"> <rect x="132.727272727273" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="152.727272727273" y="20" fill="transparent" stroke="transparent" font-size="30px">529</text></g> <g class="vert-line"> <rect x="163.636363636364" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="183.636363636364" y="20" fill="transparent" stroke="transparent" font-size="30px">529</text></g> <g class="vert-line"> <rect x="194.545454545455" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="214.545454545455" y="20" fill="transparent" stroke="transparent" font-size="30px">529</text></g> <g class="vert-line"> <rect x="225.454545454545" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="245.454545454545" y="20" fill="transparent" stroke="transparent" font-size="30px">522</text></g> <g class="vert-line"> <rect x="256.363636363636" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="276.363636363636" y="20" fill="transparent" stroke="transparent" font-size="30px">522</text></g> <g class="vert-line"> <rect x="287.272727272727" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="307.272727272727" y="20" fill="transparent" stroke="transparent" font-size="30px">522</text></g> <g class="vert-line"> <rect x="318.181818181818" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="338.181818181818" y="20" fill="transparent" stroke="transparent" font-size="30px">522</text></g> <g class="vert-line"> <rect x="349.090909090909" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="369.090909090909" y="20" fill="transparent" stroke="transparent" font-size="30px">522</text></g> <g class="vert-line"> <rect x="380" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="400" y="20" fill="transparent" stroke="transparent" font-size="30px">515</text></g> <g class="vert-line"> <rect x="410.909090909091" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="430.909090909091" y="20" fill="transparent" stroke="transparent" font-size="30px">522</text></g> <g class="vert-line"> <rect x="441.818181818182" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="461.818181818182" y="20" fill="transparent" stroke="transparent" font-size="30px">447</text></g> <g class="vert-line"> <rect x="472.727272727273" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="492.727272727273" y="20" fill="transparent" stroke="transparent" font-size="30px">524</text></g> <g class="vert-line"> <rect x="503.636363636364" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="523.636363636364" y="20" fill="transparent" stroke="transparent" font-size="30px">556</text></g> <g class="vert-line"> <rect x="534.545454545455" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="554.545454545455" y="20" fill="transparent" stroke="transparent" font-size="30px">556</text></g> <g class="vert-line"> <rect x="565.454545454545" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="585.454545454545" y="20" fill="transparent" stroke="transparent" font-size="30px">556</text></g> <g class="vert-line"> <rect x="596.363636363636" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="616.363636363636" y="20" fill="transparent" stroke="transparent" font-size="30px">588</text></g> <g class="vert-line"> <rect x="627.272727272727" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="647.272727272727" y="20" fill="transparent" stroke="transparent" font-size="30px">567</text></g> <g class="vert-line"> <rect x="658.181818181818" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="678.181818181818" y="20" fill="transparent" stroke="transparent" font-size="30px">550</text></g> <g class="vert-line"> <rect x="689.090909090909" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="709.090909090909" y="20" fill="transparent" stroke="transparent" font-size="30px">556</text></g> <g class="vert-line"> <rect x="720" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="740" y="20" fill="transparent" stroke="transparent" font-size="30px">547</text></g> <g class="vert-line"> <rect x="750.909090909091" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="770.909090909091" y="20" fill="transparent" stroke="transparent" font-size="30px">547</text></g> <g class="vert-line"> <rect x="781.818181818182" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="801.818181818182" y="20" fill="transparent" stroke="transparent" font-size="30px">519</text></g> <g class="vert-line"> <rect x="812.727272727273" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="832.727272727273" y="20" fill="transparent" stroke="transparent" font-size="30px">603</text></g> <g class="vert-line"> <rect x="843.636363636364" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="863.636363636364" y="20" fill="transparent" stroke="transparent" font-size="30px">678</text></g> <g class="vert-line"> <rect x="874.545454545455" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="894.545454545455" y="20" fill="transparent" stroke="transparent" font-size="30px">559</text></g> <g class="vert-line"> <rect x="905.454545454545" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="925.454545454545" y="20" fill="transparent" stroke="transparent" font-size="30px">558</text></g> <g class="vert-line"> <rect x="936.363636363636" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="956.363636363636" y="20" fill="transparent" stroke="transparent" font-size="30px">514</text></g> <g class="vert-line"> <rect x="967.272727272727" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="987.272727272727" y="20" fill="transparent" stroke="transparent" font-size="30px">521</text></g> <g class="vert-line"> <rect x="998.181818181818" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="1018.18181818182" y="20" fill="transparent" stroke="transparent" font-size="30px">492</text></g> <g class="vert-line"> <rect x="1029.09090909091" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="1049.09090909091" y="20" fill="transparent" stroke="transparent" font-size="30px">523</text></g> <g class="vert-line"> <rect x="1060" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="1080" y="20" fill="transparent" stroke="transparent" font-size="30px">469</text></g>
+</svg>
+</div></td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="SPECIFICITE">LEGUMES</td>
+<td class="gt_row gt_center" headers="nanoplots" style="padding-top: 0; padding-bottom: 0; vertical-align: middle; overflow-x: visible"><div>
+<svg role="img" viewbox="0 0 1120 130" style="
+height:2em;
+margin-left:auto;
+margin-right:auto;
+font-size:inherit;
+overflow:visible;
+vertical-align:middle;
+position:relative;">
+<defs> <pattern id="area_pattern" width="8" height="8" patternunits="userSpaceOnUse"> <path class="pattern-line" d="M 0,8 l 8,-8 M -1,1 l 4,-4 M 6,10 l 4,-4" stroke="#FF0000" stroke-width="1.5" stroke-linecap="round" shape-rendering="geometricPrecision"> </path> </pattern> </defs>
+<style>text { font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace; stroke-width: 0.15em; paint-order: stroke; stroke-linejoin: round; cursor: default; } .vert-line:hover rect { fill: #911EB4; fill-opacity: 40%; stroke: #FFFFFF60; color: red; } .vert-line:hover text { stroke: white; fill: #212427; } .horizontal-line:hover text { stroke: white; fill: #212427; } .horizontal-line:hover rect { fill: transparent; stroke: transparent; color: blue; } .boxplot-line:hover text { stroke: white; fill: #212427; } .boxplot-line:hover rect { fill: transparent; stroke: transparent; } .horizontal-line:hover text { stroke: white; fill: #212427; } .ref-line:hover rect { stroke: #FFFFFF60; } .ref-line:hover line { stroke: #FF0000; } .ref-line:hover text { stroke: white; fill: #212427; } .y-axis-line:hover rect { fill: #EDEDED; fill-opacity: 60%; stroke: #FFFFFF60; color: red; } .y-axis-line:hover text { stroke: white; stroke-width: 0.20em; fill: #1A1C1F; } .ref-line:hover rect { stroke: #FFFFFF60; } .ref-line:hover line { stroke: #FF0000; } .ref-line:hover text { stroke: white; fill: #212427; }</style>
+<path class="area-closed" d="M50,90.5854692974368,80.9090909090909,86.2382445141066,111.818181818182,90.1567398119122,142.727272727273,89.294670846395,173.636363636364,89.294670846395,204.545454545455,89.294670846395,235.454545454545,115,266.363636363636,115,297.272727272727,115,328.181818181818,115,359.090909090909,115,390,91.2800417972832,420.909090909091,81.5830721003135,451.818181818182,99.6394984326019,482.727272727273,102.711598746082,513.636363636364,101.426332288401,544.545454545455,101.426332288401,575.454545454545,101.426332288401,606.363636363636,86.1494252873563,637.272727272727,78.6677115987461,668.181818181818,92.8291536050156,699.090909090909,101.426332288401,730,62.9623824451411,760.909090909091,62.9623824451411,791.818181818182,15,822.727272727273,30.9568774371129,853.636363636364,39.8934973072904,884.545454545455,65.0835945663532,915.454545454545,67.641065830721,946.363636363636,74.9479623824452,977.272727272727,57.1238244514107,1008.18181818182,44.8824451410658,1039.09090909091,33.58934169279,1070,60.4858934169279,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125Z" stroke="transparent" stroke-width="2" fill="url(#area_pattern)" fill-opacity="0.7"></path> <path d="M 50,90.5854692974368 C 65,90.5854692974368 65.9090909090909,86.2382445141066 80.9090909090909,86.2382445141066 C 95.9090909090909,86.2382445141066 96.8181818181818,90.1567398119122 111.818181818182,90.1567398119122 C 126.818181818182,90.1567398119122 127.727272727273,89.294670846395 142.727272727273,89.294670846395 C 157.727272727273,89.294670846395 158.636363636364,89.294670846395 173.636363636364,89.294670846395 C 188.636363636364,89.294670846395 189.545454545455,89.294670846395 204.545454545455,89.294670846395 C 219.545454545455,89.294670846395 220.454545454545,115 235.454545454545,115 C 250.454545454545,115 251.363636363636,115 266.363636363636,115 C 281.363636363636,115 282.272727272727,115 297.272727272727,115 C 312.272727272727,115 313.181818181818,115 328.181818181818,115 C 343.181818181818,115 344.090909090909,115 359.090909090909,115 C 374.090909090909,115 375,91.2800417972832 390,91.2800417972832 C 405,91.2800417972832 405.909090909091,81.5830721003135 420.909090909091,81.5830721003135 C 435.909090909091,81.5830721003135 436.818181818182,99.6394984326019 451.818181818182,99.6394984326019 C 466.818181818182,99.6394984326019 467.727272727273,102.711598746082 482.727272727273,102.711598746082 C 497.727272727273,102.711598746082 498.636363636364,101.426332288401 513.636363636364,101.426332288401 C 528.636363636364,101.426332288401 529.545454545455,101.426332288401 544.545454545455,101.426332288401 C 559.545454545455,101.426332288401 560.454545454545,101.426332288401 575.454545454545,101.426332288401 C 590.454545454545,101.426332288401 591.363636363636,86.1494252873563 606.363636363636,86.1494252873563 C 621.363636363636,86.1494252873563 622.272727272727,78.6677115987461 637.272727272727,78.6677115987461 C 652.272727272727,78.6677115987461 653.181818181818,92.8291536050156 668.181818181818,92.8291536050156 C 683.181818181818,92.8291536050156 684.090909090909,101.426332288401 699.090909090909,101.426332288401 C 714.090909090909,101.426332288401 715,62.9623824451411 730,62.9623824451411 C 745,62.9623824451411 745.909090909091,62.9623824451411 760.909090909091,62.9623824451411 C 775.909090909091,62.9623824451411 776.818181818182,15 791.818181818182,15 C 806.818181818182,15 807.727272727273,30.9568774371129 822.727272727273,30.9568774371129 C 837.727272727273,30.9568774371129 838.636363636364,39.8934973072904 853.636363636364,39.8934973072904 C 868.636363636364,39.8934973072904 869.545454545455,65.0835945663532 884.545454545455,65.0835945663532 C 899.545454545455,65.0835945663532 900.454545454545,67.641065830721 915.454545454545,67.641065830721 C 930.454545454545,67.641065830721 931.363636363636,74.9479623824452 946.363636363636,74.9479623824452 C 961.363636363636,74.9479623824452 962.272727272727,57.1238244514107 977.272727272727,57.1238244514107 C 992.272727272727,57.1238244514107 993.181818181818,44.8824451410658 1008.18181818182,44.8824451410658 C 1023.18181818182,44.8824451410658 1024.09090909091,33.58934169279 1039.09090909091,33.58934169279 C 1054.09090909091,33.58934169279 1055,60.4858934169279 1070,60.4858934169279" stroke="#4682B4" stroke-width="8" fill="none"></path> <circle cx="50" cy="90.5854692974368" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="80.9090909090909" cy="86.2382445141066" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="111.818181818182" cy="90.1567398119122" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="142.727272727273" cy="89.294670846395" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="173.636363636364" cy="89.294670846395" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="204.545454545455" cy="89.294670846395" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="235.454545454545" cy="115" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="266.363636363636" cy="115" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="297.272727272727" cy="115" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="328.181818181818" cy="115" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="359.090909090909" cy="115" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="390" cy="91.2800417972832" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="420.909090909091" cy="81.5830721003135" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="451.818181818182" cy="99.6394984326019" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="482.727272727273" cy="102.711598746082" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="513.636363636364" cy="101.426332288401" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="544.545454545455" cy="101.426332288401" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="575.454545454545" cy="101.426332288401" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="606.363636363636" cy="86.1494252873563" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="637.272727272727" cy="78.6677115987461" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="668.181818181818" cy="92.8291536050156" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="699.090909090909" cy="101.426332288401" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="730" cy="62.9623824451411" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="760.909090909091" cy="62.9623824451411" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="791.818181818182" cy="15" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="822.727272727273" cy="30.9568774371129" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="853.636363636364" cy="39.8934973072904" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="884.545454545455" cy="65.0835945663532" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="915.454545454545" cy="67.641065830721" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="946.363636363636" cy="74.9479623824452" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="977.272727272727" cy="57.1238244514107" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="1008.18181818182" cy="44.8824451410658" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="1039.09090909091" cy="33.58934169279" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="1070" cy="60.4858934169279" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <g class="y-axis-line"> <rect x="0" y="0" width="65" height="130" stroke="transparent" stroke-width="0" fill="transparent"></rect> <text x="0" y="19" fill="transparent" stroke="transparent" font-size="25">717</text> <text x="0" y="126" fill="transparent" stroke="transparent" font-size="25">476</text></g> <g class="vert-line"> <rect x="40" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="60" y="20" fill="transparent" stroke="transparent" font-size="30px">535</text></g> <g class="vert-line"> <rect x="70.9090909090909" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="90.9090909090909" y="20" fill="transparent" stroke="transparent" font-size="30px">545</text></g> <g class="vert-line"> <rect x="101.818181818182" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="121.818181818182" y="20" fill="transparent" stroke="transparent" font-size="30px">536</text></g> <g class="vert-line"> <rect x="132.727272727273" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="152.727272727273" y="20" fill="transparent" stroke="transparent" font-size="30px">538</text></g> <g class="vert-line"> <rect x="163.636363636364" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="183.636363636364" y="20" fill="transparent" stroke="transparent" font-size="30px">538</text></g> <g class="vert-line"> <rect x="194.545454545455" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="214.545454545455" y="20" fill="transparent" stroke="transparent" font-size="30px">538</text></g> <g class="vert-line"> <rect x="225.454545454545" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="245.454545454545" y="20" fill="transparent" stroke="transparent" font-size="30px">476</text></g> <g class="vert-line"> <rect x="256.363636363636" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="276.363636363636" y="20" fill="transparent" stroke="transparent" font-size="30px">476</text></g> <g class="vert-line"> <rect x="287.272727272727" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="307.272727272727" y="20" fill="transparent" stroke="transparent" font-size="30px">476</text></g> <g class="vert-line"> <rect x="318.181818181818" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="338.181818181818" y="20" fill="transparent" stroke="transparent" font-size="30px">476</text></g> <g class="vert-line"> <rect x="349.090909090909" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="369.090909090909" y="20" fill="transparent" stroke="transparent" font-size="30px">476</text></g> <g class="vert-line"> <rect x="380" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="400" y="20" fill="transparent" stroke="transparent" font-size="30px">533</text></g> <g class="vert-line"> <rect x="410.909090909091" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="430.909090909091" y="20" fill="transparent" stroke="transparent" font-size="30px">557</text></g> <g class="vert-line"> <rect x="441.818181818182" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="461.818181818182" y="20" fill="transparent" stroke="transparent" font-size="30px">513</text></g> <g class="vert-line"> <rect x="472.727272727273" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="492.727272727273" y="20" fill="transparent" stroke="transparent" font-size="30px">505</text></g> <g class="vert-line"> <rect x="503.636363636364" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="523.636363636364" y="20" fill="transparent" stroke="transparent" font-size="30px">509</text></g> <g class="vert-line"> <rect x="534.545454545455" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="554.545454545455" y="20" fill="transparent" stroke="transparent" font-size="30px">509</text></g> <g class="vert-line"> <rect x="565.454545454545" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="585.454545454545" y="20" fill="transparent" stroke="transparent" font-size="30px">509</text></g> <g class="vert-line"> <rect x="596.363636363636" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="616.363636363636" y="20" fill="transparent" stroke="transparent" font-size="30px">545</text></g> <g class="vert-line"> <rect x="627.272727272727" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="647.272727272727" y="20" fill="transparent" stroke="transparent" font-size="30px">564</text></g> <g class="vert-line"> <rect x="658.181818181818" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="678.181818181818" y="20" fill="transparent" stroke="transparent" font-size="30px">529</text></g> <g class="vert-line"> <rect x="689.090909090909" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="709.090909090909" y="20" fill="transparent" stroke="transparent" font-size="30px">509</text></g> <g class="vert-line"> <rect x="720" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="740" y="20" fill="transparent" stroke="transparent" font-size="30px">602</text></g> <g class="vert-line"> <rect x="750.909090909091" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="770.909090909091" y="20" fill="transparent" stroke="transparent" font-size="30px">602</text></g> <g class="vert-line"> <rect x="781.818181818182" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="801.818181818182" y="20" fill="transparent" stroke="transparent" font-size="30px">717</text></g> <g class="vert-line"> <rect x="812.727272727273" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="832.727272727273" y="20" fill="transparent" stroke="transparent" font-size="30px">679</text></g> <g class="vert-line"> <rect x="843.636363636364" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="863.636363636364" y="20" fill="transparent" stroke="transparent" font-size="30px">657</text></g> <g class="vert-line"> <rect x="874.545454545455" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="894.545454545455" y="20" fill="transparent" stroke="transparent" font-size="30px">596</text></g> <g class="vert-line"> <rect x="905.454545454545" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="925.454545454545" y="20" fill="transparent" stroke="transparent" font-size="30px">590</text></g> <g class="vert-line"> <rect x="936.363636363636" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="956.363636363636" y="20" fill="transparent" stroke="transparent" font-size="30px">573</text></g> <g class="vert-line"> <rect x="967.272727272727" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="987.272727272727" y="20" fill="transparent" stroke="transparent" font-size="30px">616</text></g> <g class="vert-line"> <rect x="998.181818181818" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="1018.18181818182" y="20" fill="transparent" stroke="transparent" font-size="30px">645</text></g> <g class="vert-line"> <rect x="1029.09090909091" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="1049.09090909091" y="20" fill="transparent" stroke="transparent" font-size="30px">672</text></g> <g class="vert-line"> <rect x="1060" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="1080" y="20" fill="transparent" stroke="transparent" font-size="30px">608</text></g>
+</svg>
+</div></td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="SPECIFICITE">OLEAGINEUX</td>
+<td class="gt_row gt_center" headers="nanoplots" style="padding-top: 0; padding-bottom: 0; vertical-align: middle; overflow-x: visible"><div>
+<svg role="img" viewbox="0 0 1120 130" style="
+height:2em;
+margin-left:auto;
+margin-right:auto;
+font-size:inherit;
+overflow:visible;
+vertical-align:middle;
+position:relative;">
+<defs> <pattern id="area_pattern" width="8" height="8" patternunits="userSpaceOnUse"> <path class="pattern-line" d="M 0,8 l 8,-8 M -1,1 l 4,-4 M 6,10 l 4,-4" stroke="#FF0000" stroke-width="1.5" stroke-linecap="round" shape-rendering="geometricPrecision"> </path> </pattern> </defs>
+<style>text { font-family: ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace; stroke-width: 0.15em; paint-order: stroke; stroke-linejoin: round; cursor: default; } .vert-line:hover rect { fill: #911EB4; fill-opacity: 40%; stroke: #FFFFFF60; color: red; } .vert-line:hover text { stroke: white; fill: #212427; } .horizontal-line:hover text { stroke: white; fill: #212427; } .horizontal-line:hover rect { fill: transparent; stroke: transparent; color: blue; } .boxplot-line:hover text { stroke: white; fill: #212427; } .boxplot-line:hover rect { fill: transparent; stroke: transparent; } .horizontal-line:hover text { stroke: white; fill: #212427; } .ref-line:hover rect { stroke: #FFFFFF60; } .ref-line:hover line { stroke: #FF0000; } .ref-line:hover text { stroke: white; fill: #212427; } .y-axis-line:hover rect { fill: #EDEDED; fill-opacity: 60%; stroke: #FFFFFF60; color: red; } .y-axis-line:hover text { stroke: white; stroke-width: 0.20em; fill: #1A1C1F; } .ref-line:hover rect { stroke: #FFFFFF60; } .ref-line:hover line { stroke: #FF0000; } .ref-line:hover text { stroke: white; fill: #212427; }</style>
+<path class="area-closed" d="M50,109.082968485847,80.9090909090909,109.565217391304,111.818181818182,112.881355932203,142.727272727273,112.789240972734,173.636363636364,112.789240972734,204.545454545455,112.789240972734,235.454545454545,113.894620486367,266.363636363636,113.894620486367,297.272727272727,113.894620486367,328.181818181818,113.894620486367,359.090909090909,113.894620486367,390,104.314664701548,420.909090909091,110.455661999509,451.818181818182,113.771800540408,482.727272727273,115,513.636363636364,114.263080324245,544.545454545455,114.263080324245,575.454545454545,114.263080324245,606.363636363636,110.332842053549,637.272727272727,110.21002210759,668.181818181818,112.697126013265,699.090909090909,114.263080324245,730,107.999263080324,760.909090909091,107.999263080324,791.818181818182,99.8931466470155,822.727272727273,62.4944731024318,853.636363636364,27.6944110460381,884.545454545455,26.5205109309752,915.454545454545,20.4900515843773,946.363636363636,15,977.272727272727,48.9904200442152,1008.18181818182,56.2675018422992,1039.09090909091,42.9661016949152,1070,62.0154753131909,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,1070,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125,50,125Z" stroke="transparent" stroke-width="2" fill="url(#area_pattern)" fill-opacity="0.7"></path> <path d="M 50,109.082968485847 C 65,109.082968485847 65.9090909090909,109.565217391304 80.9090909090909,109.565217391304 C 95.9090909090909,109.565217391304 96.8181818181818,112.881355932203 111.818181818182,112.881355932203 C 126.818181818182,112.881355932203 127.727272727273,112.789240972734 142.727272727273,112.789240972734 C 157.727272727273,112.789240972734 158.636363636364,112.789240972734 173.636363636364,112.789240972734 C 188.636363636364,112.789240972734 189.545454545455,112.789240972734 204.545454545455,112.789240972734 C 219.545454545455,112.789240972734 220.454545454545,113.894620486367 235.454545454545,113.894620486367 C 250.454545454545,113.894620486367 251.363636363636,113.894620486367 266.363636363636,113.894620486367 C 281.363636363636,113.894620486367 282.272727272727,113.894620486367 297.272727272727,113.894620486367 C 312.272727272727,113.894620486367 313.181818181818,113.894620486367 328.181818181818,113.894620486367 C 343.181818181818,113.894620486367 344.090909090909,113.894620486367 359.090909090909,113.894620486367 C 374.090909090909,113.894620486367 375,104.314664701548 390,104.314664701548 C 405,104.314664701548 405.909090909091,110.455661999509 420.909090909091,110.455661999509 C 435.909090909091,110.455661999509 436.818181818182,113.771800540408 451.818181818182,113.771800540408 C 466.818181818182,113.771800540408 467.727272727273,115 482.727272727273,115 C 497.727272727273,115 498.636363636364,114.263080324245 513.636363636364,114.263080324245 C 528.636363636364,114.263080324245 529.545454545455,114.263080324245 544.545454545455,114.263080324245 C 559.545454545455,114.263080324245 560.454545454545,114.263080324245 575.454545454545,114.263080324245 C 590.454545454545,114.263080324245 591.363636363636,110.332842053549 606.363636363636,110.332842053549 C 621.363636363636,110.332842053549 622.272727272727,110.21002210759 637.272727272727,110.21002210759 C 652.272727272727,110.21002210759 653.181818181818,112.697126013265 668.181818181818,112.697126013265 C 683.181818181818,112.697126013265 684.090909090909,114.263080324245 699.090909090909,114.263080324245 C 714.090909090909,114.263080324245 715,107.999263080324 730,107.999263080324 C 745,107.999263080324 745.909090909091,107.999263080324 760.909090909091,107.999263080324 C 775.909090909091,107.999263080324 776.818181818182,99.8931466470155 791.818181818182,99.8931466470155 C 806.818181818182,99.8931466470155 807.727272727273,62.4944731024318 822.727272727273,62.4944731024318 C 837.727272727273,62.4944731024318 838.636363636364,27.6944110460381 853.636363636364,27.6944110460381 C 868.636363636364,27.6944110460381 869.545454545455,26.5205109309752 884.545454545455,26.5205109309752 C 899.545454545455,26.5205109309752 900.454545454545,20.4900515843773 915.454545454545,20.4900515843773 C 930.454545454545,20.4900515843773 931.363636363636,15 946.363636363636,15 C 961.363636363636,15 962.272727272727,48.9904200442152 977.272727272727,48.9904200442152 C 992.272727272727,48.9904200442152 993.181818181818,56.2675018422992 1008.18181818182,56.2675018422992 C 1023.18181818182,56.2675018422992 1024.09090909091,42.9661016949152 1039.09090909091,42.9661016949152 C 1054.09090909091,42.9661016949152 1055,62.0154753131909 1070,62.0154753131909" stroke="#4682B4" stroke-width="8" fill="none"></path> <circle cx="50" cy="109.082968485847" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="80.9090909090909" cy="109.565217391304" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="111.818181818182" cy="112.881355932203" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="142.727272727273" cy="112.789240972734" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="173.636363636364" cy="112.789240972734" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="204.545454545455" cy="112.789240972734" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="235.454545454545" cy="113.894620486367" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="266.363636363636" cy="113.894620486367" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="297.272727272727" cy="113.894620486367" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="328.181818181818" cy="113.894620486367" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="359.090909090909" cy="113.894620486367" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="390" cy="104.314664701548" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="420.909090909091" cy="110.455661999509" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="451.818181818182" cy="113.771800540408" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="482.727272727273" cy="115" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="513.636363636364" cy="114.263080324245" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="544.545454545455" cy="114.263080324245" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="575.454545454545" cy="114.263080324245" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="606.363636363636" cy="110.332842053549" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="637.272727272727" cy="110.21002210759" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="668.181818181818" cy="112.697126013265" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="699.090909090909" cy="114.263080324245" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="730" cy="107.999263080324" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="760.909090909091" cy="107.999263080324" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="791.818181818182" cy="99.8931466470155" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="822.727272727273" cy="62.4944731024318" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="853.636363636364" cy="27.6944110460381" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="884.545454545455" cy="26.5205109309752" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="915.454545454545" cy="20.4900515843773" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="946.363636363636" cy="15" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="977.272727272727" cy="48.9904200442152" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="1008.18181818182" cy="56.2675018422992" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="1039.09090909091" cy="42.9661016949152" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <circle cx="1070" cy="62.0154753131909" r="10" stroke="#FFFFFF" stroke-width="4" fill="#FF0000"></circle> <g class="y-axis-line"> <rect x="0" y="0" width="65" height="130" stroke="transparent" stroke-width="0" fill="transparent"></rect> <text x="0" y="19" fill="transparent" stroke="transparent" font-size="25">1.32K</text> <text x="0" y="126" fill="transparent" stroke="transparent" font-size="25">188</text></g> <g class="vert-line"> <rect x="40" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="60" y="20" fill="transparent" stroke="transparent" font-size="30px">254</text></g> <g class="vert-line"> <rect x="70.9090909090909" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="90.9090909090909" y="20" fill="transparent" stroke="transparent" font-size="30px">249</text></g> <g class="vert-line"> <rect x="101.818181818182" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="121.818181818182" y="20" fill="transparent" stroke="transparent" font-size="30px">211</text></g> <g class="vert-line"> <rect x="132.727272727273" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="152.727272727273" y="20" fill="transparent" stroke="transparent" font-size="30px">212</text></g> <g class="vert-line"> <rect x="163.636363636364" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="183.636363636364" y="20" fill="transparent" stroke="transparent" font-size="30px">212</text></g> <g class="vert-line"> <rect x="194.545454545455" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="214.545454545455" y="20" fill="transparent" stroke="transparent" font-size="30px">212</text></g> <g class="vert-line"> <rect x="225.454545454545" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="245.454545454545" y="20" fill="transparent" stroke="transparent" font-size="30px">200</text></g> <g class="vert-line"> <rect x="256.363636363636" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="276.363636363636" y="20" fill="transparent" stroke="transparent" font-size="30px">200</text></g> <g class="vert-line"> <rect x="287.272727272727" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="307.272727272727" y="20" fill="transparent" stroke="transparent" font-size="30px">200</text></g> <g class="vert-line"> <rect x="318.181818181818" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="338.181818181818" y="20" fill="transparent" stroke="transparent" font-size="30px">200</text></g> <g class="vert-line"> <rect x="349.090909090909" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="369.090909090909" y="20" fill="transparent" stroke="transparent" font-size="30px">200</text></g> <g class="vert-line"> <rect x="380" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="400" y="20" fill="transparent" stroke="transparent" font-size="30px">308</text></g> <g class="vert-line"> <rect x="410.909090909091" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="430.909090909091" y="20" fill="transparent" stroke="transparent" font-size="30px">239</text></g> <g class="vert-line"> <rect x="441.818181818182" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="461.818181818182" y="20" fill="transparent" stroke="transparent" font-size="30px">201</text></g> <g class="vert-line"> <rect x="472.727272727273" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="492.727272727273" y="20" fill="transparent" stroke="transparent" font-size="30px">188</text></g> <g class="vert-line"> <rect x="503.636363636364" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="523.636363636364" y="20" fill="transparent" stroke="transparent" font-size="30px">196</text></g> <g class="vert-line"> <rect x="534.545454545455" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="554.545454545455" y="20" fill="transparent" stroke="transparent" font-size="30px">196</text></g> <g class="vert-line"> <rect x="565.454545454545" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="585.454545454545" y="20" fill="transparent" stroke="transparent" font-size="30px">196</text></g> <g class="vert-line"> <rect x="596.363636363636" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="616.363636363636" y="20" fill="transparent" stroke="transparent" font-size="30px">240</text></g> <g class="vert-line"> <rect x="627.272727272727" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="647.272727272727" y="20" fill="transparent" stroke="transparent" font-size="30px">242</text></g> <g class="vert-line"> <rect x="658.181818181818" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="678.181818181818" y="20" fill="transparent" stroke="transparent" font-size="30px">214</text></g> <g class="vert-line"> <rect x="689.090909090909" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="709.090909090909" y="20" fill="transparent" stroke="transparent" font-size="30px">196</text></g> <g class="vert-line"> <rect x="720" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="740" y="20" fill="transparent" stroke="transparent" font-size="30px">267</text></g> <g class="vert-line"> <rect x="750.909090909091" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="770.909090909091" y="20" fill="transparent" stroke="transparent" font-size="30px">267</text></g> <g class="vert-line"> <rect x="781.818181818182" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="801.818181818182" y="20" fill="transparent" stroke="transparent" font-size="30px">358</text></g> <g class="vert-line"> <rect x="812.727272727273" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="832.727272727273" y="20" fill="transparent" stroke="transparent" font-size="30px">781</text></g> <g class="vert-line"> <rect x="843.636363636364" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="863.636363636364" y="20" fill="transparent" stroke="transparent" font-size="30px">1.17K</text></g> <g class="vert-line"> <rect x="874.545454545455" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="894.545454545455" y="20" fill="transparent" stroke="transparent" font-size="30px">1.19K</text></g> <g class="vert-line"> <rect x="905.454545454545" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="925.454545454545" y="20" fill="transparent" stroke="transparent" font-size="30px">1.26K</text></g> <g class="vert-line"> <rect x="936.363636363636" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="956.363636363636" y="20" fill="transparent" stroke="transparent" font-size="30px">1.32K</text></g> <g class="vert-line"> <rect x="967.272727272727" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="987.272727272727" y="20" fill="transparent" stroke="transparent" font-size="30px">934</text></g> <g class="vert-line"> <rect x="998.181818181818" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="1018.18181818182" y="20" fill="transparent" stroke="transparent" font-size="30px">852</text></g> <g class="vert-line"> <rect x="1029.09090909091" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="1049.09090909091" y="20" fill="transparent" stroke="transparent" font-size="30px">1.00K</text></g> <g class="vert-line"> <rect x="1060" y="0" width="20" height="130" stroke="transparent" stroke-width="12" fill="transparent"></rect> <text x="1080" y="20" fill="transparent" stroke="transparent" font-size="30px">787</text></g>
+</svg>
+</div></td>
+</tr>
+</tbody><tfoot class="gt_footnotes">
+<tr class="odd">
+<td colspan="2" class="gt_footnote"><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>1</sup></span></td>
+</tr>
+</tfoot>
+
+</table>
+
+</div>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Categorie : FECULENTS"</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TimeSeries_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Categorie : FRUITS"</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TimeSeries_files/figure-html/unnamed-chunk-18-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Categorie : CEREALES"</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TimeSeries_files/figure-html/unnamed-chunk-18-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Categorie : LEGUMES"</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TimeSeries_files/figure-html/unnamed-chunk-18-4.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "Categorie : OLEAGINEUX"</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TimeSeries_files/figure-html/unnamed-chunk-18-5.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="modélisation" class="level2">
+<h2 class="anchored" data-anchor-id="modélisation">Modélisation</h2>
+<section id="test-de-stationnarité" class="level3">
+<h3 class="anchored" data-anchor-id="test-de-stationnarité">Test de stationnarité</h3>
+<p><strong>Résulats des tests de stationnarité</strong></p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<div id="ijpahdtgds" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#ijpahdtgds table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#ijpahdtgds thead, #ijpahdtgds tbody, #ijpahdtgds tfoot, #ijpahdtgds tr, #ijpahdtgds td, #ijpahdtgds th {
+  border-style: none;
+}
+
+#ijpahdtgds p {
+  margin: 0;
+  padding: 0;
+}
+
+#ijpahdtgds .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#ijpahdtgds .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#ijpahdtgds .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#ijpahdtgds .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#ijpahdtgds .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ijpahdtgds .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ijpahdtgds .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ijpahdtgds .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#ijpahdtgds .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#ijpahdtgds .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#ijpahdtgds .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#ijpahdtgds .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#ijpahdtgds .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#ijpahdtgds .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#ijpahdtgds .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#ijpahdtgds .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#ijpahdtgds .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#ijpahdtgds .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#ijpahdtgds .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ijpahdtgds .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#ijpahdtgds .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#ijpahdtgds .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#ijpahdtgds .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ijpahdtgds .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#ijpahdtgds .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#ijpahdtgds .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ijpahdtgds .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ijpahdtgds .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#ijpahdtgds .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ijpahdtgds .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#ijpahdtgds .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ijpahdtgds .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ijpahdtgds .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ijpahdtgds .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ijpahdtgds .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ijpahdtgds .gt_left {
+  text-align: left;
+}
+
+#ijpahdtgds .gt_center {
+  text-align: center;
+}
+
+#ijpahdtgds .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#ijpahdtgds .gt_font_normal {
+  font-weight: normal;
+}
+
+#ijpahdtgds .gt_font_bold {
+  font-weight: bold;
+}
+
+#ijpahdtgds .gt_font_italic {
+  font-style: italic;
+}
+
+#ijpahdtgds .gt_super {
+  font-size: 65%;
+}
+
+#ijpahdtgds .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#ijpahdtgds .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#ijpahdtgds .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#ijpahdtgds .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#ijpahdtgds .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#ijpahdtgds .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#ijpahdtgds .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+
+<table class="gt_table table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="header gt_col_headings">
+<th id="Test" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Test</th>
+<th id="Specificite" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Specificite</th>
+<th id="hypothese nulle" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">hypothese nulle</th>
+<th id="P-Value" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">P-Value</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="Test">ADF</td>
+<td class="gt_row gt_left" headers="Specificite">FECULENTS</td>
+<td class="gt_row gt_left" headers="hypothese nulle">Non stationnaire</td>
+<td class="gt_row gt_right" headers="P-Value">0.99000000</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Test">ADF</td>
+<td class="gt_row gt_left" headers="Specificite">FRUITS</td>
+<td class="gt_row gt_left" headers="hypothese nulle">Non stationnaire</td>
+<td class="gt_row gt_right" headers="P-Value">0.74596728</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Test">ADF</td>
+<td class="gt_row gt_left" headers="Specificite">CEREALES</td>
+<td class="gt_row gt_left" headers="hypothese nulle">Non stationnaire</td>
+<td class="gt_row gt_right" headers="P-Value">0.43448294</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Test">ADF</td>
+<td class="gt_row gt_left" headers="Specificite">LEGUMES</td>
+<td class="gt_row gt_left" headers="hypothese nulle">Non stationnaire</td>
+<td class="gt_row gt_right" headers="P-Value">0.35047882</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Test">ADF</td>
+<td class="gt_row gt_left" headers="Specificite">OLEAGINEUX</td>
+<td class="gt_row gt_left" headers="hypothese nulle">Non stationnaire</td>
+<td class="gt_row gt_right" headers="P-Value">0.47147833</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Test">PP</td>
+<td class="gt_row gt_left" headers="Specificite">FECULENTS</td>
+<td class="gt_row gt_left" headers="hypothese nulle">Non stationnaire</td>
+<td class="gt_row gt_right" headers="P-Value">0.09267797</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Test">PP</td>
+<td class="gt_row gt_left" headers="Specificite">FRUITS</td>
+<td class="gt_row gt_left" headers="hypothese nulle">Non stationnaire</td>
+<td class="gt_row gt_right" headers="P-Value">0.07827257</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Test">PP</td>
+<td class="gt_row gt_left" headers="Specificite">CEREALES</td>
+<td class="gt_row gt_left" headers="hypothese nulle">Non stationnaire</td>
+<td class="gt_row gt_right" headers="P-Value">0.10943410</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Test">PP</td>
+<td class="gt_row gt_left" headers="Specificite">LEGUMES</td>
+<td class="gt_row gt_left" headers="hypothese nulle">Non stationnaire</td>
+<td class="gt_row gt_right" headers="P-Value">0.35340615</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Test">PP</td>
+<td class="gt_row gt_left" headers="Specificite">OLEAGINEUX</td>
+<td class="gt_row gt_left" headers="hypothese nulle">Non stationnaire</td>
+<td class="gt_row gt_right" headers="P-Value">0.29101307</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Test">KPSS</td>
+<td class="gt_row gt_left" headers="Specificite">FECULENTS</td>
+<td class="gt_row gt_left" headers="hypothese nulle">Stationnaire CP</td>
+<td class="gt_row gt_right" headers="P-Value">0.04114470</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Test">KPSS</td>
+<td class="gt_row gt_left" headers="Specificite">FRUITS</td>
+<td class="gt_row gt_left" headers="hypothese nulle">Stationnaire CP</td>
+<td class="gt_row gt_right" headers="P-Value">0.10000000</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Test">KPSS</td>
+<td class="gt_row gt_left" headers="Specificite">CEREALES</td>
+<td class="gt_row gt_left" headers="hypothese nulle">Stationnaire CP</td>
+<td class="gt_row gt_right" headers="P-Value">0.01108050</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Test">KPSS</td>
+<td class="gt_row gt_left" headers="Specificite">LEGUMES</td>
+<td class="gt_row gt_left" headers="hypothese nulle">Stationnaire CP</td>
+<td class="gt_row gt_right" headers="P-Value">0.01880843</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Test">KPSS</td>
+<td class="gt_row gt_left" headers="Specificite">OLEAGINEUX</td>
+<td class="gt_row gt_left" headers="hypothese nulle">Stationnaire CP</td>
+<td class="gt_row gt_right" headers="P-Value">0.02090886</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+<p>Les séries obtenues pour les différentes catégories de produits sont non stationnaires au seuil de 5%. Globalement elles affichent un ordre d’intégration égale à 1. Les séries chronologiques étudiées peuvent être approchées par l’équation :.</p>
+<p><strong>Modélisation ARIMA </strong></p>
+</section>
+</section>
+<section id="arima-pour-les-feculents" class="level2">
+<h2 class="anchored" data-anchor-id="arima-pour-les-feculents">ARIMA (Pour les FECULENTS)</h2>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Series: PriceTimesSeries2[, "FECULENTS"] 
+ARIMA(2,1,0) 
+
+Coefficients:
+          ar1      ar2
+      -0.8389  -0.7324
+s.e.   0.1097   0.1039
+
+sigma^2 = 2023:  log likelihood = -172.3
+AIC=350.6   AICc=351.43   BIC=355.09
+
+Training set error measures:
+                   ME     RMSE      MAE         MPE     MAPE      MASE
+Training set 2.224111 42.94922 24.54222 -0.04181433 5.178436 0.6742176
+                    ACF1
+Training set -0.07955932</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tsdisplay</span>(arima1<span class="sc">$</span>residuals)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TimeSeries_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">forecast</span>(arima1,<span class="at">h=</span><span class="dv">7</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="TimeSeries_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="quelques-insihts-et-recommandation" class="level3">
+<h3 class="anchored" data-anchor-id="quelques-insihts-et-recommandation">Quelques insihts et recommandation</h3>
+<p>La non stationnarité des prix des denrées alimentaires sur la période observée, met en évidence la sensibilité des prix des <strong>produits locaux</strong> aux politiques isolationniste. En effet, à partir de juillet 2020 le “grand Abidjan” (réunion de la ville d’Abidjan, ainsi que quelques villes adjacentes du sud de la CI) alors épicentre de la propagation de la COVID 19, se voit isolé par les mesures politiques destinés à contenir la propagation virale. Certaine ville clés de l’économie de la Côte d’Ivoire se retrouve en autarcie. S’en suit des pics sans précédents de la demande.</p>
+<p><strong>Recommandations :</strong></p>
+<ul>
+<li><p><strong>Maintenir la fluidité des échanges commerciaux entre les villes</strong> de la Côte d’Ivoire à travers :</p>
+<ul>
+<li><p><strong><em>L’expansion et l’entretien du réseau routier</em>,</strong> Le manque de routes praticables, de ponts ou de moyens de transport adéquats peut augmenter les coûts de transport des denrées alimentaires, rendant les prix plus élevés dans certaines régions enclavées.</p></li>
+<li><p><strong><em>La lutte contre l’insécurité sur nos routes</em></strong>, Les conflits ou l’instabilité politique peuvent perturber les chaînes d’approvisionnement et limiter l’accès aux marchés, entraînant des prix plus élevés dans les zones affectées.</p></li>
+<li><p><strong><em>L’encouragement des communications sur les prix des denrées alimentaires</em></strong> au près des population, les consommateurs dans certaines régions peuvent avoir un accès limité aux informations sur les prix du marché, ce qui les rend plus vulnérables aux fluctuations et aux prix élevés.</p></li>
+</ul></li>
+</ul>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>Cette analyse approfondie de la structure des prix des produits dans les différents marchés en Côte d’Ivoire révèle des dynamiques complexes influencées par divers facteurs économiques, politiques et sociaux. Les résultats montrent que les prix des denrées alimentaires ont subi des fluctuations significatives entre 2020 et 2022, principalement dues aux perturbations causées par la pandémie de COVID-19 et à d’autres instabilités.</p>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
