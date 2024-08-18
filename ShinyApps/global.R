@@ -192,6 +192,9 @@ SemestreTable <- SemestreTable |>
 # Fonction permettant d'avoir le min et le max sur le graph
 addMinMax <- function(dygraph,tbl){
   
+  # dygraph : graph dygraph pour le chainage
+  # tbl : tableau de minimum et maximum
+  
   dateMin <- tbl |> pluck(1,1) |> as.character()
   dateMax <- tbl |> pluck(1,2) |> as.character()
   obj <- dygraph |>

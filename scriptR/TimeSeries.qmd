@@ -1,0 +1,366 @@
+---
+title: "STRUCTURE DU PRIX DES DENREES ALIMENTAIRES EN COTE D'IVOIRE"
+author: "Amadou BAH ~ Frederic AKADJE"
+format: html
+editor: visual
+---
+
+## Contexte
+
+Dans le contexte économique actuel, marqué par une inflation constante et une incertitude croissante, la question de la variabilité des prix des produits et leur l'accessibilité dans les différents marchés est devenue cruciale. Les ménages sont contraints de jongler entre le désir de maintenir un certain niveau de vie et la nécessité de s'adapter à une réalité économique de plus en plus difficile. En Côte d'Ivoire, l'Etat s'engage résolument dans la lutte contre la vie chère, à travers certains organismes tels que le CNLVC (Conseil National de Lutte Contre la Vie Chère) et le OCPV (Office d'aide à la Commercialisation des Produits Vivriers). Ses actions visent à atténuer l'impact de l'inflation sur les populations vulnérables et à garantir l'accessibilité des produits de base à tous. Somme toute, ces initiatives sont précieuses pour assurer la stabilité économique et sociale en Côte d'Ivoire.
+
+### Objectifs
+
+-   Comprendre le structure des prix des denrées alimentaires en Côte d'Ivoire. Prédire les tendances futures des prix
+
+-   Une analyse de la structure globale des prix sur tout l'étendue du territoire sera premièrement abordée, avant de nous intéresser aux structures de ces prix en chacune des villes de bases étudiées.
+
+### Collecte des données et Data processing
+
+Ce projet a nécessité l'utilisation des sources de données suivantes:
+
+-   Prix des produits dans les différents marchés en Côte d'Ivoire depuis Janvier 2022 (csv), OpendataCi : <https://data.gouv.ci/datasets/echo-du-marche>
+-   Catégorisation des produits du marché (pdf), OCPV : <https://www.ocpv-ci.com/doc/SYNTHESE/2023/SYNTHESE_PRIX_MOYENS_S13_2023.pdf>
+
+#### Gestion des valeurs manquantes
+
+Deux cas de figures s'assimilent à l'observation de valeurs manquantes dans notre dataset:\
+1. Une indisponibilité du produit dans la région concernée\
+2. Un défaut de mesure des prix sur la période concernée
+
+Par suite nous considérons le cas 2.
+
+Pour chaque valeur manquante pour un produit donné dans une ville, une imputation est faite à travers la ville au prix non nul la plus proche géographiquement.
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE}
+library(tidyverse)
+library(forecast)
+library(ggpubr)
+library(tseries)
+library(gt)
+library(dygraphs)
+```
+
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE}
+PriceGlob <- read_csv("../data/priceGlobCleanFull.csv")
+# PriceGlob2 <- read_csv("ShinyAppsWelfare/data/priceGlobCleanFull.csv")
+```
+
+#### Jeu de données
+
+```{r}
+PriceGlob |> head() |> gt()
+```
+
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE}
+IndexDataTimes <- PriceGlob |>
+  filter(CATEGORIE!="PRODUITS MANUFACTURES" & SPECIFICITE!="PRODUITS LAITIERS" & SPECIFICITE!="SUCRES") |>
+  group_by(ANNEE,MOISNum) |>
+  summarise(prixMoy=mean(PRIX,na.rm=TRUE)) |>
+  ungroup()
+```
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE}
+# Construction 
+addMinMax <- function(dygraph,tbl){
+  
+  # dygraph : graph dygraph pour le chainage
+  # tbl : tableau de minimum et maximum
+  
+  dateMin <- tbl |> pluck(1,1) |> as.character()
+  dateMax <- tbl |> pluck(1,2) |> as.character()
+  obj <- dygraph |>
+    dyAnnotation(dateMin, text = "Min", tooltip = "Prix moyen minimum",width = 30) |>
+    dyAnnotation(dateMax, text = "Max", tooltip = "Prix moyen maximum",width = 30)
+  
+  return(obj)
+}
+```
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE}
+# dataframe du min
+RankTableMinMax <- PriceGlob |>
+  filter(
+    CATEGORIE!="PRODUITS MANUFACTURES" &
+      SPECIFICITE!="PRODUITS LAITIERS" &
+      SPECIFICITE!="SUCRES"
+    ) |>
+      group_by(DATE) |>
+      summarise(PrixMoy=mean(PRIX,na.rm = TRUE)
+                ) |>
+      select(DATE,PrixMoy) |> 
+      mutate(RankMin=min_rank(PrixMoy),
+             RankMax=min_rank(-PrixMoy)) |> 
+      filter(RankMin==1 | RankMax==1) |> 
+      arrange(-desc(RankMin)) |> 
+      distinct(RankMin,.keep_all = TRUE) |> 
+      distinct(RankMax,.keep_all = TRUE)
+```
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE}
+IndexDataTimes0 <- PriceGlob |>
+  filter(
+    CATEGORIE!="PRODUITS MANUFACTURES" &
+      SPECIFICITE!="PRODUITS LAITIERS" &
+      SPECIFICITE!="SUCRES"
+    ) |>
+  group_by(DATE) |>
+  summarise(PrixMoy=mean(PRIX,na.rm = TRUE))
+```
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE}
+# Evolution du prix moyen
+# dygraph(IndexDataTimes0,
+#             main = " Evolution du prix moyen des fruits sur les differentes annees") |> 
+#       dyRangeSelector() |> 
+#       dyOptions(stackedGraph = TRUE) |> 
+#       addMinMax(RankTableMinMax) |>
+#       dyEvent("2020-07-15","Propagation de la covid 19", labelLoc = "bottom")
+```
+
+
+```{r,echo=FALSE,cache=TRUE,warning=FALSE}
+IndexDataTimes2 <- PriceGlob |>
+  filter(CATEGORIE!="PRODUITS MANUFACTURES" & SPECIFICITE!="PRODUITS LAITIERS" & SPECIFICITE!="SUCRES") |>
+  group_by(SPECIFICITE,MOISNum, ANNEE) |>
+  summarise(prixMoy=mean(PRIX,na.rm=TRUE))
+```
+
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE}
+pivot_data <- IndexDataTimes2 %>%
+  select(MOISNum, ANNEE, SPECIFICITE, prixMoy,) %>%
+  pivot_wider(names_from = SPECIFICITE, values_from = prixMoy)
+
+PriceTimesSeries2 <- ts(pivot_data, frequency = 12)
+```
+
+
+### Transformation du Dataset en objet Ts
+
+```{r}
+PriceTimesSeries <- ts(IndexDataTimes, frequency = 12 )[,"prixMoy"]
+```
+
+### Visualisation des données
+
+Nous chargeons dans un premier temps les prix moyennes de l'ensemble des produits par années
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE}
+produitsLoc <- c("FECULENTS", "FRUITS", "CEREALES", "LEGUMES", "OLEAGINEUX")
+
+for (p in produitsLoc) {
+  print(str_c("Categorie",p))
+  plot(PriceTimesSeries2[,p])
+}
+
+
+```
+
+# Seasonal plots
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE}
+produitsLoc <- c("FECULENTS", "FRUITS", "CEREALES", "LEGUMES", "OLEAGINEUX") 
+
+ggarrange(ggseasonplot(PriceTimesSeries2[,"FRUITS"]),
+          ggseasonplot(PriceTimesSeries2[,"FECULENTS"]),
+          ggseasonplot(PriceTimesSeries2[,"CEREALES"]),
+          ggseasonplot(PriceTimesSeries2[,"LEGUMES"]),
+          ggseasonplot(PriceTimesSeries2[,"OLEAGINEUX"]),
+          nrow = 2)
+```
+
+
+
+```{r,echo=FALSE,cache=TRUE,message=FALSE,warning=FALSE}
+IndexDataTimes2 <- PriceGlob |>
+  filter(CATEGORIE!="PRODUITS MANUFACTURES" & SPECIFICITE!="PRODUITS LAITIERS" & SPECIFICITE!="SUCRES") |>
+  group_by(SPECIFICITE,MOISNum, ANNEE) |>
+  summarise(prixMoy=mean(PRIX,na.rm=TRUE))
+```
+
+```{r}
+g <- PriceGlob |>
+  mutate(moisAN=str_c("_",MOIS,"",ANNEE)) |>
+  group_by(SPECIFICITE,ANNEE,MOISNum,moisAN) |>
+  summarise(moy=mean(PRIX,na.rm=TRUE)) |>
+  pivot_wider(id_cols = SPECIFICITE,names_from = moisAN,values_from = moy) |>
+  filter(SPECIFICITE %in% produitsLoc) |> ungroup()
+```
+
+```{r}
+g |>
+  gt(rowname_col = "test") |>
+  tab_header("Partial summary of daily tests performed on YF patient") |>
+  tab_stubhead(label = md("**Test**")) |>
+  cols_hide(columns = c(starts_with("norm"))) |>
+  cols_nanoplot(
+    columns = starts_with("_"),
+    new_col_name = "nanoplots",
+    new_col_label = md("*Progression*")
+  ) |>
+  cols_align(align = "center", columns = nanoplots) |>
+  tab_footnote(
+    footnote = "",
+    locations = cells_column_labels(columns = nanoplots)
+  )
+```
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE}
+pivot_data <- IndexDataTimes2 %>%
+  select(MOISNum, ANNEE, SPECIFICITE, prixMoy,) %>%
+  pivot_wider(names_from = SPECIFICITE, values_from = prixMoy)
+
+PriceTimesSeries2 <- ts(pivot_data, frequency = 12)
+```
+
+
+
+```{r ,echo=FALSE,cache=TRUE,warning=FALSE}
+# Autocorrélation 
+produitsLoc <- c("FECULENTS", "FRUITS", "CEREALES", "LEGUMES", "OLEAGINEUX")
+## Les graphiques : ACF et PACF
+lag0=100
+for (cat in produitsLoc ){
+  print(str_c("Categorie : ",cat))
+  g <- ggarrange(autoplot(PriceTimesSeries2[,cat]),
+             ggAcf(PriceTimesSeries2[,cat],lag=lag0 ),
+             ggPacf(PriceTimesSeries2[,cat],lag=lag0 ),
+             nrow=1)
+  print(g)
+  
+}
+
+
+# ggarrange(autoplot(PriceTimesSeries2[,"FECULENTS"]),
+#              ggAcf(PriceTimesSeries2[,"FECULENTS"],lag=lag0 ),
+#              ggPacf(PriceTimesSeries2[,"FECULENTS"],lag=lag0 ),
+#              nrow=1)
+         
+```
+
+
+## Modélisation 
+
+### Test de stationnarité
+
+```{r,echo=FALSE,warning=FALSE,message=FALSE}
+produitsLoc <- c("FECULENTS", "FRUITS", "CEREALES", "LEGUMES", "OLEAGINEUX")
+resultTib <- tibble("Test"="","Specificite"="","hypothese nulle"="")
+
+for(test_ in c("ADF","PP","KPSS")){
+  if(test_=="ADF"){
+    for (catg in produitsLoc){
+  
+  IndexDataTimesInit <- PriceGlob |>
+  filter(
+    CATEGORIE!="PRODUITS MANUFACTURES" &
+      SPECIFICITE==catg ) |>
+  group_by(ANNEE,MOISNum) |>
+  summarise(prixMoy=mean(PRIX,na.rm=TRUE)) |>
+  ungroup()
+  
+  PriceTimesSeries <- ts(IndexDataTimesInit, frequency = 12 )[,"prixMoy"]
+  # Test de stationnarité ADF
+  adf <- adf.test(PriceTimesSeries, alternative = ("stationary"))
+  tbl0 <- tibble( "Test"=test_,"Specificite"=catg,"hypothese nulle"="Non stationnaire", "P-Value"=adf$p.value)
+  resultTib <-bind_rows(resultTib,tbl0)
+    }}
+    
+  if(test_=="PP"){
+     for (catg in produitsLoc){
+
+  IndexDataTimesInit <- PriceGlob |>
+  filter(
+    CATEGORIE!="PRODUITS MANUFACTURES" &
+      SPECIFICITE==catg ) |>
+  group_by(ANNEE,MOISNum) |>
+  summarise(prixMoy=mean(PRIX,na.rm=TRUE)) |>
+  ungroup()
+
+  PriceTimesSeries <- ts(IndexDataTimesInit, frequency = 12 )[,"prixMoy"]
+  # Test de stationnarité ADF
+  adf <-pp.test(PriceTimesSeries, alternative = ("stationary"))
+  tbl0 <- tibble( "Test"=test_,"Specificite"=catg,"hypothese nulle"="Non stationnaire", "P-Value"=adf$p.value)
+  resultTib <-bind_rows(resultTib,tbl0)
+     }}
+    if(test_=="KPSS"){
+      for (catg in produitsLoc){
+
+  IndexDataTimesInit <- PriceGlob |>
+  filter(
+    CATEGORIE!="PRODUITS MANUFACTURES" &
+      SPECIFICITE==catg ) |>
+  group_by(ANNEE,MOISNum) |>
+  summarise(prixMoy=mean(PRIX,na.rm=TRUE)) |>
+  ungroup()
+
+  PriceTimesSeries <- ts(IndexDataTimesInit, frequency = 12 )[,"prixMoy"]
+  # Test de stationnarité ADF
+  adf <-kpss.test(PriceTimesSeries,null=("Level"))
+  tbl0 <- tibble( "Test"=test_,
+                  "Specificite"=catg,
+                  "hypothese nulle"="Stationnaire CP",
+                  "P-Value"=adf$p.value)
+  resultTib <-bind_rows(resultTib,tbl0)
+     }
+    }
+  }
+
+  # resultTib
+
+```
+
+**Résulats des tests de stationnarité**
+```{r,echo=FALSE,message=FALSE}
+resultTib |> filter(!is.na(`P-Value`)) |> gt()
+```
+
+Les séries obtenues pour les différentes catégories de produits sont non stationnaires au seuil de 5%. Globalement elles affichent un ordre d'intégration égale à 1. Les séries chronologiques étudiées peuvent être approchées par l'équation :.
+
+**Modélisation ARIMA **
+
+
+## ARIMA  (Pour les FECULENTS)
+```{r,echo=FALSE,cache=TRUE,warning=FALSE}
+arima1 <-auto.arima(PriceTimesSeries2[,"FECULENTS"],d=5,max.p = 3,max.q=3)
+summary(arima1)
+
+
+tsdisplay(diff(PriceTimesSeries2[,"FECULENTS"]),lag.max = 36)
+
+auto.arima(diff(PriceTimesSeries2[,"FECULENTS"]))
+```
+
+```{r}
+tsdisplay(arima1$residuals)
+```
+
+
+```{r}
+plot(forecast(arima1,h=7))
+```
+
+
+
+
+
+### Quelques insihts et recommandation
+
+La non stationnarité des prix des denrées alimentaires sur la période observée, met en évidence la sensibilité des prix des **produits locaux** aux politiques isolationniste. En effet, à partir de juillet 2020 le "grand Abidjan" (réunion de la ville d'Abidjan, ainsi que quelques villes adjacentes du sud de la CI) alors épicentre de la propagation de la COVID 19, se voit isolé par les mesures politiques destinés à contenir la propagation virale. Certaine ville clés de l'économie de la Côte d'Ivoire se retrouve en autarcie. S'en suit des pics sans précédents de la demande.
+
+**Recommandations :**
+
+-   **Maintenir la fluidité des échanges commerciaux entre les villes** de la Côte d'Ivoire à travers :
+
+    -   ***L'expansion et l'entretien du réseau routier*****,** Le manque de routes praticables, de ponts ou de moyens de transport adéquats peut augmenter les coûts de transport des denrées alimentaires, rendant les prix plus élevés dans certaines régions enclavées.
+
+    -   ***La lutte contre l'insécurité sur nos routes***, Les conflits ou l'instabilité politique peuvent perturber les chaînes d'approvisionnement et limiter l'accès aux marchés, entraînant des prix plus élevés dans les zones affectées.
+
+    -   ***L'encouragement des communications sur les prix des denrées alimentaires*** au près des population, les consommateurs dans certaines régions peuvent avoir un accès limité aux informations sur les prix du marché, ce qui les rend plus vulnérables aux fluctuations et aux prix élevés.
+
+
+## Conclusion 
+Cette analyse approfondie de la structure des prix des produits dans les différents marchés en Côte d'Ivoire révèle des dynamiques complexes influencées par divers facteurs économiques, politiques et sociaux. Les résultats montrent que les prix des denrées alimentaires ont subi des fluctuations significatives entre 2020 et 2022, principalement dues aux perturbations causées par la pandémie de COVID-19 et à d'autres instabilités. 
